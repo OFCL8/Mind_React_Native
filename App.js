@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Asset } from 'expo-asset';
 import { AppLoading } from 'expo';
-import MusicApp from './app/index';
+import ReactLogin from './app/index';
 
 //Functions to load assets
 function cacheImages(images) {
@@ -44,7 +44,7 @@ export default class App extends React.Component {
         />
       );
     }
-    return <MusicApp />;
+    return <ReactLogin />;
   }
 
 }

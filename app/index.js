@@ -37,7 +37,7 @@ function runTiming(clock, value, dest) {
     state.position
   ]);
 }
-class MusicApp extends Component {
+class ReactLogin extends Component {
   constructor() {
     super();
 
@@ -144,9 +144,7 @@ class MusicApp extends Component {
 
           <TapGestureHandler onHandlerStateChange={this.onCloseState}>
             <Animated.View style= {styles.closeButton}>
-              <Animated.Text style={{ fontSize: 15, transform:[{
-                rotate: concat(this.rotateCross,'deg')
-              }] }}>X</Animated.Text>
+              <Animated.Text style={{ fontSize: 15, transform:[{ rotate: concat(this.rotateCross,'deg')}] }}>X</Animated.Text>
             </Animated.View>
           </TapGestureHandler>
               <TextInput
@@ -163,12 +161,11 @@ class MusicApp extends Component {
             <Text style={{fontSize:20, fontWeight:'bold'}}>SIGN IN</Text>
           </Animated.View>
         </Animated.View>
-        
       </View>
     );
   }
 }
-export default MusicApp;
+export default ReactLogin;
 
 const styles = StyleSheet.create({
   container: {
