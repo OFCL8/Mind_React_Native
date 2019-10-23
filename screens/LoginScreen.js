@@ -1,9 +1,14 @@
-import React, { Component } from 'react';
-import { Dimensions, StyleSheet, Text, TextInput, View } from 'react-native';
+import React from 'react';
+import { Dimensions, StyleSheet, Text, TextInput, View, KeyboardAvoidingView } from 'react-native';
 import Svg, {Image, Circle,ClipPath} from 'react-native-svg';
 import Animated, { Easing } from 'react-native-reanimated';
-import { State, TapGestureHandler } from 'react-native-gesture-handler';
+import { State, TapGestureHandler, TouchableOpacity } from 'react-native-gesture-handler';
+import * as firebase from 'firebase';
+import 'firebase/firestore';
+import Firebase from '../components/Firebase';
+import { onCameraDidChangeTrackingState } from 'expo/build/AR';
 
+//const firestore = firebase.firestore();
 
 const { width, height } = Dimensions.get('window');
 
@@ -37,7 +42,8 @@ function runTiming(clock, value, dest) {
     state.position
   ]);
 }
-class ReactLogin extends Component {
+
+export default class ReactLogin extends React.Component {
   constructor() {
     super();
 
@@ -63,7 +69,7 @@ class ReactLogin extends Component {
 
     this.bgY = interpolate(this.buttonOpacity, {
       inputRange: [0, 1],
-      outputRange: [-height / 3 - 50, 0],
+      outputRange: [-height / 2 - 250, 0],
       extrapolate: Extrapolate.CLAMP
     });
 
@@ -91,20 +97,39 @@ class ReactLogin extends Component {
       extrapolate: Extrapolate.CLAMP
     });
   }
+
+  state = {
+    email: "",
+    password: "",
+    errorMessage: null
+  };
+
+  handleLogin = () => {
+    const {email, password} = this.state;
+
+    firebase.auth().signInWithEmailAndPassword(email,password).catch(error => this.setState({errorMessage: error.message}));
+    /*const docRef = firestore.collection("Users").doc("Admin");
+    docRef.get().then(function doc() {
+      if(doc.exists){ console.log("Document data: ",doc.data());}
+    })*/
+  };
+
   render() {
     return (
-      <View
+      <KeyboardAvoidingView style={{flex:1}} behavior="padding">
+        <View
         style={{
           flex: 1,
           backgroundColor: 'white',
-          justifyContent: 'flex-end'
+          justifyContent: 'flex-end',
         }}>
+          
         <Animated.View
           style={{
             ...StyleSheet.absoluteFill,
             transform: [{ translateY: this.bgY }]
           }}>
-
+          
           <Svg height={height + 50} width={width}>
             <ClipPath id="clip">
               <Circle r={height + 50} cx={width / 2} />
@@ -136,42 +161,66 @@ class ReactLogin extends Component {
           zIndex: this.textInputZIndex,
           opacity: this.textInputOpacity,
           transform:[{translateY:this.textInputY}],
-          height: height/3, 
+          height: height/2, 
           ...StyleSheet.absoluteFill, 
           top:null, 
           justifyContent: 'center' 
           }}>
-
+          
           <TapGestureHandler onHandlerStateChange={this.onCloseState}>
             <Animated.View style= {styles.closeButton}>
               <Animated.Text style={{ fontSize: 15, transform:[{ rotate: concat(this.rotateCross,'deg')}] }}>X</Animated.Text>
             </Animated.View>
           </TapGestureHandler>
+          
+          
               <TextInput
+                autoCapitalize="none"
                 placeholder="Email"
                 style={styles.textInput}
                 placeholderTextColor="black"
+                fontSize = {15}
+                onChangeText={email => this.setState({ email })}
+                value={this.state.email}
               />
               <TextInput
+                autoCapitalize="none"
                 placeholder="Password"
                 style={styles.textInput}
+                secureTextEntry
                 placeholderTextColor="black"
+                fontSize = {15}
+                onChangeText={password => this.setState({ password })}
+                value={this.state.password}
               />
-          <Animated.View style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={this.handleLogin}>
             <Text style={{fontSize:20, fontWeight:'bold'}}>SIGN IN</Text>
-          </Animated.View>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={{ alignSelf: "center", marginTop: 32}} onPress={() => this.props.navigation.navigate("Register")}>
+            <Text style={{ color: "#414959", fontSize: 17}}>
+              New to MindReactNative? <Text style={{ fontWeight: "500", color: "#E9446A"}}>Sign up</Text>
+            </Text>
+          </TouchableOpacity>
+
+          <View style={styles.errorMessage}>
+            { this.state.errorMessage && <Text style={styles.error}>{this.state.errorMessage}</Text>}
+          </View>
+
         </Animated.View>
       </View>
+      </KeyboardAvoidingView>
     );
   }
 }
-export default ReactLogin;
 
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     flex: 1,
-    justifyContent: 'center'
+    justifyContent: 'center',
+    borderTopLeftRadius: 30,
+borderTopRightRadius: 30,
   },
   button: {
     alignItems: 'center',
@@ -192,10 +241,22 @@ const styles = StyleSheet.create({
     height: 40,
     justifyContent: 'center',
     left: width / 2 - 20,
-    position: 'absolute',
+    position: 'relative',
     shadowOpacity: 0.2,
     top: -20,
     width: 40
+  },
+  errorMessage: {
+    height: 72,
+    alignItems: "center",
+    justifyContent: "center",
+    marginHorizontal: 30
+  },
+  error: {
+    color: "#E9446A",
+    fontSize: 13,
+    fontWeight: "600",
+    textAlign: "center"
   },
   textInput:{
     borderRadius: 25,

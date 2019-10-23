@@ -1,8 +1,17 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet} from 'react-native';
 import { Asset } from 'expo-asset';
 import { AppLoading } from 'expo';
-import ReactLogin from './app/index';
+import HomeScreen from './screens/HomeScreen';
+import RegisterScreen from './screens/RegisterScreen';
+import LoadingScreen from './screens/LoadingScreen';
+import LoginScreen from './screens/LoginScreen';
+import HomeLeaderScreen from './screens/HomeLeaderScreen';
+
+import Firebase from './components/Firebase';
+import { createAppContainer, createSwitchNavigator } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation-stack';
+  
 
 //Functions to load assets
 function cacheImages(images) {
@@ -16,7 +25,6 @@ function cacheImages(images) {
 }
 
 export default class App extends React.Component {
-
   constructor() {
     super()
     //If app is ready to show image
@@ -25,6 +33,10 @@ export default class App extends React.Component {
     }
   }
 
+  componentWillMount() {
+    Firebase.init();
+  }
+  
   async _loadAssetsAsync() {
     const imageAssets = cacheImages([
       require('./assets/bg.jpg'),
@@ -44,7 +56,7 @@ export default class App extends React.Component {
         />
       );
     }
-    return <ReactLogin />;
+    return <AppContainer />;
   }
 
 }
@@ -56,6 +68,32 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+//Defining SwitchNavigator for accesing screens in app
+const AppSwitch = createSwitchNavigator({
+  Home: HomeScreen,
+  HomeLeader: HomeLeaderScreen
+});
+
+const AuthSwitch = createSwitchNavigator({
+  Login: LoginScreen,
+  Register: RegisterScreen
+});
+
+const RootStack = createSwitchNavigator(
+  {
+    Loading: LoadingScreen,
+    App: AppSwitch,
+    Auth: AuthSwitch
+  },
+  {
+    initialRouteName: 'Loading',
+  }
+  );
+//AppContainer that contains the pages
+const AppContainer = createAppContainer(RootStack);
+
+
 
 
 
