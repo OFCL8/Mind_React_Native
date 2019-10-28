@@ -25,7 +25,7 @@ export default class HomeClientScreen extends React.Component {
       switch(this.state.role)
       {
         case "CTO":
-          { this.props.navigation.navigate("HomeClient"); }
+          { this.props.navigation.navigate("Home"); }
           break;
         case "Leader":
           { this.props.navigation.navigate("HomeLeader"); }

@@ -9,7 +9,7 @@ import HomeLeaderScreen from './screens/HomeLeaderScreen';
 import HomeClientScreen from './screens/HomeClientScreen';
 
 import Firebase from './components/Firebase';
-import { createAppContainer, createSwitchNavigator } from 'react-navigation';
+import { createAppContainer, createSwitchNavigator, SafeAreaView } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
   
 
@@ -56,7 +56,7 @@ export default class App extends React.Component {
         />
       );
     }
-    return <AppContainer />;
+    return <AppContainer/>;
   }
 
 }

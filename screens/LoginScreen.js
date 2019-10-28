@@ -108,6 +108,7 @@ export default class ReactLogin extends React.Component {
 
   render() {
     return (
+      
       <KeyboardAvoidingView style={{flex:1}} behavior="padding">
         <View
         style={{
