@@ -1,0 +1,17 @@
+[
+  {"id": 1, "q": "El equipo te entregada las cosas a tiempo basado en la prioridad?"},
+  {"id": 2, "q": "La calidad de los entregables alcanzan tus expectativas?"},
+  {"id": 3, "q": "El equipo te mantiene al tanto del estatus cada cierto tiempo"},
+  {"id": 4, "q": "Como es el trato entre los puntos de comunicación del equipo contigo?"},
+  {"id": 5, "q": "Cuando hay defectos, el equipo es rápido en darte soluciones?"},
+  {"id": 6, "q": "Consideras adecuada la documentación del proyecto que el equipo mantiene?"},
+  {"id": 7, "q": "Consideras adecuado el nivel técnico del equipo?"},
+  {"id": 8, "q": "Consieras que los líderes del equipo comparten tu línea de pensamiento?"},
+  {"id": 9, "q": "El equipo está disponible para reuniones cuando son necesarias"},
+  {"id": 10, "q": "Consideras que el equipo es autónomo y no requiere demasiada supervisión (no para todos)"},
+  {"id": 11, "q": "Consideras tu relación con el equipo productiva y de alto impacto para tu organización?"},
+  {"id": 12, "q": "Como calificas la velocidad de desarrollo del equipo"},
+  {"id": 13, "q": "Consideras adecuado el costo - beneficio del servicio ArkusNexus?"},
+  {"id": 14, "q": "How much do you consider Arkus-Nexus a key partner for your business?"},
+  {"id": 15, "q": "How likely are you to recommend Arkus-Nexus’ nearshore software development teams to another business?"}
+]
