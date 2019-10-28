@@ -1,5 +1,4 @@
 import React from 'react';
-import { StyleSheet} from 'react-native';
 import { Asset } from 'expo-asset';
 import { AppLoading } from 'expo';
 import HomeScreen from './screens/HomeScreen';
@@ -7,6 +6,7 @@ import RegisterScreen from './screens/RegisterScreen';
 import LoadingScreen from './screens/LoadingScreen';
 import LoginScreen from './screens/LoginScreen';
 import HomeLeaderScreen from './screens/HomeLeaderScreen';
+import HomeClientScreen from './screens/HomeClientScreen';
 
 import Firebase from './components/Firebase';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
@@ -60,19 +60,12 @@ export default class App extends React.Component {
   }
 
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
 
 //Defining SwitchNavigator for accesing screens in app
 const AppSwitch = createSwitchNavigator({
   Home: HomeScreen,
-  HomeLeader: HomeLeaderScreen
+  HomeLeader: HomeLeaderScreen,
+  HomeClient: HomeClientScreen
 });
 
 const AuthSwitch = createSwitchNavigator({

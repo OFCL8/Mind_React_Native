@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
 import * as firebase from 'firebase';
 
-export default class HomeLeaderScreen extends React.Component {
+export default class HomeClientScreen extends React.Component {
 
   state = {
     email: "",

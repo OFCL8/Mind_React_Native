@@ -6,13 +6,32 @@ import * as firebase from 'firebase';
 export default class HomeScreen extends React.Component {
   state = {
     email: "",
-    displayName: ""
+    currentUser: "", 
+    role: ""
   };
 
-  componentDidMount() {
-    const { email, displayName } = firebase.auth().currentUser;
+  componentWillMount() {
+    const { email } = firebase.auth().currentUser;
 
-    this.setState({ email, displayName });
+    //Checks for role of current user
+    const currentUser = firebase.auth().currentUser.uid;
+    firebase.firestore().doc(`Users/${ currentUser }`).onSnapshot(doc=>{ 
+      this.setState({role:  doc.get("Role")}) //Setting role state value of current user role
+      switch(this.state.role)
+      {
+        case "CTO":
+          { this.props.navigation.navigate("HomeClient"); }
+          break;
+        case "Leader":
+          { this.props.navigation.navigate("HomeLeader"); }
+          break;
+        case "Client":
+          { this.props.navigation.navigate("HomeClient"); }
+          break;
+      }
+  });
+
+    this.setState({ email });
   }
 
   signOutUser = () => {
@@ -22,7 +41,7 @@ export default class HomeScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>Hi {this.state.email}!</Text>
+        <Text>Hi {this.state.email}, you're a {this.state.role}!</Text>
 
         <TouchableOpacity style={{marginTop: 32}} onPress={this.signOutUser}>
           <Text>LogOut</Text>

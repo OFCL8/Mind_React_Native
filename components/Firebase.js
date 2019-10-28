@@ -11,15 +11,14 @@ import * as firebase from 'firebase';
     messagingSenderId: "354780949033",
     appId: "1:354780949033:web:c49345ca0859a332df0a38"
 };
+
 export default class Firebase {
  
-  static auth;
   static init() {
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
-    Firebase.auth = firebase.auth();
   }
 }
 
-export const settings = { timestampsInSnapShots: true };
+
  

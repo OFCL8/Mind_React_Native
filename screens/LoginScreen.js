@@ -5,10 +5,6 @@ import Animated, { Easing } from 'react-native-reanimated';
 import { State, TapGestureHandler, TouchableOpacity } from 'react-native-gesture-handler';
 import * as firebase from 'firebase';
 import 'firebase/firestore';
-import Firebase from '../components/Firebase';
-import { onCameraDidChangeTrackingState } from 'expo/build/AR';
-
-//const firestore = firebase.firestore();
 
 const { width, height } = Dimensions.get('window');
 
@@ -105,13 +101,9 @@ export default class ReactLogin extends React.Component {
   };
 
   handleLogin = () => {
-    const {email, password} = this.state;
-
+    const { email, password } = this.state;
+    //Sign in with firebase
     firebase.auth().signInWithEmailAndPassword(email,password).catch(error => this.setState({errorMessage: error.message}));
-    /*const docRef = firestore.collection("Users").doc("Admin");
-    docRef.get().then(function doc() {
-      if(doc.exists){ console.log("Document data: ",doc.data());}
-    })*/
   };
 
   render() {
@@ -195,12 +187,6 @@ export default class ReactLogin extends React.Component {
               />
           <TouchableOpacity style={styles.button} onPress={this.handleLogin}>
             <Text style={{fontSize:20, fontWeight:'bold'}}>SIGN IN</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={{ alignSelf: "center", marginTop: 32}} onPress={() => this.props.navigation.navigate("Register")}>
-            <Text style={{ color: "#414959", fontSize: 17}}>
-              New to MindReactNative? <Text style={{ fontWeight: "500", color: "#E9446A"}}>Sign up</Text>
-            </Text>
           </TouchableOpacity>
 
           <View style={styles.errorMessage}>
