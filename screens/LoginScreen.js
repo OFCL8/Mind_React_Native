@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dimensions, StyleSheet, Text, TextInput, View, KeyboardAvoidingView } from 'react-native';
+import { Dimensions, StyleSheet, Platform, Text, TextInput, View, KeyboardAvoidingView, ScrollView } from 'react-native';
 import Svg, {Image, Circle,ClipPath} from 'react-native-svg';
 import Animated, { Easing } from 'react-native-reanimated';
 import { State, TapGestureHandler, TouchableOpacity } from 'react-native-gesture-handler';
@@ -65,7 +65,7 @@ export default class ReactLogin extends React.Component {
 
     this.bgY = interpolate(this.buttonOpacity, {
       inputRange: [0, 1],
-      outputRange: [-height / 2 - 250, 0],
+      outputRange: [-height / 2 - 305, 0],
       extrapolate: Extrapolate.CLAMP
     });
 
@@ -109,12 +109,12 @@ export default class ReactLogin extends React.Component {
   render() {
     return (
       
-      <KeyboardAvoidingView style={{flex:1}} behavior="padding">
+      <KeyboardAvoidingView style={{flex:1}} behavior="padding" enabled={Platform.OS !== 'android'}>
         <View
         style={{
           flex: 1,
           backgroundColor: 'white',
-          justifyContent: 'flex-end',
+          justifyContent: 'flex-end'
         }}>
           
         <Animated.View
@@ -123,14 +123,14 @@ export default class ReactLogin extends React.Component {
             transform: [{ translateY: this.bgY }]
           }}>
           
-          <Svg height={height + 50} width={width}>
+          <Svg height={height + 60} width={width}>
             <ClipPath id="clip">
-              <Circle r={height + 50} cx={width / 2} />
+              <Circle r={height + 60} cx={width / 2} />
             </ClipPath>
             <Image
               clipPath="url(#clip)"
               href={require('../assets/bg.jpg')}
-              height={height + 50}
+              height={height + 60}
               preserveAspectRatio="xMidYMid slice"
               width={width}
             />
@@ -157,7 +157,9 @@ export default class ReactLogin extends React.Component {
           height: height/2, 
           ...StyleSheet.absoluteFill, 
           top:null, 
-          justifyContent: 'center' 
+          justifyContent: 'center' ,
+          paddingTop: 50,
+          paddingBottom: 5
           }}>
           
           <TapGestureHandler onHandlerStateChange={this.onCloseState}>

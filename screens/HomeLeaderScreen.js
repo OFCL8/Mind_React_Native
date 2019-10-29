@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import Survey from "../components/Survey";
 
 import * as firebase from 'firebase';
 
@@ -42,8 +43,8 @@ export default class HomeLeaderScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>Hi {this.state.email}, you're a {this.state.role}!</Text>
-
+        <Text style={{paddingTop: 40}}>Hi {this.state.email}, you're a {this.state.role}!</Text>
+          <Survey/>
         <TouchableOpacity style={{marginTop: 32}} onPress={this.signOutUser}>
           <Text>LogOut</Text>
         </TouchableOpacity>
