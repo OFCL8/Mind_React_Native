@@ -7,10 +7,12 @@ import LoadingScreen from './screens/LoadingScreen';
 import LoginScreen from './screens/LoginScreen';
 import HomeLeaderScreen from './screens/HomeLeaderScreen';
 import HomeClientScreen from './screens/HomeClientScreen';
+import AddClientScreen from './screens/AddClientScreen';
 
 import Firebase from './components/Firebase';
-import { createAppContainer, createSwitchNavigator, SafeAreaView } from 'react-navigation';
+import { createAppContainer, createSwitchNavigator, createNavigationContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
+import { AppRegistry } from 'react-native';
   
 
 //Functions to load assets
@@ -73,11 +75,21 @@ const AuthSwitch = createSwitchNavigator({
   Register: RegisterScreen
 });
 
+const AddSwitch = createStackNavigator({
+  AddClient: {
+    screen: AddClientScreen,
+    navigationOptions: {
+      headerTitle: 'Client',
+    }
+  }
+});
+
 const RootStack = createSwitchNavigator(
   {
     Loading: LoadingScreen,
     App: AppSwitch,
-    Auth: AuthSwitch
+    Auth: AuthSwitch,
+    Add: AddSwitch
   },
   {
     initialRouteName: 'Loading',
