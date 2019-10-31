@@ -5,39 +5,52 @@ import Data from '../JSON/questions.json';
 
 class Survey extends React.Component {
   state = {
-    //check: [],
-    checked: true,
-    checkedList: [],
+    status: [
+      {question: 0, status: true},
+      {question: 1, status: true},
+      {question: 2, status: true},
+      {question: 3, status: true},
+      {question: 4, status: true},
+      {question: 5, status: true},
+      {question: 6, status: true},
+      {question: 7, status: true},
+      {question: 8, status: true},
+      {question: 9, status: true},
+      {question: 10, status: true},
+      {question: 11, status: true},
+      {question: 12, status: true},
+      {question: 13, status: true},
+      {question: 14, status: false}
+    ],
   };
-
-  
 
   renderQuestion = ({index, item}) => {
     const onPressBox = () => {
-      if(this.state.checkedList.includes(index)) {
+      if(this.state.status[index].status == true) {
+        this.state.status[index].status = false;
         this.setState({
-          checkedList: this.state.checkedList.filter((idx) => {
-            return idx !== index;
-          }),
+          status: this.state.status,
         })
       }
-
-      this.setState({
-        checkedList: [...this.state.checkedList, index],
-      });
+      else {
+        this.state.status[index].status = true;
+        this.setState({
+          status: this.state.status,
+        })
+      }
     };
-
-  
+    
     return (
       <Question 
         title = {item.q} 
-        checked = {!this.state.checkedList.includes(index)}
+        checked = {this.state.status[index].status}
         onPress = {onPressBox}
       />
     );
   }
-
+  
   render() {
+    let l = this.state.status;
     return (
       <FlatList
         data = {Data}
@@ -50,15 +63,3 @@ class Survey extends React.Component {
 }
 
 export default Survey;
-/*
-renderItem={({item}) =>
-  <View style = {{margin: 10}}>
-    <CheckBox 
-      title = {item.q}
-      checked = {this.state.checked}
-      onIconPress = {this.onPress}
-    />
-  </View>
-
-  () => this.setState({checked :item.id})
-*/
