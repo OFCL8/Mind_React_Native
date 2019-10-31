@@ -1,6 +1,9 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import Constants from 'expo-constants';
 import Survey from "../components/Survey";
+
+const { width, height } = Dimensions.get('window');
 
 import * as firebase from 'firebase';
 
@@ -8,7 +11,6 @@ export default class HomeLeaderScreen extends React.Component {
 
   state = {
     email: "",
-    currentUser: "", 
     role: ""
   };
 
@@ -16,7 +18,11 @@ export default class HomeLeaderScreen extends React.Component {
     firebase.auth().signOut();
   };
 
-  componentWillMount() {
+  addClient = () => {
+    this.props.navigation.navigate("AddClient");
+  }
+
+  componentDidMount() {
     const { email } = firebase.auth().currentUser;
 
     //Checks for role of current user
@@ -43,12 +49,12 @@ export default class HomeLeaderScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={{paddingTop: 40}}>Hi {this.state.email}, you're a {this.state.role}!</Text>
-          <Survey/>
-        <TouchableOpacity style={{marginTop: 32}} onPress={this.signOutUser}>
-          <Text>LogOut</Text>
-        </TouchableOpacity>
-      </View>
+          <Text style={styles.title}>Hi {this.state.email}, you're a {this.state.role}!</Text>
+            <Survey/>
+          <TouchableOpacity style={styles.addbutton} onPress={this.addClient}>
+            <Text style={{fontSize:0}}>+</Text>
+          </TouchableOpacity>
+        </View>
     )
   }
 }
@@ -56,7 +62,25 @@ export default class HomeLeaderScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center"
+    marginTop: Constants.statusBarHeight,
+    marginHorizontal: 16,
+    marginBottom: 10
+  },
+  title: {
+    textAlign: 'center',
+    marginVertical: 8,
+    paddingTop: 20
+  },
+  addbutton: {
+    alignItems: 'center',
+    backgroundColor: 'white',
+    borderRadius: 60,
+    bottom: 5,
+    height: 60,
+    justifyContent: 'center',
+    left: 280,
+    shadowOpacity: 0.2,
+    position: 'relative',
+    width: 60
   }
 });
