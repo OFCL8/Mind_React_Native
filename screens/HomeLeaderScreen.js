@@ -1,5 +1,5 @@
 import React from "react";
-import { Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ScrollView } from "react-native";
 import Constants from 'expo-constants';
 import Survey from "../components/Survey";
 
@@ -48,13 +48,13 @@ export default class HomeLeaderScreen extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
           <Text style={styles.title}>Hi {this.state.email}, you're a {this.state.role}!</Text>
             <Survey/>
           <TouchableOpacity style={styles.addbutton} onPress={this.addClient}>
             <Text style={{fontSize:0}}>+</Text>
           </TouchableOpacity>
-        </View>
+        </ScrollView>
     )
   }
 }
