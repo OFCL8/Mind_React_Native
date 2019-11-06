@@ -5,19 +5,8 @@ import Data from '../JSON/questions.json';
 import * as firebase from 'firebase';
 import * as store from 'firebase/firestore';
 import Firebase from './Firebase';
+import { ScrollView } from 'react-native-gesture-handler';
 
-// const firebaseConfig = {
-//   apiKey: "AIzaSyAILjr3lHU1uDpN0u_-g4dAN_h6FCNgB9A",
-//   authDomain: "mindreactnative-76991.firebaseapp.com",
-//   databaseURL: "https://mindreactnative-76991.firebaseio.com",
-//   projectId: "mindreactnative-76991",
-//   storageBucket: "mindreactnative-76991.appspot.com",
-//   messagingSenderId: "354780949033",
-//   appId: "1:354780949033:web:c49345ca0859a332df0a38"
-// };
-
-//firebase.initializeApp(firebaseConfig);
-//db = firebase.firestore();
 var months = ["January",
  "February", 
  "March", 
@@ -66,7 +55,7 @@ class Survey extends React.Component {
       {question: 11, status: true},
       {question: 12, status: true},
       {question: 13, status: true},
-      {question: 14, status: false}
+      {question: 14, status: true},
     ],
   };
 
@@ -123,7 +112,7 @@ class Survey extends React.Component {
   render() {
     let l = this.state.status;
     return (
-      <View>
+      <ScrollView>
         <FlatList
           data = {Data}
           extraData = {this.state}
@@ -134,7 +123,7 @@ class Survey extends React.Component {
           title = 'Save'
           onPress = {this.saveSurvey}
         />
-      </View>
+      </ScrollView>
     );
   }
 }
