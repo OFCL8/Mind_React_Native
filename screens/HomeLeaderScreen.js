@@ -1,5 +1,5 @@
 import React from "react";
-import { Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList } from "react-native";
+import { Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList, Button } from "react-native";
 import Constants from 'expo-constants';
 //import Survey from "../components/Survey";
 import * as firebase from 'firebase';
@@ -10,6 +10,8 @@ import * as store from 'firebase/firestore';
 const { width, height } = Dimensions.get('window');
 
 export default class HomeLeaderScreen extends React.Component {
+
+clientes = [];
 
   state = {
     email: "",
@@ -36,28 +38,32 @@ export default class HomeLeaderScreen extends React.Component {
       alert('Error connecting to firebase');
     }
 
-    const { email } = firebase.auth().currentUser;
-    console.log('Hello')
+    const { email } =  firebase.auth().currentUser;
+    console.log('Got email of current user')
 
     //Checks for role of current user
     const currentUser = firebase.auth().currentUser.uid;
-    firebase.firestore().doc(`Users/${ currentUser }`).onSnapshot(doc=>{ 
+    await firebase.firestore().doc(`Users/${ currentUser }`).onSnapshot(doc=>{ 
+      console.log('Role first time: ' + this.state.role)
       this.setState({role:  doc.get("Role")}) //Setting role state value of current user role
       switch(this.state.role)
       {
         case "CTO":
           { this.props.navigation.navigate("Home"); }
+          console.log('Role inside the case: ' + this.state.role);
           break;
         case "Leader":
           { this.props.navigation.navigate("HomeLeader"); }
+          console.log('Role inside the case: ' + this.state.role);
           break;
         case "Client":
           { this.props.navigation.navigate("HomeClient"); }
+          console.log('Role inside the case: ' + this.state.role);
           break;
       }
     });
 
-    this.getClients();
+    const clients = await this.getClients();
 
     this.setState({ email });
   }
@@ -67,14 +73,11 @@ export default class HomeLeaderScreen extends React.Component {
     try{
       const response = await db.collection('Users').where('Role', '==', 'Client').get().then(snapshot => {
         snapshot.forEach((doc) => {
-          console.log('document: ' + doc.id)
-          console.log(doc.data());
-          this.setState({
-            clients: [...this.state.clients, doc.data()],
-          });
+          this.clientes.push(doc.data());
         });
       }).then(() => {
         console.log('got all the clients');
+        console.log(this.clientes);
         this.setState({
           loading: false,
         });
@@ -84,22 +87,19 @@ export default class HomeLeaderScreen extends React.Component {
     }
   }
 
-  async asas(){
-    console.log('clientessss: ' + this.state.clients[0]);
-  }
-
-  renderClients = (index, _item) => {
-    console.log('rendering the next clients');
-    console.log(this.state.clients[index]);
+  renderClients = ({index, item}) => {
     return(
-      <View>
-        <Text>item</Text>
+      <View style = {styles.clientsCard}>
+        <Text>{item.Email}</Text>
       </View>
     );
   }
 
+  goToDetails = () => {
+    this.props.navigation.navigate("DetailsClient")
+  }
+
   render() {
-    this.asas();
     if(this.state.loading){
       console.log('rendering inside loading');
       return (
@@ -111,14 +111,16 @@ export default class HomeLeaderScreen extends React.Component {
       return (
         <ScrollView style={styles.container}>
             <Text style={styles.title}>Hi {this.state.email}, you're a {this.state.role}!</Text>
-            {/* <FlatList
-              data = {this.state.clients}
-              extraData = {this.state}
-              //keyExtractor = {item => String(item.id)}
+            <FlatList
+              data = {this.clientes}
+              extraData = {this.state.loading}
+              keyExtractor = {item => String(item.Email)}
               renderItem = {this.renderClients}
-            /> */}
-            <Text>{this.state.clients[0].Email}</Text>
-
+            />
+            <Button 
+              title = "Go to details"
+              onPress = {this.goToDetails}
+            />
             {/* <Survey/>
             <TouchableOpacity style={styles.addbutton} onPress={this.addClient}>
               <Text style={{fontSize:0}}>+</Text>
@@ -152,5 +154,14 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     position: 'relative',
     width: 60
+  },
+  clientsCard: {
+    flex: 1,
+    margin: 10,
+    alignItems: "center",
+    height: '50%',
+    width: '80%',
+    borderRadius: 20,
+    backgroundColor: 'lightgray',
   }
 });
