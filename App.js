@@ -8,6 +8,8 @@ import LoginScreen from './screens/LoginScreen';
 import HomeLeaderScreen from './screens/HomeLeaderScreen';
 import HomeClientScreen from './screens/HomeClientScreen';
 import AddClientScreen from './screens/AddClientScreen';
+import DetailsScreen from './screens/ClientDetailsScreen';
+import EditSurveyScreen from './components/Survey';
 
 import Firebase from './components/Firebase';
 import { createAppContainer, createSwitchNavigator, createNavigationContainer } from 'react-navigation';
@@ -64,10 +66,12 @@ export default class App extends React.Component {
 }
 
 //Defining SwitchNavigator for accesing screens in app
-const AppSwitch = createSwitchNavigator({
+const AppSwitch = createStackNavigator({
   Home: HomeScreen,
   HomeLeader: HomeLeaderScreen,
-  HomeClient: HomeClientScreen
+  HomeClient: HomeClientScreen,
+  DetailsClient: DetailsScreen,
+  EditSurvey: EditSurveyScreen,
 });
 
 const AuthSwitch = createSwitchNavigator({
