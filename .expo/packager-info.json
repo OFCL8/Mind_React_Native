@@ -1,9 +1,9 @@
 {
   "expoServerPort": 19000,
   "packagerPort": 19001,
-  "packagerPid": 7368,
-  "expoServerNgrokUrl": null,
-  "packagerNgrokUrl": null,
-  "ngrokPid": null,
+  "packagerPid": 19196,
+  "expoServerNgrokUrl": "https://qd-vzb.anonymous.mind-react-native.exp.direct",
+  "packagerNgrokUrl": "https://packager.qd-vzb.anonymous.mind-react-native.exp.direct",
+  "ngrokPid": 18716,
   "devToolsPort": 19002
 }

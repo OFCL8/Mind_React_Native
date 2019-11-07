@@ -18,24 +18,6 @@ export default class HomeClientScreen extends React.Component {
   componentWillMount() {
     const { email } = firebase.auth().currentUser;
 
-    //Checks for role of current user
-    const currentUser = firebase.auth().currentUser.uid;
-    firebase.firestore().doc(`Users/${ currentUser }`).onSnapshot(doc=>{ 
-      this.setState({role:  doc.get("Role")}) //Setting role state value of current user role
-      switch(this.state.role)
-      {
-        case "CTO":
-          { this.props.navigation.navigate("Home"); }
-          break;
-        case "Leader":
-          { this.props.navigation.navigate("HomeLeader"); }
-          break;
-        case "Client":
-          { this.props.navigation.navigate("HomeClient"); }
-          break;
-      }
-  });
-
     this.setState({ email });
   }
 

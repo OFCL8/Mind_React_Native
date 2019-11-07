@@ -16,7 +16,9 @@ export default class Firebase {
  
   static init() {
     // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+  }
   }
 }
 
