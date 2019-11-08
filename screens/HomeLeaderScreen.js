@@ -1,17 +1,17 @@
 import React from "react";
-import { Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList, Button } from "react-native";
+import { Dimensions, SafeAreaView, StyleSheet, Text, 
+  TouchableOpacity, View, ScrollView, FlatList, Button } from "react-native";
 import Constants from 'expo-constants';
-//import Survey from "../components/Survey";
 import * as firebase from 'firebase';
 import * as store from 'firebase/firestore';
-//import { FlatList } from "react-native-gesture-handler";
 
 
 const { width, height } = Dimensions.get('window');
 
 export default class HomeLeaderScreen extends React.Component {
 
-clientes = [];
+ clientes = [];
+ currentUserLog = '';
 
   state = {
     email: "",
@@ -43,6 +43,7 @@ clientes = [];
 
     //Checks for role of current user
     const currentUser = firebase.auth().currentUser.uid;
+    this.currentUserLog = currentUser;
     await firebase.firestore().doc(`Users/${ currentUser }`).onSnapshot(doc=>{ 
       console.log('Role first time: ' + this.state.role)
       this.setState({role:  doc.get("Role")}) //Setting role state value of current user role
@@ -71,7 +72,8 @@ clientes = [];
   getClients = async () => {
     console.log('Trying to get clients');
     try{
-      const response = await db.collection('Users').where('Role', '==', 'Client').get().then(snapshot => {
+      const response = await db.collection('Users').where('Role', '==', 'Client')
+      .where('LeaderUID', '==', String(this.currentUserLog)).get().then(snapshot => {
         snapshot.forEach((doc) => {
           this.clientes.push(doc.data());
         });
@@ -88,15 +90,22 @@ clientes = [];
   }
 
   renderClients = ({index, item}) => {
-    return(
-      <View style = {styles.clientsCard}>
-        <Text>{item.Email}</Text>
-      </View>
-    );
-  }
 
-  goToDetails = () => {
-    this.props.navigation.navigate("DetailsClient")
+    const printMsg = () => {
+      console.log(item)
+      this.props.navigation.navigate("DetailsClient", {
+        clientDetails: item,
+      })
+    }
+
+    return(
+      <TouchableOpacity onPress = {printMsg}>
+        <View style = {styles.flatListStyle}>
+          <Text style = {{fontSize: 18, fontWeight: 'bold'}}>{item.Company}</Text>
+          <Text style = {{fontSize: 15}}>{item.Name}</Text>
+        </View>
+      </TouchableOpacity>
+    );
   }
 
   render() {
@@ -108,24 +117,17 @@ clientes = [];
       </View>)
     }else{
       console.log('rendering flatlist');
+      console.log('Current user log: ' + this.currentUserLog)
       return (
         <ScrollView style={styles.container}>
-            <Text style={styles.title}>Hi {this.state.email}, you're a {this.state.role}!</Text>
-            <FlatList
-              data = {this.clientes}
-              extraData = {this.state.loading}
-              keyExtractor = {item => String(item.Email)}
-              renderItem = {this.renderClients}
-            />
-            <Button 
-              title = "Go to details"
-              onPress = {this.goToDetails}
-            />
-            {/* <Survey/>
-            <TouchableOpacity style={styles.addbutton} onPress={this.addClient}>
-              <Text style={{fontSize:0}}>+</Text>
-            </TouchableOpacity> */}
-          </ScrollView>
+          <Text style={styles.title}>Hi {this.state.email}, you're a {this.state.role}!</Text>
+          <FlatList
+            data = {this.clientes}
+            extraData = {this.state.loading}
+            keyExtractor = {item => String(item.Email)}
+            renderItem = {this.renderClients}
+          />
+        </ScrollView>
       )
     }
   }
@@ -159,9 +161,20 @@ const styles = StyleSheet.create({
     flex: 1,
     margin: 10,
     alignItems: "center",
-    height: '50%',
+    height: '20%',
     width: '80%',
     borderRadius: 20,
     backgroundColor: 'lightgray',
+  },
+  flatListStyle: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: '#FFF',
+    color: '#000',
+    margin: 10,
+    borderRadius: 20,
+    height: 50,
+    borderWidth: 1,
   }
 });
