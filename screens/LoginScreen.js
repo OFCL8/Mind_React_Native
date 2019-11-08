@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dimensions, StyleSheet, Platform, Text, TextInput, View, KeyboardAvoidingView, ScrollView } from 'react-native';
+import { Dimensions, StyleSheet, Platform, Text, TextInput, View, KeyboardAvoidingView, ScrollView, AsyncStorage } from 'react-native';
 import Svg, {Image, Circle,ClipPath} from 'react-native-svg';
 import Animated, { Easing } from 'react-native-reanimated';
 import { State, TapGestureHandler, TouchableOpacity } from 'react-native-gesture-handler';
@@ -40,8 +40,8 @@ function runTiming(clock, value, dest) {
 }
 
 export default class ReactLogin extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.buttonOpacity = new Value(1);
 
@@ -100,7 +100,7 @@ export default class ReactLogin extends React.Component {
     errorMessage: null
   };
 
-  handleLogin = () => {
+  handleLogin = async() => {
     const { email, password } = this.state;
     //Sign in with firebase
     firebase.auth().signInWithEmailAndPassword(email,password).catch(error => this.setState({errorMessage: error.message}));
@@ -108,7 +108,6 @@ export default class ReactLogin extends React.Component {
 
   render() {
     return (
-      
       <KeyboardAvoidingView style={{flex:1}} behavior="padding" enabled={Platform.OS !== 'android'}>
         <View
         style={{
