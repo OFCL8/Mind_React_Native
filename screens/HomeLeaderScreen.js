@@ -91,7 +91,7 @@ export default class HomeLeaderScreen extends React.Component {
 
   renderClients = ({index, item}) => {
 
-    const printMsg = () => {
+    const openDetailsScreen = () => {
       console.log(item)
       this.props.navigation.navigate("DetailsClient", {
         clientDetails: item,
@@ -99,7 +99,7 @@ export default class HomeLeaderScreen extends React.Component {
     }
 
     return(
-      <TouchableOpacity onPress = {printMsg}>
+      <TouchableOpacity onPress = {openDetailsScreen}>
         <View style = {styles.flatListStyle}>
           <Text style = {{fontSize: 18, fontWeight: 'bold'}}>{item.Company}</Text>
           <Text style = {{fontSize: 15}}>{item.Name}</Text>
