@@ -30,11 +30,17 @@ class Survey extends React.Component {
       console.error(e);
       alert('aasas','asdasdasd');
     }
+
+    this.setState({
+      idCliente: (this.props.navigation.getParam('company') + this.props.navigation.getParam('name')),
+      idLeader: this.props.navigation.getParam('leaderID')
+    });
+
   }
 
   state = {
-    idLeader: 123,
-    idCliente: 234,
+    idLeader: '',
+    idCliente: '',
     date: {
       day: '',
       month: '',
@@ -96,7 +102,7 @@ class Survey extends React.Component {
       try{
         // object = {...this.state.status}
         // console.log(object);
-        const response = await db.collection("cities").doc("New Jersey").set(this.state);      
+        const response = await db.collection('leaderSurvey').doc(String(this.state.idCliente)).set(this.state);      
         // .where('idLeader','==', 123)
         // .where('idCliente', '==', 234);
 
