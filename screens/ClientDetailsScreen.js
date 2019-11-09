@@ -41,7 +41,11 @@ export default class ClientDetailsScreen extends React.Component{
 
   editSurvey = () => {
     console.log('edit survey')
-    this.props.navigation.navigate("EditSurvey");
+    this.props.navigation.navigate("EditSurvey", {
+      company: this.state.clientDetails.Company,
+      name: this.state.clientDetails.Name,
+      leaderID: this.state.clientDetails.LeaderUID,
+    });
   }
   
   render(){
@@ -68,34 +72,36 @@ export default class ClientDetailsScreen extends React.Component{
           </View>
 
           {/* Client Overall Satisfaction table View list */}
-          <View style = {{flexDirection: 'row', justifyContent: 'space-around', borderBottomWidth: 1, marginHorizontal: 50}}>
-            <Text>Succes: </Text>
-            <Text>0.0</Text>
-          </View>
+          <View>
+            <View style = {{flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, marginHorizontal: 50}}>
+              <Text>Succes: </Text>
+              <Text>0.0</Text>
+            </View>
 
-          <View style = {{flexDirection: 'row', justifyContent: 'space-around', borderBottomWidth: 1, marginHorizontal: 50}}>
-            <Text>Partnership: </Text>
-            <Text>0.0</Text>
-          </View>
+            <View style = {{flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, marginHorizontal: 50}}>
+              <Text>Partnership: </Text>
+              <Text>0.0</Text>
+            </View>
 
-          <View style = {{flexDirection: 'row', justifyContent: 'space-around', borderBottomWidth: 1, marginHorizontal: 50}}>
-            <Text>Goal oriented: </Text>
-            <Text>0.0</Text>
-          </View>
+            <View style = {{flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, marginHorizontal: 50}}>
+              <Text>Goal oriented: </Text>
+              <Text>0.0</Text>
+            </View>
 
-          <View style = {{flexDirection: 'row', justifyContent: 'space-around', borderBottomWidth: 1, marginHorizontal: 50}}>
-            <Text>Quality: </Text>
-            <Text>0.0</Text>
-          </View>
+            <View style = {{flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, marginHorizontal: 50}}>
+              <Text>Quality: </Text>
+              <Text>0.0</Text>
+            </View>
 
-          <View style = {{flexDirection: 'row', justifyContent: 'space-around', borderBottomWidth: 1, marginHorizontal: 50}}>
-            <Text>Velocity: </Text>
-            <Text>0.0</Text>
-          </View>
+            <View style = {{flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, marginHorizontal: 50}}>
+              <Text>Velocity: </Text>
+              <Text>0.0</Text>
+            </View>
 
-          <View style = {{flexDirection: 'row', justifyContent: 'space-around', borderBottomWidth: 1, marginHorizontal: 50}}>
-            <Text>Communication: </Text>
-            <Text>0.0</Text>
+            <View style = {{flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, marginHorizontal: 50}}>
+              <Text>Communication: </Text>
+              <Text>0.0</Text>
+            </View>
           </View>
 
         </ScrollView>
