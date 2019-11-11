@@ -1,9 +1,7 @@
-
 import React from 'react';
 import { Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList, Button} from "react-native";
 import Constants from 'expo-constants';
 import * as firebase from 'firebase';
-import * as store from 'firebase/firestore';
 import { withNavigation } from 'react-navigation';
 
 const { width, height } = Dimensions.get('window');
@@ -33,16 +31,9 @@ class HomeLeaderScreen extends React.Component {
 
   componentDidMount = async () => {
     
-    try{
-      db = await firebase.firestore();
-      console.log('Connection succesfull');
-    }catch(e){
-      console.error(e);
-      alert('Error connecting to firebase');
-    }
+    db = await firebase.firestore();
 
     const { email } =  firebase.auth().currentUser;
-    console.log('Got email of current user')
     
     const currentUser = firebase.auth().currentUser.uid;
     this.currentUserLog = currentUser;
@@ -51,7 +42,6 @@ class HomeLeaderScreen extends React.Component {
   }
 
   getClients = async () => {
-    console.log('Trying to get clients');
     try{
       const response = await db.collection('Users').where('Role', '==', 'Client')
       .where('LeaderUID', '==', String(this.currentUserLog)).get().then(snapshot => {
@@ -59,8 +49,6 @@ class HomeLeaderScreen extends React.Component {
           this.clientes.push(doc.data());
         });
       }).then(() => {
-        console.log('got all the clients');
-        console.log(this.clientes);
         this.setState({
           loading: false,
         });
@@ -73,7 +61,6 @@ class HomeLeaderScreen extends React.Component {
   renderClients = ({index, item}) => {
 
     const openDetailsScreen = () => {
-      console.log(item)
       this.props.navigation.navigate("DetailsClient", {
         clientDetails: item,
       })
@@ -91,23 +78,26 @@ class HomeLeaderScreen extends React.Component {
 
   render() {
     if(this.state.loading){
-      console.log('rendering inside loading');
       return (
       <View style = {styles.container}>
         <Text>Loading</Text>
       </View>)
     }else{
-      console.log('rendering flatlist');
-      console.log('Current user log: ' + this.currentUserLog)
       return (
         <ScrollView style={styles.container}>
-          <Text style={styles.title}>Hi {this.state.email}, you're a {this.state.role}!</Text>
+          <Text style={styles.title}>Hi {this.state.email}!</Text>
           <FlatList
             data = {this.clientes}
             extraData = {this.state.loading}
             keyExtractor = {item => String(item.Email)}
             renderItem = {this.renderClients}
           />
+          <TouchableOpacity onPress={this.signOutUser}>
+            <Text >LogOut</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.addbutton} onPress={this.addClient}>
+            <Text style={{fontSize:0}}>+</Text>
+          </TouchableOpacity>
         </ScrollView>
       )
     }
@@ -130,7 +120,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
     borderRadius: 60,
-    bottom: height - 850,
+    bottom: height - 755,
     height: 60,
     justifyContent: 'center',
     left: width - 100,

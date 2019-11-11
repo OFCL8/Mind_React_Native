@@ -3,60 +3,36 @@ import {View, Button, Flatlist, Text} from 'react-native';
 import * as firebase from 'firebase';
 import * as store from 'firebase/firestore';
 import { ScrollView } from 'react-native-gesture-handler';
-import PopupMenu from '../components/PopupMenu';
 
 
-export default class ClientDetailsScreen extends React.Component{
+export default class LeaderDetailsScreen extends React.Component{
 
   state = {
-    clientDetails: {},
+    leaderDetails: {},
     loading: true,
-    modalVisible: false,
   }
 
   static navigationOptions = ({navigation}) => {
     return {
-      headerTitle: 'Client Details',
-      headerRight: () => (
-        <Button
-          onPress={navigation.getParam("popupMenu")}
-          title="Edit Survey"
-          color="#4fa"
-        />
-      ),
+      headerTitle: 'Leader Details'
     };
   };
 
   componentDidMount(){
     this.setState({
-      clientDetails: this.props.navigation.getParam('clientDetails', 'NO-ID')
+      leaderDetails: this.props.navigation.getParam('leaderDetails', 'NO-ID')
     }, () => {
       this.setState({
         loading: false,
       })
     });
-    this.props.navigation.setParams({editSurvey: this.editSurvey});
-    this.props.navigation.setParams({popupMenu: this.changeValue});
-  }
-
-  changeValue = () => {
-    this.setState({modalVisible: !this.state.modalVisible});
-  }
-
-  editSurvey = () => {
-    this.props.navigation.navigate("EditSurvey", {
-      company: this.state.clientDetails.Company,
-      name: this.state.clientDetails.Name,
-      leaderID: this.state.clientDetails.LeaderUID,
-    });
-    this.setState({modalVisible: !this.state.modalVisible});
   }
   
   render(){
     if(this.state.loading){
       return(
         <View>
-          <Text>Loading client info</Text>
+          <Text>Loading leader info</Text>
         </View>
       );
     }else{
@@ -70,8 +46,8 @@ export default class ClientDetailsScreen extends React.Component{
 
           {/* Client data View */}
           <View style = {{flexDirection: 'row', justifyContent:'center'}}>
-            <Text>{this.state.clientDetails.Company} - </Text>
-            <Text>{this.state.clientDetails.Name}</Text>
+            <Text>{this.state.leaderDetails.Company} - </Text>
+            <Text>{this.state.leaderDetails.Name}</Text>
           </View>
 
           {/* Client Overall Satisfaction table View list */}
@@ -106,13 +82,7 @@ export default class ClientDetailsScreen extends React.Component{
               <Text>0.0</Text>
             </View>
           </View>
-          <View>
-            <PopupMenu 
-              visible = {this.state.modalVisible} 
-              onPress = {this.changeValue} 
-              onNav = {this.editSurvey}
-            />
-          </View>
+
         </ScrollView>
       );
     }
