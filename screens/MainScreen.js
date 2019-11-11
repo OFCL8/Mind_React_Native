@@ -52,7 +52,7 @@ export default class HomeScreen extends React.Component {
   };
 
   render() {
-    if (this.state.redirectTo === 'Home') {
+    if (this.state.redirectTo === 'HomeCTO') {
       return <HomeCTOScreen />
     }
     else if (this.state.redirectTo === 'HomeLeader') {

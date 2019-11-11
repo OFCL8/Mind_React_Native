@@ -1,9 +1,10 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { withNavigation } from 'react-navigation';
 
 import * as firebase from 'firebase';
 
-export default class HomeClientScreen extends React.Component {
+class HomeCTOScreen extends React.Component {
 
   state = {
     email: "",
@@ -41,3 +42,4 @@ const styles = StyleSheet.create({
     alignItems: "center"
   }
 });
+export default withNavigation(HomeCTOScreen);
