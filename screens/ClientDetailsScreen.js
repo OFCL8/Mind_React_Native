@@ -3,6 +3,7 @@ import {View, Button, Flatlist, Text} from 'react-native';
 import * as firebase from 'firebase';
 import * as store from 'firebase/firestore';
 import { ScrollView } from 'react-native-gesture-handler';
+import PopupMenu from '../components/PopupMenu';
 
 
 export default class ClientDetailsScreen extends React.Component{
@@ -10,6 +11,7 @@ export default class ClientDetailsScreen extends React.Component{
   state = {
     clientDetails: {},
     loading: true,
+    modalVisible: false,
   }
 
   static navigationOptions = ({navigation}) => {
@@ -17,7 +19,7 @@ export default class ClientDetailsScreen extends React.Component{
       headerTitle: 'Client Details',
       headerRight: () => (
         <Button
-          onPress={navigation.getParam("editSurvey")}
+          onPress={navigation.getParam("popupMenu")}
           title="Edit Survey"
           color="#4fa"
         />
@@ -34,6 +36,11 @@ export default class ClientDetailsScreen extends React.Component{
       })
     });
     this.props.navigation.setParams({editSurvey: this.editSurvey});
+    this.props.navigation.setParams({popupMenu: this.changeValue});
+  }
+
+  changeValue = () => {
+    this.setState({modalVisible: !this.state.modalVisible});
   }
 
   editSurvey = () => {
@@ -42,6 +49,7 @@ export default class ClientDetailsScreen extends React.Component{
       name: this.state.clientDetails.Name,
       leaderID: this.state.clientDetails.LeaderUID,
     });
+    this.setState({modalVisible: !this.state.modalVisible});
   }
   
   render(){
@@ -98,7 +106,13 @@ export default class ClientDetailsScreen extends React.Component{
               <Text>0.0</Text>
             </View>
           </View>
-
+          <View>
+            <PopupMenu 
+              visible = {this.state.modalVisible} 
+              onPress = {this.changeValue} 
+              onNav = {this.editSurvey}
+            />
+          </View>
         </ScrollView>
       );
     }
