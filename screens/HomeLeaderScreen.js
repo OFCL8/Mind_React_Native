@@ -1,14 +1,17 @@
-import React from "react";
-import { Dimensions, SafeAreaView, StyleSheet, Text, 
-  TouchableOpacity, View, ScrollView, FlatList, Button } from "react-native";
+
+import React from 'react';
+import { Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList, Button} from "react-native";
 import Constants from 'expo-constants';
 import * as firebase from 'firebase';
 import * as store from 'firebase/firestore';
-
+import { withNavigation } from 'react-navigation';
 
 const { width, height } = Dimensions.get('window');
 
-export default class HomeLeaderScreen extends React.Component {
+class HomeLeaderScreen extends React.Component {
+  constructor(props) {
+    super(props);
+  }
 
  clientes = [];
  currentUserLog = '';
@@ -40,32 +43,10 @@ export default class HomeLeaderScreen extends React.Component {
 
     const { email } =  firebase.auth().currentUser;
     console.log('Got email of current user')
-
-    //Checks for role of current user
+    
     const currentUser = firebase.auth().currentUser.uid;
     this.currentUserLog = currentUser;
-    await firebase.firestore().doc(`Users/${ currentUser }`).onSnapshot(doc=>{ 
-      console.log('Role first time: ' + this.state.role)
-      this.setState({role:  doc.get("Role")}) //Setting role state value of current user role
-      switch(this.state.role)
-      {
-        case "CTO":
-          { this.props.navigation.navigate("Home"); }
-          console.log('Role inside the case: ' + this.state.role);
-          break;
-        case "Leader":
-          { this.props.navigation.navigate("HomeLeader"); }
-          console.log('Role inside the case: ' + this.state.role);
-          break;
-        case "Client":
-          { this.props.navigation.navigate("HomeClient"); }
-          console.log('Role inside the case: ' + this.state.role);
-          break;
-      }
-    });
-
     const clients = await this.getClients();
-
     this.setState({ email });
   }
 
@@ -149,10 +130,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
     borderRadius: 60,
-    bottom: 5,
+    bottom: height - 850,
     height: 60,
     justifyContent: 'center',
-    left: 280,
+    left: width - 100,
     shadowOpacity: 0.2,
     position: 'relative',
     width: 60
@@ -178,3 +159,5 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   }
 });
+
+export default withNavigation(HomeLeaderScreen);
