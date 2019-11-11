@@ -6,6 +6,8 @@ import HomeLeaderScreen from './screens/HomeLeaderScreen';
 import HomeClientScreen from './screens/HomeClientScreen';
 import HomeCTOScreen from './screens/HomeCTOScreen';
 import AddClientScreen from './screens/AddClientScreen';
+import DetailsScreen from './screens/ClientDetailsScreen';
+import EditSurveyScreen from './components/Survey';
 
 import Firebase from './components/Firebase';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
@@ -63,7 +65,9 @@ const RootStack = createStackNavigator(
     HomeLeader: HomeLeaderScreen,
     HomeClient: HomeClientScreen,
     HomeCTO: HomeCTOScreen,
-    AddClient: AddClientScreen
+    AddClient: AddClientScreen,
+    DetailsClient: DetailsScreen,
+    EditSurvey: EditSurveyScreen,
   },
   {
     initialRouteName: 'Main',
