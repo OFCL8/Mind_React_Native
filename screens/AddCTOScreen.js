@@ -23,8 +23,8 @@ export default class AddCTOScreen extends React.Component {
     Email: "",
     Password: "",
     ConfirmPassword: "",
-    Role: "",
-    checked1: false,
+    Role: "CTO",
+    checked1: true,
     checked2: false,
     errorMessage: null
   }
@@ -38,7 +38,7 @@ export default class AddCTOScreen extends React.Component {
   addUser = () => {
     const { CTOUID, Name, Company, Email, Password, ConfirmPassword, Role } = this.state;
     
-    if (!(Name || Company || (Role==="")))
+    if (!(Name || Company))
     {
       Alert.alert( 
         'Error',
