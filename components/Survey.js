@@ -41,6 +41,7 @@ class Survey extends React.Component {
   state = {
     idLeader: '',
     idCliente: '',
+    answered: false,
     date: {
       day: '',
       month: '',
