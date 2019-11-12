@@ -4,7 +4,6 @@ import Constants from 'expo-constants';
 import { withNavigation } from 'react-navigation';
 
 import * as firebase from 'firebase';
-import { withNavigation } from 'react-navigation';
 
 const { width, height } = Dimensions.get('window');
 
@@ -15,7 +14,6 @@ class HomeCTOScreen extends React.Component {
 
   users = [];
   currentUserLog = '';
-class HomeCTOScreen extends React.Component {
 
   state = {
     email: "",
