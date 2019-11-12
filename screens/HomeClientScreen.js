@@ -41,8 +41,8 @@ export default class HomeClientScreen extends React.Component {
     let token = await Notifications.getExpoPushTokenAsync();
   
     // POST the token to your backend server from where you can retrieve it to send push notifications.
-    firebase.firestore().doc(`Users/${ this.currentUser.uid}`).set({push_token:token});
-    firebase.database().ref('users/'+this.currentUser.uid+'/push_token').set(token);
+    firebase.firestore().doc(`Users/${ this.currentUserLog }`).update({push_token:token});
+    firebase.database().ref('users/'+ this.currentUserLog +'/push_token').set(token);
     console.log(token);
     }
     catch(error)
@@ -51,11 +51,12 @@ export default class HomeClientScreen extends React.Component {
     }
   };
 
-  async componentDidMount() {
-    const { email } = firebase.auth().currentUser;
-
+  componentDidMount = async () => {
+    const { email } =  firebase.auth().currentUser;
+    
+    const currentUser = firebase.auth().currentUser.uid;
+    this.currentUserLog = currentUser;
     this.setState({ email });
-    this.currentUser = await this.email;
     await this.registerForPushNotificationsAsync();
   }
 
