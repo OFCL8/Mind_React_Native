@@ -1,9 +1,11 @@
 import React from 'react';
-import {View, Button, Flatlist, Text} from 'react-native';
+import {View, Flatlist, Text} from 'react-native';
 import * as firebase from 'firebase';
 import * as store from 'firebase/firestore';
 import { ScrollView } from 'react-native-gesture-handler';
 import PopupMenu from '../components/PopupMenu';
+import { Button } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 
 export default class ClientDetailsScreen extends React.Component{
@@ -21,6 +23,7 @@ export default class ClientDetailsScreen extends React.Component{
         <Button
           onPress={navigation.getParam("popupMenu")}
           title="Edit Survey"
+          type="clear"
           color="#4fa"
         />
       ),
@@ -51,7 +54,23 @@ export default class ClientDetailsScreen extends React.Component{
     });
     this.setState({modalVisible: !this.state.modalVisible});
   }
-  
+
+  sendPushNotification = () => {
+    let response = fetch('https://exp.host/--/api/v2/push/send', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify( {
+        to: this.state.clientDetails.push_token,
+        sound: 'default',
+        title: 'Notification',
+        body: 'You have a new survey, go check it out!'
+      })
+    });
+  };
+
   render(){
     if(this.state.loading){
       return(
@@ -113,6 +132,20 @@ export default class ClientDetailsScreen extends React.Component{
               onNav = {this.editSurvey}
             />
           </View>
+
+          <Button 
+            icon={
+              <Icon
+                name="bell"
+                size={15}
+                color="#4682B4"
+              />
+            }
+            type="clear"
+            iconRight
+            title="Send Request Survey" 
+            onPress={()=>this.sendPushNotification()}
+          />
         </ScrollView>
       );
     }

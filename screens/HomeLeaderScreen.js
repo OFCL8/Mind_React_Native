@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList, Button} from "react-native";
+import { Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList} from "react-native";
 import Constants from 'expo-constants';
 import * as firebase from 'firebase';
 import { withNavigation } from 'react-navigation';
@@ -108,23 +108,7 @@ class HomeLeaderScreen extends React.Component {
         </View>
       </TouchableOpacity>
     );
-  }
-  
-  sendPushNotification = () => {
-    let response = fetch('https://exp.host/--/api/v2/push/send', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify( {
-        to: 'ExponentPushToken[9UqdNEMBIds5nay_o7kn0F]',
-        sound: 'default',
-        title: 'Demo',
-        body: 'Demo'
-      })
-    });
-  }; 
+  } 
 
   render() {
     if(this.state.loading){
@@ -145,7 +129,6 @@ class HomeLeaderScreen extends React.Component {
           <TouchableOpacity onPress={this.signOutUser}>
             <Text >LogOut</Text>
           </TouchableOpacity>
-        <Button title="Send push notification" onPress={()=>this.sendPushNotification()}/>
           <TouchableOpacity style={styles.addbutton} onPress={this.addClient}>
             <Text style={{fontSize:0}}>+</Text>
           </TouchableOpacity>
