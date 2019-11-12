@@ -47,10 +47,6 @@ export default class HomeScreen extends React.Component {
     redirectTo: ""
   };
 
-  signOutUser = () => {
-    firebase.auth().signOut();
-  };
-
   render() {
     if (this.state.redirectTo === 'HomeCTO') {
       return <HomeCTOScreen />

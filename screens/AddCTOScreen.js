@@ -1,23 +1,31 @@
 import React from "react";
 import { Dimensions, SafeAreaView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
 import Constants from 'expo-constants';
-import { Input } from 'react-native-elements';
+import { CheckBox, Input } from 'react-native-elements';
 
 const { width, height } = Dimensions.get('window');
 import * as firebase from 'firebase';
 import 'firebase/firestore';
 
-export default class AddClientScreen extends React.Component {
+export default class AddCTOScreen extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
   static navigationOptions = {
     title: 'Add',
   };
+
   state = {
-    LeaderUID: firebase.auth().currentUser.uid,
+    CTOUID: firebase.auth().currentUser.uid,
     Name: "",
     Company: "",
     Email: "",
     Password: "",
     ConfirmPassword: "",
+    Role: "CTO",
+    checked1: true,
+    checked2: false,
     errorMessage: null
   }
 
@@ -27,9 +35,10 @@ export default class AddClientScreen extends React.Component {
     })
   }
 
-  addClient = () => {
-    const { LeaderUID, Name, Company, Email, Password, ConfirmPassword } = this.state;
-    if (!(Name && Company))
+  addUser = () => {
+    const { CTOUID, Name, Company, Email, Password, ConfirmPassword, Role } = this.state;
+    
+    if (!(Name || Company))
     {
       Alert.alert( 
         'Error',
@@ -42,12 +51,12 @@ export default class AddClientScreen extends React.Component {
     {
       firebase.auth().createUserWithEmailAndPassword(Email,Password).then((user) => {
         firebase.firestore().doc(`Users/${ user.user.uid}`).set({
-          LeaderUID,
+          CTOUID,
           Name: Name,
           Email: Email,
           Company: Company,
           Password: Password,
-          Role: "Client"
+          Role: Role
         })
       }).catch(error => this.setState({errorMessage: error.message}));
     }
@@ -65,7 +74,30 @@ export default class AddClientScreen extends React.Component {
     return (
       <SafeAreaView style={styles.container}>
          <StatusBar backgroundColor="blue" barStyle="light-content" />
-
+         <CheckBox
+            center
+            title='CTO'
+            checkedIcon='dot-circle-o'
+            uncheckedIcon='circle-o'
+            checked={this.state.checked1}
+            onPress={() => {
+              this.setState({checked1: true}),
+              this.setState({checked2: false}),
+              this.setState({Role: "CTO"})
+            }}
+          />
+          <CheckBox
+            center
+            title='Leader'
+            checkedIcon='dot-circle-o'
+            uncheckedIcon='circle-o'
+            checked={this.state.checked2}
+            onPress={() => {
+              this.setState({checked2: true}),
+              this.setState({checked1: false}),
+              this.setState({Role: "Leader"})
+            }}
+          />
          <Input
           placeholder='Name'
           defaultValue={this.state.Name}
@@ -110,7 +142,7 @@ export default class AddClientScreen extends React.Component {
           value={this.state.ConfirmPassword}
          />
 
-         <TouchableOpacity style={styles.addbutton} onPress={this.addClient}>
+         <TouchableOpacity style={styles.addbutton} onPress={this.addUser}>
             <Text style={{fontSize:0}}>+</Text>
           </TouchableOpacity>
 
@@ -135,7 +167,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
     borderRadius: 60,
-    bottom: height - 850,
+    bottom: height - 755,
     height: 60,
     justifyContent: 'center',
     left: width - 100,
