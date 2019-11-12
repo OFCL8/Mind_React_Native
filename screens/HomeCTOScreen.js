@@ -1,6 +1,8 @@
 import React from 'react';
 import { Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList, Button} from "react-native";
 import Constants from 'expo-constants';
+import { withNavigation } from 'react-navigation';
+
 import * as firebase from 'firebase';
 import { withNavigation } from 'react-navigation';
 
@@ -13,6 +15,7 @@ class HomeCTOScreen extends React.Component {
 
   users = [];
   currentUserLog = '';
+class HomeCTOScreen extends React.Component {
 
   state = {
     email: "",
@@ -150,5 +153,4 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   }
 });
-
 export default withNavigation(HomeCTOScreen);

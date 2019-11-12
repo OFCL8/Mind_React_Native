@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "expo": "^35.0.0",
+    "expo-permissions": "~7.0.0",
     "firebase": "^7.2.1",
     "metro-core": "^0.57.0",
     "react": "16.8.3",
