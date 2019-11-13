@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList, Button} from "react-native";
+import { Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList} from "react-native";
 import Constants from 'expo-constants';
 import * as firebase from 'firebase';
 import { withNavigation } from 'react-navigation';
@@ -53,9 +53,8 @@ class HomeLeaderScreen extends React.Component {
     let token = await Notifications.getExpoPushTokenAsync();
   
     // POST the token to your backend server from where you can retrieve it to send push notifications.
-    let uid = firebase.auth().currentUser.uid;
-    firebase.firestore().doc(`Users/${ uid }`).update({push_token:token});
-    firebase.database().ref('users/'+ uid +'/push_token').set(token);
+    firebase.firestore().doc(`Users/${ this.currentUserLog }`).update({push_token:token});
+    firebase.database().ref('users/'+ this.currentUserLog +'/push_token').set(token);
     }
     catch(error)
     {
@@ -109,23 +108,7 @@ class HomeLeaderScreen extends React.Component {
         </View>
       </TouchableOpacity>
     );
-  }
-  
-  sendPushNotification = () => {
-    let response = fetch('https://exp.host/--/api/v2/push/send', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify( {
-        to: 'ExponentPushToken[PNP63bG3O588iAN-Dp3hh4]',
-        sound: 'default',
-        title: 'Demo',
-        body: 'Demo'
-      })
-    });
-  }; 
+  } 
 
   render() {
     if(this.state.loading){
@@ -146,7 +129,6 @@ class HomeLeaderScreen extends React.Component {
           <TouchableOpacity onPress={this.signOutUser}>
             <Text >LogOut</Text>
           </TouchableOpacity>
-        <Button title="Send push notification" onPress={()=>this.sendPushNotification}/>
           <TouchableOpacity style={styles.addbutton} onPress={this.addClient}>
             <Text style={{fontSize:0}}>+</Text>
           </TouchableOpacity>
