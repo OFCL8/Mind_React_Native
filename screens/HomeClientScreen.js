@@ -70,9 +70,7 @@ class HomeClientScreen extends React.Component {
   }
 
   answerSurvey = () => {
-    this.props.navigation.navigate("DetailsClient", {
-      clientDetails: this.state.clientDetails,
-    });
+    this.props.navigation.navigate("ClientSurvey");
   }
 
   render() {
