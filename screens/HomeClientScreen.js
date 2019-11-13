@@ -2,8 +2,13 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
 import * as firebase from 'firebase';
+import { withNavigation } from "react-navigation";
 
-export default class HomeClientScreen extends React.Component {
+class HomeClientScreen extends React.Component {
+
+  constructor(props){
+    super(props)
+  }
 
   state = {
     email: "",
@@ -11,30 +16,63 @@ export default class HomeClientScreen extends React.Component {
     name: '',
     currentUser: "", 
     role: "",
-    newSurveys: true,
+    newSurveys: false,
+    clientDetails: {},
   };
 
   signOutUser = () => {
     firebase.auth().signOut();
   };
 
-  async componentWillMount() {
-    var clientDetails = [];
+  async componentDidMount() {
+    //var clientDetails = {};
     var currentUser = await firebase.auth().currentUser.uid;
     const { email } = await firebase.auth().currentUser;
     db = firebase.firestore();
     
-    const response = await db.collection('Users').doc(String(currentUser)).get()
+    const userData = await db.collection('Users')
+    .doc(String(currentUser))
+    .get()
     .then((doc) => {
-      if(doc.exists)
+      if(doc.exists){
         console.log('User found');
+        this.setState({
+          clientDetails: doc.data(),
+        });
+        //clientDetails = doc.data();
+        //console.log('Los details del cliente son: ', clientDetails);
+      }
       else
-        console.log('User not found')
-    }).catch((error) => {
-      console.log('Error getting document: ' , error)
+        console.log('User not found');
     })
+    .catch((error) => {
+      console.log('Error getting document: ' , error)
+    });
+
+    const surveyData = await db.collection('leaderSurvey')
+    .doc(String(this.state.clientDetails.Company+this.state.clientDetails.Name))
+    .get()
+    .then((doc) => {
+      if(doc.exists){
+        console.log('Survey found!!!')
+        this.setState({
+          newSurveys: true,
+        });
+      } else {
+        console.log('No new surveys :{');
+      }
+    })
+    .catch((error) => {
+      console.log('Could not connect to firebase: ', error)
+    });
 
     this.setState({ email });
+  }
+
+  answerSurvey = () => {
+    this.props.navigation.navigate("DetailsClient", {
+      clientDetails: this.state.clientDetails,
+    });
   }
 
   render() {
@@ -43,7 +81,7 @@ export default class HomeClientScreen extends React.Component {
       return (
         <View style={styles.container}>
           <Text>Hi {this.state.email}! You're logged in :) </Text>
-          <TouchableOpacity style = {styles.surveysOptions}>
+          <TouchableOpacity style = {styles.surveysOptions} onPress = {this.answerSurvey}>
             <View>
               <Text style = {{fontWeight: 'bold', fontSize: 15}}>You have new surveys!!!</Text>
               <Text>Tap here to answer them</Text>
@@ -101,3 +139,5 @@ const styles = StyleSheet.create({
     marginVertical: '3%',
   }
 });
+
+export default withNavigation (HomeClientScreen)
