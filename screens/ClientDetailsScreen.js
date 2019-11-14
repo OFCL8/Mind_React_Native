@@ -1,15 +1,16 @@
-import React from 'react';
-import {View, Flatlist, Text} from 'react-native';
+import React, { Component } from 'react';
+import {View, Dimensions, Flatlist, Text, Platform, StyleSheet, Alert } from 'react-native';
 import * as firebase from 'firebase';
 import * as store from 'firebase/firestore';
 import { ScrollView } from 'react-native-gesture-handler';
 import PopupMenu from '../components/PopupMenu';
 import { Button } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { LineChart, BarChart, PieChart, ProgressChart, ContributionGraph, StackedBarChart } from "react-native-chart-kit";
 
+const { width, height } = Dimensions.get('window');
 
 export default class ClientDetailsScreen extends React.Component{
-
   state = {
     clientDetails: {},
     loading: true,
@@ -80,7 +81,7 @@ export default class ClientDetailsScreen extends React.Component{
       );
     }else{
       return(
-        <ScrollView contentContainerStyle = {{flex: 1, justifyContent: 'center'}}>
+        <ScrollView contentContainerStyle = {{flex: 1, justifyContent: 'center' , padding: 5}}>
           
           {/* Score View */}
           <View style = {{flexDirection: 'row', justifyContent:'center'}}>
@@ -146,8 +147,61 @@ export default class ClientDetailsScreen extends React.Component{
             title="Send Request Survey" 
             onPress={()=>this.sendPushNotification()}
           />
+          <View>
+            <LineChart
+            data={{
+              labels: ["January", "February", "March", "April", "May", "June"],
+              datasets: [
+                {
+                  data: [
+                    Math.random() * 100,
+                    Math.random() * 100,
+                    Math.random() * 100,
+                    Math.random() * 100,
+                    Math.random() * 100,
+                    Math.random() * 100
+                  ]
+                }
+              ]
+            }}
+            width={ width - 10}// from react-native
+            height={220}
+            yAxisLabel={"$"}
+            yAxisSuffix={"k"}
+            chartConfig={{
+              backgroundColor: "#e26a00",
+              backgroundGradientFrom: "#fb8c00",
+              backgroundGradientTo: "#ffa726",
+              decimalPlaces: 2, // optional, defaults to 2dp
+              color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+              labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+              style: {
+                borderRadius: 16
+              },
+              propsForDots: {
+                r: "6",
+                strokeWidth: "2",
+                stroke: "#ffa726"
+              }
+            }}
+            bezier
+            style={{
+              marginVertical: 8,
+              borderRadius: 16
+            }}
+            />
+            </View>
         </ScrollView>
       );
     }
   }
 }
+const chartConfig = {
+  backgroundGradientFrom: "#1E2923",
+  backgroundGradientFromOpacity: 0,
+  backgroundGradientTo: "#08130D",
+  backgroundGradientToOpacity: 0.5,
+  color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
+  strokeWidth: 2, // optional, default 3
+  barPercentage: 0.5
+};

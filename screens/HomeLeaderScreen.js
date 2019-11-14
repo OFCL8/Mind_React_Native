@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList} from "react-native";
+import { Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList } from "react-native";
 import Constants from 'expo-constants';
 import * as firebase from 'firebase';
 import { withNavigation } from 'react-navigation';
