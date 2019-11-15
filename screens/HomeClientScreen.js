@@ -18,6 +18,7 @@ class HomeClientScreen extends React.Component {
     role: "",
     newSurveys: false,
     clientDetails: {},
+    survey: {}
   };
 
   signOutUser = () => {
@@ -38,6 +39,7 @@ class HomeClientScreen extends React.Component {
         console.log('User found');
         this.setState({
           clientDetails: doc.data(),
+          currentUser: currentUser,
         });
         //clientDetails = doc.data();
         //console.log('Los details del cliente son: ', clientDetails);
@@ -57,6 +59,7 @@ class HomeClientScreen extends React.Component {
         console.log('Survey found!!!')
         this.setState({
           newSurveys: true,
+          survey: doc.data(),
         });
       } else {
         console.log('No new surveys :{');
@@ -69,8 +72,21 @@ class HomeClientScreen extends React.Component {
     this.setState({ email });
   }
 
+  surveyDone = () => {
+    console.log('yupp');
+    this.state.clientDetails.answered = true
+    this.setState({
+      clientDetails: this.state.clientDetails,
+    })
+  }
+
   answerSurvey = () => {
-    this.props.navigation.navigate("ClientSurvey");
+    this.props.navigation.navigate("ClientSurvey", {
+      survey: this.state.survey.status,
+      client: this.state.currentUser,
+      leader: this.state.clientDetails.LeaderUID,
+      isAnswered: this.surveyDone 
+    });
   }
 
   render() {

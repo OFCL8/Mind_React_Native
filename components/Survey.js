@@ -101,12 +101,7 @@ class Survey extends React.Component {
     },async () => {
 
       try{
-        // object = {...this.state.status}
-        // console.log(object);
         const response = await db.collection('leaderSurvey').doc(String(this.state.idCliente)).set(this.state);      
-        // .where('idLeader','==', 123)
-        // .where('idCliente', '==', 234);
-
         console.log('Survey saved succesfully');
         alert('Survey saved succesfully','asdasdasd');
       }catch(e) {

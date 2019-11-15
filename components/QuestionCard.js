@@ -1,10 +1,24 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableHighlight, View } from 'react-native';
+import { StyleSheet, Text, TouchableHighlight, View, FlatList } from 'react-native';
+
+var numbers = ['1','2','3','4','5'];
 
 class QuestionCard extends React.Component {
-  text = 'Dummy question?' 
+
+  renderButton = ({index,item}) => {
+  
+    const answerQuestion = () => {
+      this.props.onPress(index+1);
+    }
+
+    return(
+      <TouchableHighlight style = {styles.button} onPress = {answerQuestion} >
+        <Text style = {styles.buttonText}>{index+1}</Text>
+      </TouchableHighlight>
+    );
+  }
+
   render() {
-    console.log('Question ' + this.props.index + ' rendered')
     return (
       <View style = {styles.container}>
         <Text style = {styles.text}>{this.props.question}</Text>
@@ -16,21 +30,12 @@ class QuestionCard extends React.Component {
             alignItems: 'flex-end', 
             marginBottom: 10}}
         >
-          <TouchableHighlight style = {styles.button} onPress = {() => console.log('1')}>
-            <Text style = {styles.buttonText}>1</Text>
-          </TouchableHighlight>
-          <TouchableHighlight style = {styles.button} onPress = {() => console.log('2')}>
-            <Text style = {styles.buttonText}>2</Text>
-          </TouchableHighlight>
-          <TouchableHighlight style = {styles.button} onPress = {() => console.log('3')}>
-            <Text style = {styles.buttonText}>3</Text>
-          </TouchableHighlight>
-          <TouchableHighlight style = {styles.button} onPress = {() => console.log('4')}>
-            <Text style = {styles.buttonText}>4</Text>
-          </TouchableHighlight>
-          <TouchableHighlight style = {styles.button} onPress = {() => console.log('5')}>
-            <Text style = {styles.buttonText}>5</Text>
-          </TouchableHighlight>
+          <FlatList
+            data = {numbers}
+            renderItem = {this.renderButton}
+            numColumns = {5}
+            keyExtractor = {(item,index) => index.toString()}
+          />
         </View>
       </View>
     );
@@ -48,7 +53,8 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: 'lightgrey',
     borderRadius: 10,
-    width: 50
+    width: 50,
+    margin: 2
   },
   text: {
     fontSize: 18,
@@ -66,3 +72,21 @@ const styles = StyleSheet.create({
 });
 
 export default QuestionCard;
+
+/*
+<TouchableHighlight style = {styles.button} onPress = {() => console.log('1')}>
+            <Text style = {styles.buttonText}>1</Text>
+          </TouchableHighlight>
+          <TouchableHighlight style = {styles.button} onPress = {() => console.log('2')}>
+            <Text style = {styles.buttonText}>2</Text>
+          </TouchableHighlight>
+          <TouchableHighlight style = {styles.button} onPress = {() => console.log('3')}>
+            <Text style = {styles.buttonText}>3</Text>
+          </TouchableHighlight>
+          <TouchableHighlight style = {styles.button} onPress = {() => console.log('4')}>
+            <Text style = {styles.buttonText}>4</Text>
+          </TouchableHighlight>
+          <TouchableHighlight style = {styles.button} onPress = {() => console.log('5')}>
+            <Text style = {styles.buttonText}>5</Text>
+          </TouchableHighlight>
+*/
