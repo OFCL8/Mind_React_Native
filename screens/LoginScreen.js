@@ -166,8 +166,7 @@ export default class ReactLogin extends React.Component {
               <Animated.Text style={{ fontSize: 15, transform:[{ rotate: concat(this.rotateCross,'deg')}] }}>X</Animated.Text>
             </Animated.View>
           </TapGestureHandler>
-          
-          
+
               <TextInput
                 autoCapitalize="none"
                 placeholder="Email"

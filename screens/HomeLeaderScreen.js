@@ -22,11 +22,7 @@ class HomeLeaderScreen extends React.Component {
     clients: [],
     loading: true,
   };
-
-  signOutUser = () => {
-    firebase.auth().signOut();
-  };
-
+  
   addClient = () => {
     this.props.navigation.navigate("AddClient");
   }
@@ -63,7 +59,6 @@ class HomeLeaderScreen extends React.Component {
   };
 
   componentDidMount = async () => {
-    
     db = await firebase.firestore();
 
     const { email } =  firebase.auth().currentUser;
@@ -125,10 +120,7 @@ class HomeLeaderScreen extends React.Component {
             extraData = {this.state.loading}
             keyExtractor = {item => String(item.Email)}
             renderItem = {this.renderClients}
-          />     
-          <TouchableOpacity onPress={this.signOutUser}>
-            <Text >LogOut</Text>
-          </TouchableOpacity>
+          />
           <TouchableOpacity style={styles.addbutton} onPress={this.addClient}>
             <Text style={{fontSize:0}}>+</Text>
           </TouchableOpacity>

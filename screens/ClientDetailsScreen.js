@@ -1,37 +1,64 @@
 import React, { Component } from 'react';
-import {View, Dimensions, Flatlist, Text, Platform, StyleSheet, Alert } from 'react-native';
+import {View, Dimensions, Text, Modal} from 'react-native';
 import * as firebase from 'firebase';
-import * as store from 'firebase/firestore';
-import { ScrollView } from 'react-native-gesture-handler';
-import PopupMenu from '../components/PopupMenu';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { Button } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { LineChart, BarChart, PieChart, ProgressChart, ContributionGraph, StackedBarChart } from "react-native-chart-kit";
+import LoadingScreen from "./LoadingScreen";
 
 const { width, height } = Dimensions.get('window');
 
 export default class ClientDetailsScreen extends React.Component{
-  state = {
-    clientDetails: {},
-    loading: true,
-    modalVisible: false,
+  constructor(props) {
+    super(props);
+    this.state = {
+      clientDetails: {},
+      loading: true
+    }
   }
 
-  static navigationOptions = ({navigation}) => {
-    return {
-      headerTitle: 'Client Details',
-      headerRight: () => (
-        <Button
-          onPress={navigation.getParam("popupMenu")}
-          title="Edit Survey"
-          type="clear"
-          color="#4fa"
-        />
-      ),
-    };
+  static navigationOptions = ({ navigation }) => {
+    const { params = {} } = navigation.state;
+    let headerTitle = 'Client Details';
+    let headerRight = (<Button
+    title="Options" 
+    type="clear"
+    color="#4fa"
+    style={{fontSize: 15, color: 'white'}}
+    onPress={()=>{ params.toggle(); }}>Options</Button>);
+    return { headerTitle, headerRight };
   };
 
+  setPickerValue (newValue) {
+    this.props.navigation.setParams({pickerDisplayed: false});
+    //Handles the selected value to navigate
+    switch(newValue)
+    {
+      case 'editsurvey':
+        { 
+          this.props.navigation.navigate("EditSurvey", {
+            company: this.state.clientDetails.Company,
+            name: this.state.clientDetails.Name,
+            leaderID: this.state.clientDetails.LeaderUID,
+          });
+          
+        }
+        break;
+        case 'signout':
+        { 
+          firebase.auth().signOut();
+        }
+        break;
+    }
+  }
+
+  togglePicker() {
+    this.props.navigation.setParams({pickerDisplayed: !this.pickerDisplayed});
+  }
+
   componentDidMount(){
+    this.props.navigation.setParams({ toggle: this.togglePicker.bind(this), pickerDisplayed:false });
     this.setState({
       clientDetails: this.props.navigation.getParam('clientDetails', 'NO-ID')
     }, () => {
@@ -39,21 +66,6 @@ export default class ClientDetailsScreen extends React.Component{
         loading: false,
       })
     });
-    this.props.navigation.setParams({editSurvey: this.editSurvey});
-    this.props.navigation.setParams({popupMenu: this.changeValue});
-  }
-
-  changeValue = () => {
-    this.setState({modalVisible: !this.state.modalVisible});
-  }
-
-  editSurvey = () => {
-    this.props.navigation.navigate("EditSurvey", {
-      company: this.state.clientDetails.Company,
-      name: this.state.clientDetails.Name,
-      leaderID: this.state.clientDetails.LeaderUID,
-    });
-    this.setState({modalVisible: !this.state.modalVisible});
   }
 
   sendPushNotification = () => {
@@ -73,16 +85,23 @@ export default class ClientDetailsScreen extends React.Component{
   };
 
   render(){
-    if(this.state.loading){
-      return(
-        <View>
-          <Text>Loading client info</Text>
-        </View>
-      );
+    const { params } = this.props.navigation.state;
+    const pickerValues = [
+      {
+        title: 'Edit Survey',
+        value: 'editsurvey'
+      },
+      {
+        title: 'Log Out',
+        value: 'signout'
+      }
+    ]
+    if(this.state.loading || params.pickerDisplayed==undefined){
+      return <LoadingScreen/>;
     }else{
       return(
-        <ScrollView contentContainerStyle = {{flex: 1, justifyContent: 'center' , padding: 5}}>
-          
+        <View contentContainerStyle = {{flex: 1, justifyContent: 'center' , padding: 5}}>
+          <ScrollView >
           {/* Score View */}
           <View style = {{flexDirection: 'row', justifyContent:'center'}}>
             <Text style = {{fontWeight: 'bold', fontSize: 25}}>0.0</Text>
@@ -125,13 +144,6 @@ export default class ClientDetailsScreen extends React.Component{
               <Text>Communication: </Text>
               <Text>0.0</Text>
             </View>
-          </View>
-          <View>
-            <PopupMenu 
-              visible = {this.state.modalVisible} 
-              onPress = {this.changeValue} 
-              onNav = {this.editSurvey}
-            />
           </View>
 
           <Button 
@@ -191,7 +203,29 @@ export default class ClientDetailsScreen extends React.Component{
             }}
             />
             </View>
+            <Modal visible= {params.pickerDisplayed} animationType={"slide"} transparent={true}>
+              <View style={{ 
+                  margin: 20, 
+                  padding: 20,
+                  backgroundColor: '#fffff', 
+                  bottom: 20, 
+                  left: 20, 
+                  right: 20, 
+                  alignItems: 'center',
+                  position: 'absolute' }}>
+                <Text style={{ fontWeight: 'bold', marginBottom: 10 }}>Select Option</Text>
+                { pickerValues.map((value, index) => {
+                  return <TouchableOpacity key={ index } onPress={() => this.setPickerValue(value.value)} style={{ paddingTop: 4, paddingBottom: 4, alignItems: 'center' }}>
+                        <Text>{value.title}</Text>
+                   </TouchableOpacity>
+                })}
+                <TouchableOpacity onPress={()=>this.props.navigation.setParams({pickerDisplayed: false})} style={{ paddingTop: 4, paddingBottom: 4 }}>
+                  <Text style={{ color: '#999' }}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            </Modal>
         </ScrollView>
+        </View>
       );
     }
   }
