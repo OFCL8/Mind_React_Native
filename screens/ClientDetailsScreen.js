@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
-import {View, Dimensions, Text, Modal} from 'react-native';
+import React from 'react';
+import {View, Dimensions, StyleSheet, Text, Modal, TouchableOpacity} from 'react-native';
 import * as firebase from 'firebase';
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+import { ScrollView } from 'react-native-gesture-handler';
 import { Button } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { LineChart, BarChart, PieChart, ProgressChart, ContributionGraph, StackedBarChart } from "react-native-chart-kit";
@@ -37,6 +37,7 @@ export default class ClientDetailsScreen extends React.Component{
     {
       case 'editsurvey':
         { 
+          console.log(newValue);
           this.props.navigation.navigate("EditSurvey", {
             company: this.state.clientDetails.Company,
             name: this.state.clientDetails.Name,
@@ -203,27 +204,21 @@ export default class ClientDetailsScreen extends React.Component{
             }}
             />
             </View>
-            <Modal visible= {params.pickerDisplayed} animationType={"slide"} transparent={true}>
-              <View style={{ 
-                  margin: 20, 
-                  padding: 20,
-                  backgroundColor: '#fffff', 
-                  bottom: 20, 
-                  left: 20, 
-                  right: 20, 
-                  alignItems: 'center',
-                  position: 'absolute' }}>
-                <Text style={{ fontWeight: 'bold', marginBottom: 10 }}>Select Option</Text>
+            <View>
+            <Modal visible= {params.pickerDisplayed} animationType={"slide"} transparent={false}>
+              <View style={styles.container}>
+                <Text style={{ fontWeight: 'bold', marginBottom: 10, fontSize: 25 }}>Select Option</Text>
                 { pickerValues.map((value, index) => {
                   return <TouchableOpacity key={ index } onPress={() => this.setPickerValue(value.value)} style={{ paddingTop: 4, paddingBottom: 4, alignItems: 'center' }}>
-                        <Text>{value.title}</Text>
-                   </TouchableOpacity>
+                        <Text style={{ fontSize: 25 }}>{value.title}</Text>
+                    </TouchableOpacity>
                 })}
                 <TouchableOpacity onPress={()=>this.props.navigation.setParams({pickerDisplayed: false})} style={{ paddingTop: 4, paddingBottom: 4 }}>
-                  <Text style={{ color: '#999' }}>Cancel</Text>
+                  <Text style={{ color: '#999', fontSize: 25 }}>Cancel</Text>
                 </TouchableOpacity>
               </View>
-            </Modal>
+           </Modal>
+          </View>
         </ScrollView>
         </View>
       );
@@ -239,3 +234,11 @@ const chartConfig = {
   strokeWidth: 2, // optional, default 3
   barPercentage: 0.5
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
+});
