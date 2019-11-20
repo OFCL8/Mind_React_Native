@@ -159,10 +159,10 @@ export default class ClientDetailsScreen extends React.Component{
             title="Send Request Survey" 
             onPress={()=>this.sendPushNotification()}
           />
-          <View>
+          <View style={{padding: 2}}>
             <LineChart
             data={{
-              labels: ["January", "February", "March", "April", "May", "June"],
+              labels: ["PartnerShip", "Goal Oriented", "Quality", "Velocity", "Communication", "Success"],
               datasets: [
                 {
                   data: [
@@ -176,24 +176,24 @@ export default class ClientDetailsScreen extends React.Component{
                 }
               ]
             }}
-            width={ width - 10}// from react-native
-            height={220}
-            yAxisLabel={"$"}
-            yAxisSuffix={"k"}
+            width={ width - 7}// from react-native
+            height={500}
+            verticalLabelRotation = {60}
             chartConfig={{
-              backgroundColor: "#e26a00",
-              backgroundGradientFrom: "#fb8c00",
-              backgroundGradientTo: "#ffa726",
+              backgroundColor: "blue",
+              backgroundGradientFrom: "#6593F5",
+              backgroundGradientTo: "#003152",
               decimalPlaces: 2, // optional, defaults to 2dp
               color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
               labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+              barPercentage: 0.1,
               style: {
                 borderRadius: 16
               },
               propsForDots: {
                 r: "6",
                 strokeWidth: "2",
-                stroke: "#ffa726"
+                stroke: "black"
               }
             }}
             bezier
@@ -224,15 +224,6 @@ export default class ClientDetailsScreen extends React.Component{
     }
   }
 }
-const chartConfig = {
-  backgroundGradientFrom: "#1E2923",
-  backgroundGradientFromOpacity: 0,
-  backgroundGradientTo: "#08130D",
-  backgroundGradientToOpacity: 0.5,
-  color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
-  strokeWidth: 2, // optional, default 3
-  barPercentage: 0.5
-};
 
 const styles = StyleSheet.create({
   container: {

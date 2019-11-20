@@ -127,7 +127,7 @@ export default class AddClientScreen extends React.Component {
            />
   
            <TouchableOpacity style={styles.addbutton} onPress={this.addClient}>
-              <Text style={{fontSize:0}}>+</Text>
+              <Text style={{fontSize: 20}}>+</Text>
             </TouchableOpacity>
   
             <View style={styles.errorMessage}>
@@ -152,7 +152,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
     borderRadius: 60,
-    bottom: height - 740,
+    bottom: height - 750,
+    elevation: 2,
     height: 60,
     justifyContent: 'center',
     left: width - 100,
