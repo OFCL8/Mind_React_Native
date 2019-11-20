@@ -24,7 +24,7 @@ export default class ClientDetailsScreen extends React.Component{
     let headerRight = (<Button
     title="Options" 
     type="clear"
-    color="#4fa"
+    color="blue"
     style={{fontSize: 15, color: 'white'}}
     onPress={()=>{ params.toggle(); }}>Options</Button>);
     return { headerTitle, headerRight };
@@ -37,8 +37,7 @@ export default class ClientDetailsScreen extends React.Component{
     {
       case 'editsurvey':
         { 
-          console.log(newValue);
-          this.props.navigation.navigate("EditSurvey", {
+            this.props.navigation.navigate("EditSurvey", {
             company: this.state.clientDetails.Company,
             name: this.state.clientDetails.Name,
             leaderID: this.state.clientDetails.LeaderUID,

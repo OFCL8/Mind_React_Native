@@ -7,10 +7,11 @@ import HomeCTOScreen from "./HomeCTOScreen";
 import LoadingScreen from "./LoadingScreen";
 
 export default class HomeScreen extends React.Component {
-  
+
   static navigationOptions = {
     title: 'Home',
   };
+
   constructor(props){
     super(props);
     //Checks for role of current user

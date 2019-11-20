@@ -122,7 +122,7 @@ class HomeLeaderScreen extends React.Component {
             renderItem = {this.renderClients}
           />
           <TouchableOpacity style={styles.addbutton} onPress={this.addClient}>
-            <Text style={{fontSize:0}}>+</Text>
+            <Text style={{fontSize: 20}}>+</Text>
           </TouchableOpacity>
         </ScrollView>
       )
@@ -146,7 +146,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
     borderRadius: 60,
-    bottom: height - 755,
+    bottom: height - 740,
+    elevation: 2,
     height: 60,
     justifyContent: 'center',
     left: width - 100,
