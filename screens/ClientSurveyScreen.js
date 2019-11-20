@@ -3,25 +3,7 @@ import { Button, FlatList, ScrollView, StyleSheet, Text, View } from 'react-nati
 import QuestionCard from '../components/QuestionCard';
 import Data from '../JSON/questions.json';
 import * as firebase from 'firebase';
-
-
-var answers = [
-  {question: 0, answer: 0},
-  {question: 1, answer: 0},
-  {question: 2, answer: 0},
-  {question: 3, answer: 0},
-  {question: 4, answer: 0},
-  {question: 5, answer: 0},
-  {question: 6, answer: 0},
-  {question: 7, answer: 0},
-  {question: 8, answer: 0},
-  {question: 9, answer: 0},
-  {question: 10, answer: 0},
-  {question: 11, answer: 0},
-  {question: 12, answer: 0},
-  {question: 13, answer: 0},
-  {question: 14, answer: 0}
-];
+import { StackActions } from 'react-navigation';
 
 var months = [
   "January",
@@ -44,6 +26,7 @@ export default class ClientSurveyScreen extends React.Component {
     status: {},
     idLeader: '',
     idClient: '',
+    name: '',
     date: {
       day: '',
       month: '',
@@ -83,12 +66,12 @@ export default class ClientSurveyScreen extends React.Component {
       status: this.props.navigation.getParam('survey'),
       idClient: this.props.navigation.getParam('client'),
       idLeader: this.props.navigation.getParam('leader'),
+      name: this.props.navigation.getParam('name')
     });
     this.setState({loading: false})
   }
 
   renderQuestion = ({index,item}) => {
-
     const onAnsweredQuestion = (num) => {
       this.state.surveyAnswers[index].answer = num;
       this.setState({
@@ -124,16 +107,25 @@ export default class ClientSurveyScreen extends React.Component {
         const response = await db.collection('answeredSurveys').doc(String(this.state.idClient)).set(this.state);      
         console.log('Survey sended succesfully');
         alert('Survey saved succesfully','asdasdasd');
-
+        db.collection('leaderSurvey').doc(this.state.name).update({answered: true});
+        //this.props.navigation.navigate.pop(1);
+        this.props.navigation.goBack(null);
+        //this.props.navigation.dispatch(StackActions.popToTop());
       }catch(e) {
         console.log(e);
         alert('Save failed');
       }
-      this.props.getParam('isAnswered');
-      console.log('sjdhhb')
+      //this.props.getParam('isAnswered');
+      //console.log('sjdhhb')
     });
-    this.props.navigation.navigate('HomeClient');
   }
+/*
+  async send() {
+    console.log('adfhsfgjdx')
+    const response = await this.sendSurvey();
+    console.log('-------------------')
+  }
+*/
 
   render() {
     return(

@@ -2,7 +2,9 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
 import * as firebase from 'firebase';
-import { withNavigation } from "react-navigation";
+import { NavigationEvents, withNavigation } from "react-navigation";
+
+var surveyName;
 
 class HomeClientScreen extends React.Component {
 
@@ -18,7 +20,8 @@ class HomeClientScreen extends React.Component {
     role: "",
     newSurveys: false,
     clientDetails: {},
-    survey: {}
+    survey: {},
+    trigger: false,
   };
 
   signOutUser = () => {
@@ -58,7 +61,8 @@ class HomeClientScreen extends React.Component {
       if(doc.exists){
         console.log('Survey found!!!')
         this.setState({
-          newSurveys: true,
+          name: String(this.state.clientDetails.Company+this.state.clientDetails.Name),
+          newSurveys: !doc.get('answered'),
           survey: doc.data(),
         });
       } else {
@@ -73,27 +77,28 @@ class HomeClientScreen extends React.Component {
   }
 
   surveyDone = () => {
-    console.log('yupp');
-    this.state.clientDetails.answered = true
-    this.setState({
-      clientDetails: this.state.clientDetails,
-    })
+    db.collection('leaderSurvey').doc(this.state.name).get().then((doc) => {
+      this.setState({ newSurveys: !doc.get('answered') });
+    });
   }
 
-  answerSurvey = () => {
+  answerSurvey = async () => {
     this.props.navigation.navigate("ClientSurvey", {
       survey: this.state.survey.status,
       client: this.state.currentUser,
       leader: this.state.clientDetails.LeaderUID,
-      isAnswered: this.surveyDone 
+      name: this.state.name,
     });
   }
 
   render() {
-
     if(this.state.newSurveys){
       return (
         <View style={styles.container}>
+          <NavigationEvents onDidFocus={() => {
+            this.surveyDone();
+          }
+          } />
           <Text>Hi {this.state.email}! You're logged in :) </Text>
           <TouchableOpacity style = {styles.surveysOptions} onPress = {this.answerSurvey}>
             <View>
@@ -115,6 +120,7 @@ class HomeClientScreen extends React.Component {
     }else{
       return (
         <View style={styles.container}>
+          <NavigationEvents onDidFocus={() => console.log('I am triggered 2')} />
           <Text>Hi {this.state.email}! You're logged in :) </Text>
           <TouchableOpacity style = {styles.surveysOptions}>
             <View>

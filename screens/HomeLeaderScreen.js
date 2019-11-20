@@ -96,7 +96,7 @@ class HomeLeaderScreen extends React.Component {
             <Text >LogOut</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.addbutton} onPress={this.addClient}>
-            <Text style={{fontSize:0}}>+</Text>
+            <Text style={{fontSize:30}}>+</Text>
           </TouchableOpacity>
         </ScrollView>
       )
