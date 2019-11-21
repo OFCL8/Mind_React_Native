@@ -104,7 +104,7 @@ export default class ClientSurveyScreen extends React.Component {
     },async () => {
       
       try{
-        const response = await db.collection('answeredSurveys').doc(String(this.state.idClient)).set(this.state);      
+        const response = await db.collection('answeredSurveys').add(this.state);      
         console.log('Survey sended succesfully');
         alert('Survey saved succesfully','asdasdasd');
         db.collection('leaderSurvey').doc(this.state.name).update({answered: true});

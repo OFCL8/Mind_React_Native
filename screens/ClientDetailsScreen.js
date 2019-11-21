@@ -76,32 +76,62 @@ export default class ClientDetailsScreen extends React.Component{
 
           {/* Client Overall Satisfaction table View list */}
           <View>
-            <View style = {{flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, marginHorizontal: 50}}>
+            <View style = {{
+              flexDirection: 'row', 
+              justifyContent: 'space-between', 
+              borderBottomWidth: 1, 
+              marginHorizontal: 50
+            }}>
               <Text>Succes: </Text>
               <Text>0.0</Text>
             </View>
 
-            <View style = {{flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, marginHorizontal: 50}}>
+            <View style = {{
+              flexDirection: 'row', 
+              justifyContent: 'space-between', 
+              borderBottomWidth: 1, 
+              marginHorizontal: 50
+            }}>
               <Text>Partnership: </Text>
               <Text>0.0</Text>
             </View>
 
-            <View style = {{flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, marginHorizontal: 50}}>
+            <View style = {{
+              flexDirection: 'row', 
+              justifyContent: 'space-between', 
+              borderBottomWidth: 1, 
+              marginHorizontal: 50
+            }}>
               <Text>Goal oriented: </Text>
               <Text>0.0</Text>
             </View>
 
-            <View style = {{flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, marginHorizontal: 50}}>
+            <View style = {{
+              flexDirection: 'row', 
+              justifyContent: 'space-between', 
+              borderBottomWidth: 1, 
+              marginHorizontal: 50
+            }}>
               <Text>Quality: </Text>
               <Text>0.0</Text>
             </View>
 
-            <View style = {{flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, marginHorizontal: 50}}>
+            <View style = {{
+              flexDirection: 'row', 
+              justifyContent: 'space-between', 
+              borderBottomWidth: 1, 
+              marginHorizontal: 50
+            }}>
               <Text>Velocity: </Text>
               <Text>0.0</Text>
             </View>
 
-            <View style = {{flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, marginHorizontal: 50}}>
+            <View style = {{
+              flexDirection: 'row', 
+              justifyContent: 'space-between', 
+              borderBottomWidth: 1, 
+              marginHorizontal: 50
+            }}>
               <Text>Communication: </Text>
               <Text>0.0</Text>
             </View>
