@@ -10,6 +10,7 @@ import AddCTOScreen from './screens/AddCTOScreen';
 import ClientDetailsScreen from './screens/ClientDetailsScreen';
 import LeaderDetailsScreen from './screens/LeaderDetailsScreen';
 import EditSurveyScreen from './components/Survey';
+import ClientsurveyScreen from './screens/ClientSurveyScreen';
 
 import Firebase from './components/Firebase';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
@@ -28,6 +29,7 @@ export default class App extends React.Component {
     }
     Firebase.init();
   }
+  
 
   componentDidMount() {
     this.authListener();
@@ -72,6 +74,7 @@ const RootStack = createStackNavigator(
     DetailsClient: ClientDetailsScreen,
     DetailsLeader: LeaderDetailsScreen,
     EditSurvey: EditSurveyScreen,
+    ClientSurvey: ClientsurveyScreen,
   },
   {
     initialRouteName: 'Main',

@@ -92,6 +92,7 @@ class HomeLeaderScreen extends React.Component {
     const openDetailsScreen = () => {
       this.props.navigation.navigate("DetailsClient", {
         clientDetails: item,
+
       })
     }
 

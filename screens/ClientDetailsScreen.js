@@ -7,6 +7,61 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { LineChart, BarChart, PieChart, ProgressChart, ContributionGraph, StackedBarChart } from "react-native-chart-kit";
 import LoadingScreen from "./LoadingScreen";
 
+var surveys = [];
+var question = [];
+
+var globalScore = 0;
+var partnership = [];
+var goalOriented = [];
+var qualityControl = [];
+var developmentVelocity = [];
+var communication = [];
+var success = [];
+
+var score = {
+  partnership: {
+    id: 1,
+    name: 'partnership',
+    weight: 15,
+    score: 0,
+    percentage: 0,
+  },
+  goalOriented: {
+    id: 2,
+    name: 'goalOriented',
+    weight: 15,
+    score: 0,
+    percentage: 0,
+  },
+  qualityControl: {
+    id: 3,
+    name: 'qualityControl',
+    weight: 15,
+    score: 0,
+    percentage: 0,
+  },
+  developmentVelocity: {
+    id: 4,
+    name: 'developmentVelocity',
+    weight: 15,
+    score: 0,
+    percentage: 0,
+  },
+  communication: {
+    id: 5,
+    name: 'communication',
+    weight: 15,
+    score: 0,
+    percentage: 0,
+  },
+  success: {
+    id: 6,
+    name: 'succes',
+    weight: 25,
+    score: 0,
+    percentage: 0,
+  },
+}
 const { width, height } = Dimensions.get('window');
 
 export default class ClientDetailsScreen extends React.Component{
@@ -58,13 +113,27 @@ export default class ClientDetailsScreen extends React.Component{
   }
 
   componentDidMount(){
+    score.partnership.score = 0;
+    score.qualityControl.score = 0;
+    score.communication.score = 0;
+    score.developmentVelocity.score = 0;
+    score.goalOriented.score = 0;
+    score.success.score = 0;
+    question = [];
+    globalScore = 0;
+    db = firebase.firestore();
+    const clientData = this.props.navigation.getParam('clientDetails', 'NO-ID');
+
     this.props.navigation.setParams({ toggle: this.togglePicker.bind(this), pickerDisplayed:false });
+
     this.setState({
-      clientDetails: this.props.navigation.getParam('clientDetails', 'NO-ID')
+      clientDetails: clientData
     }, () => {
+      this.getData();
+      console.log('Got the data, rendering screen!!')
       this.setState({
         loading: false,
-      })
+      });
     });
   }
 
@@ -82,6 +151,111 @@ export default class ClientDetailsScreen extends React.Component{
         body: 'You have a new survey, go check it out!'
       })
     });
+  }
+  
+  getData = async () => {
+    let temp = this.state.clientDetails.Company + this.state.clientDetails.Name;
+    console.log('Trying to get: ' + temp);
+    const response = await db
+    .collection('answeredSurveys').where('name', '==', temp)
+    .get()
+    .then((query) => {
+      query.forEach(doc => {
+        question.push(doc.data());
+      });
+
+      console.log('Finished pushing data, analyzing.')
+
+      if(question.length != 0){
+        console.log(question.length);
+        console.log('Question is not empty');
+        this.analyzeData();
+        this.setScores();
+      }
+    }).catch(error => {
+      console.log('Error connecting to FB', error);
+      // this.setState({
+      //   loading: false,
+      // })
+    });
+  }
+  
+  printNames = () => {
+    score.forEach(element => {
+      console.log(element.name);
+    });
+  }
+  
+  analyzeData = () => {
+    for(let i = 0 ; i < question[0].status.length ; i++){
+      for(let j = 0 ; j < question[0].status[i].teamskill.length ; j++){
+        if(question[0].status[i].teamskill[j] == 1 && (question[0].status[i].status))
+          partnership.push(question[0].surveyAnswers[i]);
+        
+        if(question[0].status[i].teamskill[j] == 2  && (question[0].status[i].status))
+          goalOriented.push(question[0].surveyAnswers[i]);
+        
+        if(question[0].status[i].teamskill[j] == 3  && (question[0].status[i].status))
+          qualityControl.push(question[0].surveyAnswers[i]);
+        
+        if(question[0].status[i].teamskill[j] == 4  && (question[0].status[i].status))
+          developmentVelocity.push(question[0].surveyAnswers[i]);
+        
+        if(question[0].status[i].teamskill[j] == 5  && (question[0].status[i].status))
+          communication.push(question[0].surveyAnswers[i]);
+        
+        if(question[0].status[i].teamskill[j] == 6  && (question[0].status[i].status))
+          success.push(question[0].surveyAnswers[i]);
+      }
+    }
+  }
+  
+  setScores = () => {
+    globalScore = 0;
+    for(let i = 0 ; i < partnership.length ; i++)
+    {
+      score.partnership.score += (partnership[i].answer * (score.partnership.weight / partnership.length)) / 5;
+    }
+    console.log(score.partnership.score);
+    globalScore += score.partnership.score;
+  
+    for(let i = 0 ; i < goalOriented.length ; i++)
+    {
+      score.goalOriented.score += (goalOriented[i].answer * (score.goalOriented.weight / goalOriented.length)) / 5;
+    }
+    console.log(score.goalOriented.score);
+    globalScore += score.goalOriented.score;
+  
+    for(let i = 0 ; i < qualityControl.length ; i++)
+    {
+      score.qualityControl.score += (qualityControl[i].answer * (score.qualityControl.weight / qualityControl.length)) / 5;
+    }
+    console.log(score.qualityControl.score);
+    globalScore += score.qualityControl.score;
+  
+    for(let i = 0 ; i < developmentVelocity.length ; i++)
+    {
+      score.developmentVelocity.score += (developmentVelocity[i].answer * (score.developmentVelocity.weight / developmentVelocity.length)) / 5;
+    }
+    console.log(score.developmentVelocity.score);
+    globalScore += score.developmentVelocity.score;
+  
+    for(let i = 0 ; i < communication.length ; i++)
+    {
+      score.communication.score += (communication[i].answer * (score.communication.weight / communication.length)) / 5;
+    }
+    console.log(score.communication.score);
+    globalScore += score.communication.score;
+  
+    for(let i = 0 ; i < success.length ; i++)
+    {
+      score.success.score += (success[i].answer * (score.success.weight / success.length)) / 5;
+    }
+    console.log(score.success.score);
+    globalScore += score.success.score;
+    //globalScore = 10;
+    console.log(globalScore);
+  }
   };
 
   render(){
@@ -104,7 +278,7 @@ export default class ClientDetailsScreen extends React.Component{
           <ScrollView >
           {/* Score View */}
           <View style = {{flexDirection: 'row', justifyContent:'center'}}>
-            <Text style = {{fontWeight: 'bold', fontSize: 25}}>0.0</Text>
+            <Text style = {{fontWeight: 'bold', fontSize: 25}}>{globalScore}</Text>
           </View>
 
           {/* Client data View */}
@@ -115,34 +289,64 @@ export default class ClientDetailsScreen extends React.Component{
 
           {/* Client Overall Satisfaction table View list */}
           <View>
-            <View style = {{flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, marginHorizontal: 50}}>
+            <View style = {{
+              flexDirection: 'row', 
+              justifyContent: 'space-between', 
+              borderBottomWidth: 1, 
+              marginHorizontal: 50
+            }}>
               <Text>Succes: </Text>
-              <Text>0.0</Text>
+              <Text>{score.success.score}</Text>
             </View>
 
-            <View style = {{flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, marginHorizontal: 50}}>
+            <View style = {{
+              flexDirection: 'row', 
+              justifyContent: 'space-between', 
+              borderBottomWidth: 1, 
+              marginHorizontal: 50
+            }}>
               <Text>Partnership: </Text>
-              <Text>0.0</Text>
+              <Text>{score.partnership.score}</Text>
             </View>
 
-            <View style = {{flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, marginHorizontal: 50}}>
+            <View style = {{
+              flexDirection: 'row', 
+              justifyContent: 'space-between', 
+              borderBottomWidth: 1, 
+              marginHorizontal: 50
+            }}>
               <Text>Goal oriented: </Text>
-              <Text>0.0</Text>
+              <Text>{score.goalOriented.score}</Text>
             </View>
 
-            <View style = {{flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, marginHorizontal: 50}}>
+            <View style = {{
+              flexDirection: 'row', 
+              justifyContent: 'space-between', 
+              borderBottomWidth: 1, 
+              marginHorizontal: 50
+            }}>
               <Text>Quality: </Text>
-              <Text>0.0</Text>
+              <Text>{score.qualityControl.score}</Text>
             </View>
 
-            <View style = {{flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, marginHorizontal: 50}}>
+            <View style = {{
+              flexDirection: 'row', 
+              justifyContent: 'space-between', 
+              borderBottomWidth: 1, 
+              marginHorizontal: 50
+            }}>
               <Text>Velocity: </Text>
-              <Text>0.0</Text>
+              <Text>{score.developmentVelocity.score}</Text>
             </View>
 
-            <View style = {{flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, marginHorizontal: 50}}>
+            <View style = {{
+              flexDirection: 'row', 
+              justifyContent: 'space-between', 
+              borderBottomWidth: 1, 
+              marginHorizontal: 50
+            }}>
               <Text>Communication: </Text>
-              <Text>0.0</Text>
+              <Text>{score.communication.score}</Text>
             </View>
           </View>
 

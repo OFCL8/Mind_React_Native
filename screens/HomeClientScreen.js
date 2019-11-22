@@ -4,18 +4,76 @@ import { Notifications } from 'expo';
 import * as Permissions from 'expo-permissions';
 
 import * as firebase from 'firebase';
+import { NavigationEvents, withNavigation } from "react-navigation";
 
-export default class HomeClientScreen extends React.Component {
+var surveyName;
+
+class HomeClientScreen extends React.Component {
+
+  constructor(props){
+    super(props)
+  }
 
   state = {
     email: "",
+    company: '',
+    name: '',
     currentUser: "", 
-    role: ""
+    role: "",
+    newSurveys: false,
+    clientDetails: {},
+    survey: {},
+    trigger: false,
   };
 
   signOutUser = () => {
     firebase.auth().signOut();
   };
+
+  async componentDidMount() {
+    //var clientDetails = {};
+    var currentUser = await firebase.auth().currentUser.uid;
+    const { email } = await firebase.auth().currentUser;
+    db = firebase.firestore();
+    
+    const userData = await db.collection('Users')
+    .doc(String(currentUser))
+    .get()
+    .then((doc) => {
+      if(doc.exists){
+        console.log('User found');
+        this.setState({
+          clientDetails: doc.data(),
+          currentUser: currentUser,
+        });
+        //clientDetails = doc.data();
+        //console.log('Los details del cliente son: ', clientDetails);
+      }
+      else
+        console.log('User not found');
+    })
+    .catch((error) => {
+      console.log('Error getting document: ' , error)
+    });
+
+    const surveyData = await db.collection('leaderSurvey')
+    .doc(String(this.state.clientDetails.Company+this.state.clientDetails.Name))
+    .get()
+    .then((doc) => {
+      if(doc.exists){
+        console.log('Survey found!!!')
+        this.setState({
+          name: String(this.state.clientDetails.Company+this.state.clientDetails.Name),
+          newSurveys: !doc.get('answered'),
+          survey: doc.data(),
+        });
+      } else {
+        console.log('No new surveys :{');
+      }
+    })
+    .catch((error) => {
+      console.log('Could not connect to firebase: ', error)
+    });
 
   registerForPushNotificationsAsync = async() => {
     const { status: existingStatus } = await Permissions.getAsync(
@@ -60,23 +118,88 @@ export default class HomeClientScreen extends React.Component {
     await this.registerForPushNotificationsAsync();
   }
 
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text>Hi {this.state.email}!</Text>
+  surveyDone = () => {
+    db.collection('leaderSurvey').doc(this.state.name).get().then((doc) => {
+      this.setState({ newSurveys: !doc.get('answered') });
+    });
+  }
 
-        <TouchableOpacity style={{marginTop: 32}} onPress={this.signOutUser}>
-          <Text>LogOut</Text>
-        </TouchableOpacity>
-      </View>
-    )
+  answerSurvey = async () => {
+    this.props.navigation.navigate("ClientSurvey", {
+      survey: this.state.survey.status,
+      client: this.state.currentUser,
+      leader: this.state.clientDetails.LeaderUID,
+      name: this.state.name,
+    });
+  }
+
+  render() {
+    if(this.state.newSurveys){
+      return (
+        <View style={styles.container}>
+          <NavigationEvents onDidFocus={() => {
+            this.surveyDone();
+          }
+          } />
+          <Text>Hi {this.state.email}! You're logged in :) </Text>
+          <TouchableOpacity style = {styles.surveysOptions} onPress = {this.answerSurvey}>
+            <View>
+              <Text style = {{fontWeight: 'bold', fontSize: 15}}>You have new surveys!!!</Text>
+              <Text>Tap here to answer them</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity style = {styles.surveysOptions}>
+            <View>
+              <Text>Survey history</Text>
+            </View>
+          </TouchableOpacity>
+  
+          <TouchableOpacity style={{marginTop: 32}} onPress={this.signOutUser}>
+            <Text>LogOut</Text>
+          </TouchableOpacity>
+        </View>
+      )
+    }else{
+      return (
+        <View style={styles.container}>
+          <NavigationEvents onDidFocus={() => console.log('I am triggered 2')} />
+          <Text>Hi {this.state.email}! You're logged in :) </Text>
+          <TouchableOpacity style = {styles.surveysOptions}>
+            <View>
+              <Text>No pending surveys</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity style = {styles.surveysOptions}>
+            <View>
+              <Text>Survey history</Text>
+            </View>
+          </TouchableOpacity>
+  
+          <TouchableOpacity style={{marginTop: 32}} onPress={this.signOutUser}>
+            <Text>LogOut</Text>
+          </TouchableOpacity>
+        </View>
+      )
+    }
   }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center"
+    justifyContent: 'flex-start',
+    alignItems: "center",
+    margin: '5%',
+  },
+  surveysOptions: {
+    borderWidth: 1, 
+    borderRadius: 20, 
+    justifyContent: 'center', 
+    height: '10%', 
+    width: '70%', 
+    alignItems: 'center',
+    marginVertical: '3%',
   }
 });
+
+export default withNavigation (HomeClientScreen)
