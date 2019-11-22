@@ -1,8 +1,10 @@
 import React from 'react';
-import { Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList, Button} from "react-native";
+import { Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList } from "react-native";
 import Constants from 'expo-constants';
 import * as firebase from 'firebase';
 import { withNavigation } from 'react-navigation';
+import { Notifications } from 'expo';
+import * as Permissions from 'expo-permissions';
 
 const { width, height } = Dimensions.get('window');
 
@@ -20,17 +22,43 @@ class HomeLeaderScreen extends React.Component {
     clients: [],
     loading: true,
   };
-
-  signOutUser = () => {
-    firebase.auth().signOut();
-  };
-
+  
   addClient = () => {
     this.props.navigation.navigate("AddClient");
   }
+  
+  registerForPushNotificationsAsync = async() => {
+    const { status: existingStatus } = await Permissions.getAsync(
+      Permissions.NOTIFICATIONS
+    );
+    let finalStatus = existingStatus;
+  
+    // only ask if permissions have not already been determined, because
+    // iOS won't necessarily prompt the user a second time.
+    if (existingStatus !== 'granted') {
+      // Android remote notification permissions are granted during the app
+      // install, so this will only ask on iOS
+      const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+      finalStatus = status;
+    }
+  
+    // Stop here if the user did not grant permissions
+    if (finalStatus !== 'granted') { return; }
+    try {
+      // Get the token that uniquely identifies this device
+    let token = await Notifications.getExpoPushTokenAsync();
+  
+    // POST the token to your backend server from where you can retrieve it to send push notifications.
+    firebase.firestore().doc(`Users/${ this.currentUserLog }`).update({push_token:token});
+    firebase.database().ref('users/'+ this.currentUserLog +'/push_token').set(token);
+    }
+    catch(error)
+    {
+      console.log(error);
+    }
+  };
 
   componentDidMount = async () => {
-    
     db = await firebase.firestore();
 
     const { email } =  firebase.auth().currentUser;
@@ -39,6 +67,7 @@ class HomeLeaderScreen extends React.Component {
     this.currentUserLog = currentUser;
     const clients = await this.getClients();
     this.setState({ email });
+    await this.registerForPushNotificationsAsync();
   }
 
   getClients = async () => {
@@ -75,7 +104,7 @@ class HomeLeaderScreen extends React.Component {
         </View>
       </TouchableOpacity>
     );
-  }
+  } 
 
   render() {
     if(this.state.loading){
@@ -93,11 +122,8 @@ class HomeLeaderScreen extends React.Component {
             keyExtractor = {item => String(item.Email)}
             renderItem = {this.renderClients}
           />
-          <TouchableOpacity onPress={this.signOutUser}>
-            <Text >LogOut</Text>
-          </TouchableOpacity>
           <TouchableOpacity style={styles.addbutton} onPress={this.addClient}>
-            <Text style={{fontSize:30}}>+</Text>
+            <Text style={{fontSize: 20}}>+</Text>
           </TouchableOpacity>
         </ScrollView>
       )
@@ -121,7 +147,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
     borderRadius: 60,
-    bottom: height - 755,
+    bottom: height - 660,
+    elevation: 2,
     height: 60,
     justifyContent: 'center',
     left: width - 100,

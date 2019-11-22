@@ -1,16 +1,12 @@
 import React from "react";
-import { Dimensions, SafeAreaView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
+import { Button, Dimensions, SafeAreaView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
 import Constants from 'expo-constants';
 import { Input } from 'react-native-elements';
-
+import LoadingScreen from "./LoadingScreen";
 const { width, height } = Dimensions.get('window');
 import * as firebase from 'firebase';
-import 'firebase/firestore';
 
 export default class AddClientScreen extends React.Component {
-  static navigationOptions = {
-    title: 'Add',
-  };
   state = {
     LeaderUID: firebase.auth().currentUser.uid,
     Name: "",
@@ -18,7 +14,8 @@ export default class AddClientScreen extends React.Component {
     Email: "",
     Password: "",
     ConfirmPassword: "",
-    errorMessage: null
+    errorMessage: null,
+    loading: true
   }
 
   handleChangeText(newText) {
@@ -26,6 +23,17 @@ export default class AddClientScreen extends React.Component {
       value: newText
     })
   }
+
+  static navigationOptions = () => {
+    let headerTitle = 'Add Client';
+    let headerRight = (<Button
+    title="Log Out" 
+    type="clear"
+    color="blue"
+    style={{fontSize: 15, color: 'white'}}
+    onPress={()=>{ firebase.auth().signOut(); }}>Log Out</Button>);
+    return { headerTitle, headerRight };
+  };
 
   addClient = () => {
     const { LeaderUID, Name, Company, Email, Password, ConfirmPassword } = this.state;
@@ -61,64 +69,73 @@ export default class AddClientScreen extends React.Component {
     }
   }
 
+  componentDidMount() {
+    this.setState({loading: false});
+  }
+
   render() {
-    return (
-      <SafeAreaView style={styles.container}>
-         <StatusBar backgroundColor="blue" barStyle="light-content" />
-
-         <Input
-          placeholder='Name'
-          defaultValue={this.state.Name}
-          onChangeText={Name => this.setState({ Name })}
-          value={this.state.Name}
-         />
-
-         
-         <Input 
-          placeholder='Company'
-          defaultValue={this.state.Company}
-          onChangeText={Company => this.setState({ Company })}
-          value={this.state.Company}
-         />
-
-         
-         <Input 
-          autoCapitalize="none"
-          placeholder='Email'
-          defaultValue={this.state.Email}
-          onChangeText={Email => this.setState({ Email })}
-          value={this.state.Email}
-         />
-
-         
-         <Input 
-          autoCapitalize="none"
-          placeholder='Password'
-          defaultValue={this.state.Password}
-          secureTextEntry
-          onChangeText={Password => this.setState({ Password })}
-          value={this.state.Password}
-         />
-
-        
-         <Input 
-          autoCapitalize="none"
-          placeholder='Confirm Password'
-          defaultValue={this.state.ConfirmPassword}
-          secureTextEntry
-          onChangeText={ConfirmPassword => this.setState({ ConfirmPassword })}
-          value={this.state.ConfirmPassword}
-         />
-
-         <TouchableOpacity style={styles.addbutton} onPress={this.addClient}>
-            <Text style={{fontSize:0}}>+</Text>
-          </TouchableOpacity>
-
-          <View style={styles.errorMessage}>
-            { this.state.errorMessage && <Text style={styles.error}>{this.state.errorMessage}</Text>}
-          </View>
-      </SafeAreaView>
-    )
+    if(this.state.loading) {
+      return <LoadingScreen/>;
+    }
+    else {
+      return (
+        <SafeAreaView style={styles.container}>
+           <StatusBar backgroundColor="blue" barStyle="light-content" />
+  
+           <Input
+            placeholder='Name'
+            defaultValue={this.state.Name}
+            onChangeText={Name => this.setState({ Name })}
+            value={this.state.Name}
+           />
+  
+           
+           <Input 
+            placeholder='Company'
+            defaultValue={this.state.Company}
+            onChangeText={Company => this.setState({ Company })}
+            value={this.state.Company}
+           />
+  
+           
+           <Input 
+            autoCapitalize="none"
+            placeholder='Email'
+            defaultValue={this.state.Email}
+            onChangeText={Email => this.setState({ Email })}
+            value={this.state.Email}
+           />
+  
+           
+           <Input 
+            autoCapitalize="none"
+            placeholder='Password'
+            defaultValue={this.state.Password}
+            secureTextEntry
+            onChangeText={Password => this.setState({ Password })}
+            value={this.state.Password}
+           />
+  
+          
+           <Input 
+            autoCapitalize="none"
+            placeholder='Confirm Password'
+            defaultValue={this.state.ConfirmPassword}
+            secureTextEntry
+            onChangeText={ConfirmPassword => this.setState({ ConfirmPassword })}
+            value={this.state.ConfirmPassword}
+           />
+  
+           <TouchableOpacity style={styles.addbutton} onPress={this.addClient}>
+              <Text style={{fontSize: 20}}>+</Text>
+            </TouchableOpacity>
+  
+            <View style={styles.errorMessage}>
+              { this.state.errorMessage && <Text style={styles.error}>{this.state.errorMessage}</Text>}
+            </View>
+        </SafeAreaView>
+      );
+    }
   }
 }
 
@@ -135,7 +152,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
     borderRadius: 60,
-    bottom: height - 850,
+    bottom: height - 730,
+    elevation: 2,
     height: 60,
     justifyContent: 'center',
     left: width - 100,

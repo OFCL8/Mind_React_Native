@@ -1,8 +1,9 @@
 import React from 'react';
 import { Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList, Button} from "react-native";
 import Constants from 'expo-constants';
-import * as firebase from 'firebase';
 import { withNavigation } from 'react-navigation';
+
+import * as firebase from 'firebase';
 
 const { width, height } = Dimensions.get('window');
 
@@ -19,10 +20,6 @@ class HomeCTOScreen extends React.Component {
     role: "",
     users: [],
     loading: true,
-  };
-
-  signOutUser = () => {
-    firebase.auth().signOut();
   };
 
   addUser = () => {
@@ -93,11 +90,8 @@ class HomeCTOScreen extends React.Component {
             keyExtractor = {item => String(item.Email)}
             renderItem = {this.renderUsers}
           />
-          <TouchableOpacity onPress={this.signOutUser}>
-            <Text >LogOut</Text>
-          </TouchableOpacity>
           <TouchableOpacity style={styles.addbutton} onPress={this.addUser}>
-            <Text style={{fontSize:0}}>+</Text>
+            <Text style={{fontSize: 20}}>+</Text>
           </TouchableOpacity>
         </ScrollView>
       )
@@ -121,7 +115,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
     borderRadius: 60,
-    bottom: height - 755,
+    bottom: height - 660,
+    elevation: 2,
     height: 60,
     justifyContent: 'center',
     left: width - 100,
@@ -150,5 +145,4 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   }
 });
-
 export default withNavigation(HomeCTOScreen);
