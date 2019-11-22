@@ -82,19 +82,31 @@ export default class ClientDetailsScreen extends React.Component{
     };
   };
 
-  async componentDidMount(){
+  componentDidMount(){
+    score.partnership.score = 0;
+    score.qualityControl.score = 0;
+    score.communication.score = 0;
+    score.developmentVelocity.score = 0;
+    score.goalOriented.score = 0;
+    score.success.score = 0;
+    question = [];
+    globalScore = 0;
     db = firebase.firestore();
+    const clientData = this.props.navigation.getParam('clientDetails', 'NO-ID');
+        
     this.setState({
-      clientDetails: this.props.navigation.getParam('clientDetails', 'NO-ID')
-    }, async () => {
-      console.log('Awaiting data...');
-      const data = await this.getData();
-      //console.log('Get data finished!!!');
-      // this.setState({
-      //   loading: false,
-      // })
+      clientDetails: clientData
+    }, () => {
+      this.getData();
+      console.log('Got the data, rendering screen!!')
+      this.setState({
+        loading: false,
+      });
     });
-    console.log('setting params');
+
+    //this.getData();
+
+    //console.log('setting params');
     this.props.navigation.setParams({editSurvey: this.editSurvey});
     this.props.navigation.setParams({popupMenu: this.changeValue});
   }
@@ -115,29 +127,51 @@ export default class ClientDetailsScreen extends React.Component{
   getData = async () => {
     let temp = this.state.clientDetails.Company + this.state.clientDetails.Name;
     console.log('Trying to get: ' + temp);
-    db
+    const response = await db
     .collection('answeredSurveys').where('name', '==', temp)
     .get()
     .then((query) => {
-      if(query.exists){
-        query.forEach(element => {
-          console.log('Pushe data to question!!!');
-          question.push(element.data());
-        });
-        console.log('Pushed all data!!!');
+      query.forEach(doc => {
+        question.push(doc.data());
+      });
+
+      console.log('Finished pushing data, analyzing.')
+
+      if(question.length != 0){
+        console.log(question.length);
+        console.log('Question is not empty');
         this.analyzeData();
-        console.log('Data analysed!!');
         this.setScores();
-        console.log('Scores set');
-        this.setState({
-          loading: false,
-        })
       }
-    }).catch( (error) => {
-      console.log('User not found', error);
-      this.setState({
-        loading: false,
-      })
+      
+      // if(query.exists){
+      //query.forEach(doc => {
+        //console.log(doc.data());
+      //});
+      // }else{
+      //   console.log('No documents available!!!');
+      // }
+      // if(query.exists){
+      //   console.log('The document existss!!!')
+      //   // query.forEach(element => {
+      //   //   console.log('Pushe data to question!!!');
+      //   //   question.push(element.data());
+      //   // });
+      //   // console.log('Pushed all data!!!');
+      //   // this.analyzeData();
+      //   // console.log('Data analysed!!');
+      //   // this.setScores();
+      //   // console.log('Scores set');
+      //   // this.setState({
+      //   //   loading: false,
+      //   // })
+      // }else
+      //   console.log('Document not found!!!!');
+    }).catch(error => {
+      console.log('Error connecting to FB', error);
+      // this.setState({
+      //   loading: false,
+      // })
     });
   }
   
@@ -173,12 +207,6 @@ export default class ClientDetailsScreen extends React.Component{
   
   setScores = () => {
     globalScore = 0;
-    score.partnership.score = 0;
-    score.qualityControl.score = 0;
-    score.communication.score = 0;
-    score.developmentVelocity.score = 0;
-    score.goalOriented.score = 0;
-    score.success.score = 0;
     for(let i = 0 ; i < partnership.length ; i++)
     {
       score.partnership.score += (partnership[i].answer * (score.partnership.weight / partnership.length)) / 5;
