@@ -11,7 +11,7 @@ var surveyName;
 class HomeClientScreen extends React.Component {
 
   constructor(props){
-    super(props)
+    super(props);
   }
 
   state = {
@@ -35,6 +35,7 @@ class HomeClientScreen extends React.Component {
     var currentUser = await firebase.auth().currentUser.uid;
     const { email } = await firebase.auth().currentUser;
     db = firebase.firestore();
+    await this.registerForPushNotificationsAsync();
     
     const userData = await db.collection('Users')
     .doc(String(currentUser))
@@ -53,7 +54,7 @@ class HomeClientScreen extends React.Component {
         console.log('User not found');
     })
     .catch((error) => {
-      console.log('Error getting document: ' , error)
+      console.log('Error getting document: ' , error);
     });
 
     const surveyData = await db.collection('leaderSurvey')
@@ -74,6 +75,7 @@ class HomeClientScreen extends React.Component {
     .catch((error) => {
       console.log('Could not connect to firebase: ', error)
     });
+  }
 
   registerForPushNotificationsAsync = async() => {
     const { status: existingStatus } = await Permissions.getAsync(
@@ -108,15 +110,6 @@ class HomeClientScreen extends React.Component {
       console.log(error);
     }
   };
-
-  componentDidMount = async () => {
-    const { email } =  firebase.auth().currentUser;
-    
-    const currentUser = firebase.auth().currentUser.uid;
-    this.currentUserLog = currentUser;
-    this.setState({ email });
-    await this.registerForPushNotificationsAsync();
-  }
 
   surveyDone = () => {
     db.collection('leaderSurvey').doc(this.state.name).get().then((doc) => {
@@ -202,4 +195,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default withNavigation (HomeClientScreen)
+export default withNavigation(HomeClientScreen);

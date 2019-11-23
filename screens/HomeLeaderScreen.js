@@ -126,7 +126,7 @@ class HomeLeaderScreen extends React.Component {
             <Text style={{fontSize: 20}}>+</Text>
           </TouchableOpacity>
         </ScrollView>
-      )
+      );
     }
   }
 }

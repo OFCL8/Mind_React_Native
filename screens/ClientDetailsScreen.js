@@ -256,7 +256,6 @@ export default class ClientDetailsScreen extends React.Component{
     //globalScore = 10;
     console.log(globalScore);
   }
-  };
 
   render(){
     const { params } = this.props.navigation.state;
@@ -370,12 +369,12 @@ export default class ClientDetailsScreen extends React.Component{
               datasets: [
                 {
                   data: [
-                    Math.random() * 100,
-                    Math.random() * 100,
-                    Math.random() * 100,
-                    Math.random() * 100,
-                    Math.random() * 100,
-                    Math.random() * 100
+                    score.partnership.score,
+                    score.goalOriented.score,
+                    score.qualityControl.score,
+                    score.developmentVelocity.score,
+                    score.communication.score,
+                    score.success.score
                   ]
                 }
               ]
@@ -427,7 +426,7 @@ export default class ClientDetailsScreen extends React.Component{
       );
     }
   }
-}
+} 
 
 const styles = StyleSheet.create({
   container: {
