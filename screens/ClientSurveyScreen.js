@@ -3,7 +3,7 @@ import { Button, FlatList, ScrollView, StyleSheet, Text, View } from 'react-nati
 import QuestionCard from '../components/QuestionCard';
 import Data from '../JSON/questions.json';
 import * as firebase from 'firebase';
-import { StackActions } from 'react-navigation';
+import LoadingScreen from "./LoadingScreen";
 
 var months = [
   "January",
@@ -53,22 +53,13 @@ export default class ClientSurveyScreen extends React.Component {
   }
 
   componentDidMount = async () => {
-
-    try{
-      db = await firebase.firestore();
-      console.log('Connection succesfull');
-    }catch(e){
-      console.error(e);
-      alert('aasas','asdasdasd');
-    }
-
     this.setState({
       status: this.props.navigation.getParam('survey'),
       idClient: this.props.navigation.getParam('client'),
       idLeader: this.props.navigation.getParam('leader'),
       name: this.props.navigation.getParam('name')
     });
-    this.setState({loading: false})
+    this.setState({loading: false});
   }
 
   renderQuestion = ({index,item}) => {
@@ -104,41 +95,34 @@ export default class ClientSurveyScreen extends React.Component {
     },async () => {
       
       try{
-        const response = await db.collection('answeredSurveys').add(this.state);      
-        console.log('Survey sended succesfully');
+        const response = await db.collection('answeredSurveys').add(this.state);
         alert('Survey saved succesfully','asdasdasd');
         db.collection('leaderSurvey').doc(this.state.name).update({answered: true});
-        //this.props.navigation.navigate.pop(1);
         this.props.navigation.goBack(null);
-        //this.props.navigation.dispatch(StackActions.popToTop());
       }catch(e) {
         console.log(e);
         alert('Save failed');
       }
-      //this.props.getParam('isAnswered');
-      //console.log('sjdhhb')
     });
   }
-/*
-  async send() {
-    console.log('adfhsfgjdx')
-    const response = await this.sendSurvey();
-    console.log('-------------------')
-  }
-*/
 
   render() {
-    return(
-      <ScrollView>
-      <FlatList
-        data = {Data}
-        extraData = {this.state.loading}
-        keyExtractor = {item => String(item.id)}
-        renderItem = {this.renderQuestion}
-      />
-      <Button title = 'Send' onPress = {this.sendSurvey}/>
-      </ScrollView>
-    );
+    if(this.state.loading){
+      return <LoadingScreen/>;
+    }
+    else {
+      return(
+        <ScrollView>
+        <FlatList
+          data = {Data}
+          extraData = {this.state.loading}
+          keyExtractor = {item => String(item.id)}
+          renderItem = {this.renderQuestion}
+        />
+        <Button title = 'Send' onPress = {this.sendSurvey}/>
+        </ScrollView>
+      );
+    }
   } 
 }
 

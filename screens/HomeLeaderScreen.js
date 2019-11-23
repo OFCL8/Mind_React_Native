@@ -5,6 +5,7 @@ import * as firebase from 'firebase';
 import { withNavigation } from 'react-navigation';
 import { Notifications } from 'expo';
 import * as Permissions from 'expo-permissions';
+import LoadingScreen from "./LoadingScreen";
 
 const { width, height } = Dimensions.get('window');
 
@@ -108,10 +109,7 @@ class HomeLeaderScreen extends React.Component {
 
   render() {
     if(this.state.loading){
-      return (
-      <View style = {styles.container}>
-        <Text>Loading</Text>
-      </View>)
+      return <LoadingScreen/>;
     }else{
       return (
         <ScrollView style={styles.container}>

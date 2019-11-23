@@ -5,7 +5,7 @@ import * as Permissions from 'expo-permissions';
 
 import * as firebase from 'firebase';
 import { NavigationEvents, withNavigation } from "react-navigation";
-
+import LoadingScreen from "./LoadingScreen";
 var surveyName;
 
 class HomeClientScreen extends React.Component {
@@ -24,6 +24,7 @@ class HomeClientScreen extends React.Component {
     clientDetails: {},
     survey: {},
     trigger: false,
+    loading: true,
   };
 
   signOutUser = () => {
@@ -31,9 +32,7 @@ class HomeClientScreen extends React.Component {
   };
 
   async componentDidMount() {
-    //var clientDetails = {};
     var currentUser = await firebase.auth().currentUser.uid;
-    const { email } = await firebase.auth().currentUser;
     db = firebase.firestore();
     await this.registerForPushNotificationsAsync();
     
@@ -42,13 +41,13 @@ class HomeClientScreen extends React.Component {
     .get()
     .then((doc) => {
       if(doc.exists){
-        console.log('User found');
         this.setState({
           clientDetails: doc.data(),
           currentUser: currentUser,
         });
-        //clientDetails = doc.data();
-        //console.log('Los details del cliente son: ', clientDetails);
+        this.setState({
+          loading: false,
+        });
       }
       else
         console.log('User not found');
@@ -62,7 +61,6 @@ class HomeClientScreen extends React.Component {
     .get()
     .then((doc) => {
       if(doc.exists){
-        console.log('Survey found!!!')
         this.setState({
           name: String(this.state.clientDetails.Company+this.state.clientDetails.Name),
           newSurveys: !doc.get('answered'),
@@ -127,52 +125,56 @@ class HomeClientScreen extends React.Component {
   }
 
   render() {
-    if(this.state.newSurveys){
-      return (
-        <View style={styles.container}>
-          <NavigationEvents onDidFocus={() => {
-            this.surveyDone();
-          }
-          } />
-          <Text>Hi {this.state.email}! You're logged in :) </Text>
-          <TouchableOpacity style = {styles.surveysOptions} onPress = {this.answerSurvey}>
-            <View>
-              <Text style = {{fontWeight: 'bold', fontSize: 15}}>You have new surveys!!!</Text>
-              <Text>Tap here to answer them</Text>
+    if(this.state.loading){
+      return <LoadingScreen/>;
+    }
+    else {
+      if(this.state.newSurveys){
+        return (
+          <View style={styles.container}>
+            <NavigationEvents onDidFocus={() => {
+              this.surveyDone();
+            }
+            } />
+            <Text>Hi {this.state.email}! You're logged in :) </Text>
+            <TouchableOpacity style = {styles.surveysOptions} onPress = {this.answerSurvey}>
+              <View>
+                <Text style = {{fontWeight: 'bold', fontSize: 15}}>You have a new survey!</Text>
+                <Text>Tap here to answer.</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity style = {styles.surveysOptions}>
+              <View>
+                <Text>Survey history</Text>
+              </View>
+            </TouchableOpacity>
+    
+            <TouchableOpacity style = {styles.surveysOptions} onPress={this.signOutUser}>
+              <Text>LogOut</Text>
+            </TouchableOpacity>
+          </View>
+        )
+      }else{
+          return (
+            <View style={styles.container}>
+              <Text>Hi {this.state.email}! You're logged in :) </Text>
+              <TouchableOpacity style = {styles.surveysOptions}>
+                <View>
+                  <Text>No pending surveys</Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity style = {styles.surveysOptions}>
+                <View>
+                  <Text>Survey history</Text>
+                </View>
+              </TouchableOpacity>
+      
+              <TouchableOpacity style = {styles.surveysOptions} onPress={this.signOutUser}>
+              <Text>LogOut</Text>
+            </TouchableOpacity>
             </View>
-          </TouchableOpacity>
-          <TouchableOpacity style = {styles.surveysOptions}>
-            <View>
-              <Text>Survey history</Text>
-            </View>
-          </TouchableOpacity>
-  
-          <TouchableOpacity style={{marginTop: 32}} onPress={this.signOutUser}>
-            <Text>LogOut</Text>
-          </TouchableOpacity>
-        </View>
-      )
-    }else{
-      return (
-        <View style={styles.container}>
-          <NavigationEvents onDidFocus={() => console.log('I am triggered 2')} />
-          <Text>Hi {this.state.email}! You're logged in :) </Text>
-          <TouchableOpacity style = {styles.surveysOptions}>
-            <View>
-              <Text>No pending surveys</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity style = {styles.surveysOptions}>
-            <View>
-              <Text>Survey history</Text>
-            </View>
-          </TouchableOpacity>
-  
-          <TouchableOpacity style={{marginTop: 32}} onPress={this.signOutUser}>
-            <Text>LogOut</Text>
-          </TouchableOpacity>
-        </View>
-      )
+          );
+      }
     }
   }
 }

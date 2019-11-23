@@ -155,7 +155,6 @@ export default class ClientDetailsScreen extends React.Component{
   
   getData = async () => {
     let temp = this.state.clientDetails.Company + this.state.clientDetails.Name;
-    console.log('Trying to get: ' + temp);
     const response = await db
     .collection('answeredSurveys').where('name', '==', temp)
     .get()
@@ -167,16 +166,11 @@ export default class ClientDetailsScreen extends React.Component{
       console.log('Finished pushing data, analyzing.')
 
       if(question.length != 0){
-        console.log(question.length);
-        console.log('Question is not empty');
         this.analyzeData();
         this.setScores();
       }
     }).catch(error => {
       console.log('Error connecting to FB', error);
-      // this.setState({
-      //   loading: false,
-      // })
     });
   }
   
@@ -216,45 +210,37 @@ export default class ClientDetailsScreen extends React.Component{
     {
       score.partnership.score += (partnership[i].answer * (score.partnership.weight / partnership.length)) / 5;
     }
-    console.log(score.partnership.score);
     globalScore += score.partnership.score;
   
     for(let i = 0 ; i < goalOriented.length ; i++)
     {
       score.goalOriented.score += (goalOriented[i].answer * (score.goalOriented.weight / goalOriented.length)) / 5;
     }
-    console.log(score.goalOriented.score);
     globalScore += score.goalOriented.score;
   
     for(let i = 0 ; i < qualityControl.length ; i++)
     {
       score.qualityControl.score += (qualityControl[i].answer * (score.qualityControl.weight / qualityControl.length)) / 5;
     }
-    console.log(score.qualityControl.score);
     globalScore += score.qualityControl.score;
   
     for(let i = 0 ; i < developmentVelocity.length ; i++)
     {
       score.developmentVelocity.score += (developmentVelocity[i].answer * (score.developmentVelocity.weight / developmentVelocity.length)) / 5;
     }
-    console.log(score.developmentVelocity.score);
     globalScore += score.developmentVelocity.score;
   
     for(let i = 0 ; i < communication.length ; i++)
     {
       score.communication.score += (communication[i].answer * (score.communication.weight / communication.length)) / 5;
     }
-    console.log(score.communication.score);
     globalScore += score.communication.score;
   
     for(let i = 0 ; i < success.length ; i++)
     {
       score.success.score += (success[i].answer * (score.success.weight / success.length)) / 5;
     }
-    console.log(score.success.score);
     globalScore += score.success.score;
-    //globalScore = 10;
-    console.log(globalScore);
   }
 
   render(){
