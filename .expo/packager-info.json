@@ -1,9 +1,9 @@
 {
   "expoServerPort": 19000,
-  "packagerPort": 19001,
-  "packagerPid": 13928,
-  "expoServerNgrokUrl": "https://u6-mwn.ofcl10.mind-react-native.exp.direct",
-  "packagerNgrokUrl": "https://packager.u6-mwn.ofcl10.mind-react-native.exp.direct",
-  "ngrokPid": 14948,
+  "packagerPort": null,
+  "packagerPid": null,
+  "expoServerNgrokUrl": "https://dx-mqe.ofcl10.mind-react-native.exp.direct",
+  "packagerNgrokUrl": "https://packager.dx-mqe.ofcl10.mind-react-native.exp.direct",
+  "ngrokPid": 14344,
   "devToolsPort": 19002
 }

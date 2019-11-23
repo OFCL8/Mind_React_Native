@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList} from "react-native";
+import { Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList } from "react-native";
 import Constants from 'expo-constants';
 import * as firebase from 'firebase';
 import { withNavigation } from 'react-navigation';
@@ -22,11 +22,7 @@ class HomeLeaderScreen extends React.Component {
     clients: [],
     loading: true,
   };
-
-  signOutUser = () => {
-    firebase.auth().signOut();
-  };
-
+  
   addClient = () => {
     this.props.navigation.navigate("AddClient");
   }
@@ -63,7 +59,6 @@ class HomeLeaderScreen extends React.Component {
   };
 
   componentDidMount = async () => {
-    
     db = await firebase.firestore();
 
     const { email } =  firebase.auth().currentUser;
@@ -97,6 +92,7 @@ class HomeLeaderScreen extends React.Component {
     const openDetailsScreen = () => {
       this.props.navigation.navigate("DetailsClient", {
         clientDetails: item,
+
       })
     }
 
@@ -125,15 +121,12 @@ class HomeLeaderScreen extends React.Component {
             extraData = {this.state.loading}
             keyExtractor = {item => String(item.Email)}
             renderItem = {this.renderClients}
-          />     
-          <TouchableOpacity onPress={this.signOutUser}>
-            <Text >LogOut</Text>
-          </TouchableOpacity>
+          />
           <TouchableOpacity style={styles.addbutton} onPress={this.addClient}>
-            <Text style={{fontSize:0}}>+</Text>
+            <Text style={{fontSize: 20}}>+</Text>
           </TouchableOpacity>
         </ScrollView>
-      )
+      );
     }
   }
 }
@@ -154,7 +147,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
     borderRadius: 60,
-    bottom: height - 755,
+    bottom: height - 660,
+    elevation: 2,
     height: 60,
     justifyContent: 'center',
     left: width - 100,

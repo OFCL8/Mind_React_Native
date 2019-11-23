@@ -22,10 +22,6 @@ class HomeCTOScreen extends React.Component {
     loading: true,
   };
 
-  signOutUser = () => {
-    firebase.auth().signOut();
-  };
-
   addUser = () => {
     this.props.navigation.navigate("AddCTO");
   }
@@ -94,11 +90,8 @@ class HomeCTOScreen extends React.Component {
             keyExtractor = {item => String(item.Email)}
             renderItem = {this.renderUsers}
           />
-          <TouchableOpacity onPress={this.signOutUser}>
-            <Text >LogOut</Text>
-          </TouchableOpacity>
           <TouchableOpacity style={styles.addbutton} onPress={this.addUser}>
-            <Text style={{fontSize:0}}>+</Text>
+            <Text style={{fontSize: 20}}>+</Text>
           </TouchableOpacity>
         </ScrollView>
       )
@@ -122,7 +115,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
     borderRadius: 60,
-    bottom: height - 755,
+    bottom: height - 660,
+    elevation: 2,
     height: 60,
     justifyContent: 'center',
     left: width - 100,

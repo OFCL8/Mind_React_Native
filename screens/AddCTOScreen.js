@@ -1,20 +1,15 @@
 import React from "react";
-import { Dimensions, SafeAreaView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
+import { Button, Dimensions, SafeAreaView, StatusBar, StyleSheet, Text, TextInput, Modal, TouchableOpacity, View, Alert } from "react-native";
 import Constants from 'expo-constants';
 import { CheckBox, Input } from 'react-native-elements';
-
+import LoadingScreen from "./LoadingScreen";
 const { width, height } = Dimensions.get('window');
 import * as firebase from 'firebase';
-import 'firebase/firestore';
 
 export default class AddCTOScreen extends React.Component {
   constructor(props) {
     super(props);
   }
-
-  static navigationOptions = {
-    title: 'Add',
-  };
 
   state = {
     CTOUID: firebase.auth().currentUser.uid,
@@ -26,13 +21,30 @@ export default class AddCTOScreen extends React.Component {
     Role: "CTO",
     checked1: true,
     checked2: false,
-    errorMessage: null
+    errorMessage: null,
+    loading: true
   }
+
+  static navigationOptions = ({ navigation }) => {
+    const { params = {} } = navigation.state;
+    let headerTitle = 'Add User';
+    let headerRight = (<Button
+    title="Log Out" 
+    type="clear"
+    color="blue"
+    style={{fontSize: 15, color: 'white'}}
+    onPress={()=>{ firebase.auth().signOut(); }}>Log Out</Button>);
+    return { headerTitle, headerRight };
+  };
 
   handleChangeText(newText) {
     this.setState({
       value: newText
     })
+  }
+
+  componentDidMount() {
+    this.setState({loading: false});
   }
 
   addUser = () => {
@@ -71,86 +83,91 @@ export default class AddCTOScreen extends React.Component {
   }
 
   render() {
-    return (
-      <SafeAreaView style={styles.container}>
-         <StatusBar backgroundColor="blue" barStyle="light-content" />
-         <CheckBox
-            center
-            title='CTO'
-            checkedIcon='dot-circle-o'
-            uncheckedIcon='circle-o'
-            checked={this.state.checked1}
-            onPress={() => {
-              this.setState({checked1: true}),
-              this.setState({checked2: false}),
-              this.setState({Role: "CTO"})
-            }}
-          />
-          <CheckBox
-            center
-            title='Leader'
-            checkedIcon='dot-circle-o'
-            uncheckedIcon='circle-o'
-            checked={this.state.checked2}
-            onPress={() => {
-              this.setState({checked2: true}),
-              this.setState({checked1: false}),
-              this.setState({Role: "Leader"})
-            }}
-          />
-         <Input
-          placeholder='Name'
-          defaultValue={this.state.Name}
-          onChangeText={Name => this.setState({ Name })}
-          value={this.state.Name}
-         />
-
-         
-         <Input 
-          placeholder='Company'
-          defaultValue={this.state.Company}
-          onChangeText={Company => this.setState({ Company })}
-          value={this.state.Company}
-         />
-
-         
-         <Input 
-          autoCapitalize="none"
-          placeholder='Email'
-          defaultValue={this.state.Email}
-          onChangeText={Email => this.setState({ Email })}
-          value={this.state.Email}
-         />
-
-         
-         <Input 
-          autoCapitalize="none"
-          placeholder='Password'
-          defaultValue={this.state.Password}
-          secureTextEntry
-          onChangeText={Password => this.setState({ Password })}
-          value={this.state.Password}
-         />
-
-        
-         <Input 
-          autoCapitalize="none"
-          placeholder='Confirm Password'
-          defaultValue={this.state.ConfirmPassword}
-          secureTextEntry
-          onChangeText={ConfirmPassword => this.setState({ ConfirmPassword })}
-          value={this.state.ConfirmPassword}
-         />
-
-         <TouchableOpacity style={styles.addbutton} onPress={this.addUser}>
-            <Text style={{fontSize:0}}>+</Text>
-          </TouchableOpacity>
-
-          <View style={styles.errorMessage}>
-            { this.state.errorMessage && <Text style={styles.error}>{this.state.errorMessage}</Text>}
-          </View>
-      </SafeAreaView>
-    )
+    if(this.state.loading){
+      return <LoadingScreen/>;
+    }
+    else {
+      return (
+        <SafeAreaView style={styles.container}>
+           <StatusBar backgroundColor="blue" barStyle="light-content" />
+           <CheckBox
+              center
+              title='CTO'
+              checkedIcon='dot-circle-o'
+              uncheckedIcon='circle-o'
+              checked={this.state.checked1}
+              onPress={() => {
+                this.setState({checked1: true}),
+                this.setState({checked2: false}),
+                this.setState({Role: "CTO"})
+              }}
+            />
+            <CheckBox
+              center
+              title='Leader'
+              checkedIcon='dot-circle-o'
+              uncheckedIcon='circle-o'
+              checked={this.state.checked2}
+              onPress={() => {
+                this.setState({checked2: true}),
+                this.setState({checked1: false}),
+                this.setState({Role: "Leader"})
+              }}
+            />
+           <Input
+            placeholder='Name'
+            defaultValue={this.state.Name}
+            onChangeText={Name => this.setState({ Name })}
+            value={this.state.Name}
+           />
+  
+           
+           <Input 
+            placeholder='Company'
+            defaultValue={this.state.Company}
+            onChangeText={Company => this.setState({ Company })}
+            value={this.state.Company}
+           />
+  
+           
+           <Input 
+            autoCapitalize="none"
+            placeholder='Email'
+            defaultValue={this.state.Email}
+            onChangeText={Email => this.setState({ Email })}
+            value={this.state.Email}
+           />
+  
+           
+           <Input 
+            autoCapitalize="none"
+            placeholder='Password'
+            defaultValue={this.state.Password}
+            secureTextEntry
+            onChangeText={Password => this.setState({ Password })}
+            value={this.state.Password}
+           />
+  
+          
+           <Input 
+            autoCapitalize="none"
+            placeholder='Confirm Password'
+            defaultValue={this.state.ConfirmPassword}
+            secureTextEntry
+            onChangeText={ConfirmPassword => this.setState({ ConfirmPassword })}
+            value={this.state.ConfirmPassword}
+           />
+  
+           <TouchableOpacity style={styles.addbutton} onPress={this.addUser}>
+              <Text style={{fontSize: 20}}>+</Text>
+            </TouchableOpacity>
+  
+            <View style={styles.errorMessage}>
+              { this.state.errorMessage && <Text style={styles.error}>{this.state.errorMessage}</Text>}
+            </View>
+        </SafeAreaView>
+      );
+    }
   }
 }
 
@@ -167,7 +184,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
     borderRadius: 60,
-    bottom: height - 755,
+    bottom: height - 730,
+    elevation: 2,
     height: 60,
     justifyContent: 'center',
     left: width - 100,

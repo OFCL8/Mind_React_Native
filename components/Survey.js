@@ -41,27 +41,28 @@ class Survey extends React.Component {
   state = {
     idLeader: '',
     idCliente: '',
+    answered: false,
     date: {
       day: '',
       month: '',
       year: '',
     },
     status: [
-      {question: 0, status: true},
-      {question: 1, status: true},
-      {question: 2, status: true},
-      {question: 3, status: true},
-      {question: 4, status: true},
-      {question: 5, status: true},
-      {question: 6, status: true},
-      {question: 7, status: true},
-      {question: 8, status: true},
-      {question: 9, status: true},
-      {question: 10, status: true},
-      {question: 11, status: true},
-      {question: 12, status: true},
-      {question: 13, status: true},
-      {question: 14, status: true},
+      {question: 0, status: true, teamskill: [2,4]},
+      {question: 1, status: true, teamskill:[2]},
+      {question: 2, status: true, teamskill:[3]},
+      {question: 3, status: true, teamskill:[4]},
+      {question: 4, status: true, teamskill:[5]},
+      {question: 5, status: true, teamskill:[1]},
+      {question: 6, status: true, teamskill:[2]},
+      {question: 7, status: true, teamskill:[3]},
+      {question: 8, status: true, teamskill:[4]},
+      {question: 9, status: true, teamskill:[5]},
+      {question: 10, status: true, teamskill:[1]},
+      {question: 11, status: true, teamskill:[2]},
+      {question: 12, status: true, teamskill:[3]},
+      {question: 13, status: true, teamskill:[1]},
+      {question: 14, status: true, teamskill:[6]},
     ],
   };
 
@@ -100,12 +101,7 @@ class Survey extends React.Component {
     },async () => {
 
       try{
-        // object = {...this.state.status}
-        // console.log(object);
         const response = await db.collection('leaderSurvey').doc(String(this.state.idCliente)).set(this.state);      
-        // .where('idLeader','==', 123)
-        // .where('idCliente', '==', 234);
-
         console.log('Survey saved succesfully');
         alert('Survey saved succesfully','asdasdasd');
       }catch(e) {
