@@ -1,82 +1,49 @@
 import React from 'react';
-import { Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList } from "react-native";
+import { Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList, Button} from "react-native";
 import Constants from 'expo-constants';
-import * as firebase from 'firebase';
 import { withNavigation } from 'react-navigation';
-import { Notifications } from 'expo';
-import * as Permissions from 'expo-permissions';
-import LoadingScreen from "./LoadingScreen";
+
+import * as firebase from 'firebase';
 
 const { width, height } = Dimensions.get('window');
 
-class HomeLeaderScreen extends React.Component {
+class HomeCTOScreen extends React.Component {
   constructor(props) {
     super(props);
   }
 
- clientes = [];
- currentUserLog = '';
+  users = [];
+  currentUserLog = '';
 
   state = {
     email: "",
     role: "",
-    clients: [],
+    users: [],
     loading: true,
   };
-  
-  addClient = () => {
-    this.props.navigation.navigate("AddClient");
+
+  addUser = () => {
+    this.props.navigation.navigate("AddCTO");
   }
-  
-  registerForPushNotificationsAsync = async() => {
-    const { status: existingStatus } = await Permissions.getAsync(
-      Permissions.NOTIFICATIONS
-    );
-    let finalStatus = existingStatus;
-  
-    // only ask if permissions have not already been determined, because
-    // iOS won't necessarily prompt the user a second time.
-    if (existingStatus !== 'granted') {
-      // Android remote notification permissions are granted during the app
-      // install, so this will only ask on iOS
-      const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-      finalStatus = status;
-    }
-  
-    // Stop here if the user did not grant permissions
-    if (finalStatus !== 'granted') { return; }
-    try {
-      // Get the token that uniquely identifies this device
-    let token = await Notifications.getExpoPushTokenAsync();
-  
-    // POST the token to your backend server from where you can retrieve it to send push notifications.
-    firebase.firestore().doc(`Users/${ this.currentUserLog }`).update({push_token:token});
-    firebase.database().ref('users/'+ this.currentUserLog +'/push_token').set(token);
-    }
-    catch(error)
-    {
-      console.log(error);
-    }
-  };
 
   componentDidMount = async () => {
+    
     db = await firebase.firestore();
 
     const { email } =  firebase.auth().currentUser;
     
     const currentUser = firebase.auth().currentUser.uid;
     this.currentUserLog = currentUser;
-    const clients = await this.getClients();
+    const users = await this.getUsers();
     this.setState({ email });
-    await this.registerForPushNotificationsAsync();
   }
 
-  getClients = async () => {
+  getUsers = async () => {
     try{
-      const response = await db.collection('Users').where('Role', '==', 'Client')
-      .where('LeaderUID', '==', String(this.currentUserLog)).get().then(snapshot => {
+      const response = await db.collection('Users').where('Role', '==', 'Leader')
+      .where('CTOUID', '==', String(this.currentUserLog)).get().then(snapshot => {
         snapshot.forEach((doc) => {
-          this.clientes.push(doc.data());
+          this.users.push(doc.data());
         });
       }).then(() => {
         this.setState({
@@ -88,12 +55,11 @@ class HomeLeaderScreen extends React.Component {
     }
   }
 
-  renderClients = ({index, item}) => {
+  renderUsers = ({index, item}) => {
 
     const openDetailsScreen = () => {
-      this.props.navigation.navigate("DetailsClient", {
-        clientDetails: item,
-
+      this.props.navigation.navigate("DetailsLeader", {
+        leaderDetails: item,
       })
     }
 
@@ -105,26 +71,30 @@ class HomeLeaderScreen extends React.Component {
         </View>
       </TouchableOpacity>
     );
-  } 
+  }
+    
 
   render() {
     if(this.state.loading){
-      return <LoadingScreen/>;
+      return (
+      <View style = {styles.container}>
+        <Text>Loading</Text>
+      </View>)
     }else{
       return (
         <ScrollView style={styles.container}>
           <Text style={styles.title}>Hi {this.state.email}!</Text>
           <FlatList
-            data = {this.clientes}
+            data = {this.users}
             extraData = {this.state.loading}
             keyExtractor = {item => String(item.Email)}
-            renderItem = {this.renderClients}
+            renderItem = {this.renderUsers}
           />
-          <TouchableOpacity style={styles.addbutton} onPress={this.addClient}>
+          <TouchableOpacity style={styles.addbutton} onPress={this.addUser}>
             <Text style={{fontSize: 20}}>+</Text>
           </TouchableOpacity>
         </ScrollView>
-      );
+      )
     }
   }
 }
@@ -175,5 +145,4 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   }
 });
-
-export default withNavigation(HomeLeaderScreen);
+export default withNavigation(HomeCTOScreen);

@@ -1,98 +1,83 @@
 import React from 'react';
-import { Asset } from 'expo-asset';
-import { AppLoading } from 'expo';
-import HomeScreen from './screens/HomeScreen';
-import RegisterScreen from './screens/RegisterScreen';
+import MainScreen from './screens/MainScreen';
 import LoadingScreen from './screens/LoadingScreen';
 import LoginScreen from './screens/LoginScreen';
 import HomeLeaderScreen from './screens/HomeLeaderScreen';
 import HomeClientScreen from './screens/HomeClientScreen';
+import HomeCTOScreen from './screens/HomeCTOScreen';
 import AddClientScreen from './screens/AddClientScreen';
+import AddCTOScreen from './screens/AddCTOScreen';
+import ClientDetailsScreen from './screens/ClientDetailsScreen';
+import LeaderDetailsScreen from './screens/LeaderDetailsScreen';
+import EditSurveyScreen from './components/Survey';
+import ClientsurveyScreen from './screens/ClientSurveyScreen';
 
 import Firebase from './components/Firebase';
-import { createAppContainer, createSwitchNavigator, createNavigationContainer } from 'react-navigation';
+import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
-import { AppRegistry } from 'react-native';
   
-
-//Functions to load assets
-function cacheImages(images) {
-  return images.map(image => {
-    if (typeof image === 'string') {
-      return Image.prefetch(image);
-    } else {
-      return Asset.fromModule(image).downloadAsync();
-    }
-  });
-}
+import * as firebase from 'firebase';
 
 export default class App extends React.Component {
-  constructor() {
-    super()
-    //If app is ready to show image
-    this.state = {
-      isReady: false
-    }
-  }
+  constructor(props) {
+    super(props)
 
-  componentWillMount() {
+    this.state = {
+      isReady: false,
+      isUser: false,
+      user: null,
+    }
     Firebase.init();
   }
   
-  async _loadAssetsAsync() {
-    const imageAssets = cacheImages([
-      require('./assets/bg.jpg'),
-    ]);
 
-    await Promise.all([...imageAssets]);
+  componentDidMount() {
+    this.authListener();
   }
 
+  authListener = () => {
+    let self = this;
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        //User is logged
+        self.setState({user});
+      }
+      else {
+        //User is not logged
+        self.setState({user:null});
+      }
+    this.setState({"isReady":true});
+    })
+  }
   render() {
     //Checks if the state is not ready
-    if (!this.state.isReady) {
-      return (
-        <AppLoading
-          startAsync={this._loadAssetsAsync}
-          onFinish={() => this.setState({ isReady: true })}
-          onError={console.warn}
-        />
-      );
+    if(!this.state.isReady) {
+      return <LoadingScreen/>
     }
-    return <AppContainer/>;
+    //If user is logged return Home, if not, return Login Screen
+    return (this.state.user ? (<AppContainer/>) : (<LoginScreen/>));
   }
 
 }
 
-//Defining SwitchNavigator for accesing screens in app
-const AppSwitch = createSwitchNavigator({
-  Home: HomeScreen,
-  HomeLeader: HomeLeaderScreen,
-  HomeClient: HomeClientScreen
-});
-
-const AuthSwitch = createSwitchNavigator({
-  Login: LoginScreen,
-  Register: RegisterScreen
-});
-
-const AddSwitch = createStackNavigator({
-  AddClient: {
-    screen: AddClientScreen,
-    navigationOptions: {
-      headerTitle: 'Client',
-    }
-  }
-});
-
-const RootStack = createSwitchNavigator(
+//Defining StackNavigator for accesing screens in app
+const RootStack = createStackNavigator(
   {
-    Loading: LoadingScreen,
-    App: AppSwitch,
-    Auth: AuthSwitch,
-    Add: AddSwitch
+    Loading:LoadingScreen,
+    Login: LoginScreen,
+    Main: MainScreen,
+    HomeLeader: HomeLeaderScreen,
+    HomeClient: HomeClientScreen,
+    HomeCTO: HomeCTOScreen,
+    AddClient: AddClientScreen,
+    AddCTO: AddCTOScreen,
+    DetailsClient: ClientDetailsScreen,
+    DetailsLeader: LeaderDetailsScreen,
+    EditSurvey: EditSurveyScreen,
+    ClientSurvey: ClientsurveyScreen,
   },
   {
-    initialRouteName: 'Loading',
+    initialRouteName: 'Main',
   }
   );
 //AppContainer that contains the pages
