@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Flatlist, View, StyleSheet, Text, Modal, TouchableOpacity} from 'react-native';
 import * as firebase from 'firebase';
 import { ScrollView } from 'react-native-gesture-handler';
-import LoadingScreen from "./LoadingScreen";
+import LoadingScreen from "../LoadingScreen";
 
 export default class LeaderDetailsScreen extends React.Component{
   constructor(props) {

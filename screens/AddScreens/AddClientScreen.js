@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Dimensions, SafeAreaView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
 import Constants from 'expo-constants';
 import { Input } from 'react-native-elements';
-import LoadingScreen from "./LoadingScreen";
+import LoadingScreen from "../LoadingScreen";
 const { width, height } = Dimensions.get('window');
 import * as firebase from 'firebase';
 

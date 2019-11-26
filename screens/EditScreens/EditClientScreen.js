@@ -2,7 +2,7 @@ import React from "react";
 import { Dimensions, SafeAreaView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
 import Constants from 'expo-constants';
 import { Input } from 'react-native-elements';
-import LoadingScreen from "./LoadingScreen";
+import LoadingScreen from "../LoadingScreen";
 const { width, height } = Dimensions.get('window');
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Button } from 'react-native-elements';
@@ -81,6 +81,7 @@ export default class EditClientScreen extends React.Component {
 
   render() {
     if(this.state.loading) {
+      console.log(this.state.loading);
       return <LoadingScreen/>;
     }
     else {
