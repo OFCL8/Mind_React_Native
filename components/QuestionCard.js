@@ -1,9 +1,10 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableHighlight } from 'react-native';
+import { StyleSheet, Text, TouchableHighlight, View, FlatList } from 'react-native';
 
 var numbers = ['1','2','3','4','5'];
 
 class QuestionCard extends React.Component {
+  
   state = {
     selected: [false,false,false,false,false],
     select: false,
@@ -12,23 +13,25 @@ class QuestionCard extends React.Component {
   }
 
   renderButton = ({index,item}) => {
+    
     const answerQuestion = () => {
       this.props.onPress(index+1);
-    }
-    if(this.state.select === true) {
-      this.state.selected[this.state.prevSelect] = false;
-    }
     
-    this.state.selected[index] = !this.state.selected[index];
-    this.state.select = true;
-    this.state.prevSelect = index;
+      if(this.state.select === true) {
+        this.state.selected[this.state.prevSelect] = false;
+      }
 
-    this.setState({
-      selected: this.state.selected, 
-      select: this.state.select,
-      refresh: !this.state.refresh,
-      prevSelect: this.state.prevSelect,
-    });
+      this.state.selected[index] = !this.state.selected[index];
+      this.state.select = true;
+      this.state.prevSelect = index;
+
+      this.setState({
+        selected: this.state.selected, 
+        select: this.state.select,
+        refresh: !this.state.refresh,
+        prevSelect: this.state.prevSelect,
+      });
+    }
     
     return(
       <TouchableHighlight style = {styles.button} onPress = {answerQuestion} >
@@ -51,6 +54,7 @@ class QuestionCard extends React.Component {
         >
           <FlatList
             data = {numbers}
+            extraData = {this.state.refresh}
             renderItem = {this.renderButton}
             numColumns = {5}
             keyExtractor = {(item,index) => index.toString()}
