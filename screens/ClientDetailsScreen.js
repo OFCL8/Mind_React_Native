@@ -12,11 +12,20 @@ var question = [];
 
 var globalScore = 0;
 var partnership = [];
+var globalPartnership;
 var goalOriented = [];
 var qualityControl = [];
 var developmentVelocity = [];
 var communication = [];
 var success = [];
+var globalGoalOriented;
+var globalQualityControl;
+var globalDevelopmentVelocity
+var globalCommunication;
+var globalSuccess;
+var recentScores = [{score: 0, name: 'partnership'}, {score: 0, name: 'goalOriented'}, 
+{score: 0, name: 'qualityControl'}, {score: 0, name: 'developmentVelocity'}, {score: 0, name: 'communication'},
+{score: 0, name: 'success'}];
 
 var score = {
   partnership: {
@@ -184,31 +193,71 @@ export default class ClientDetailsScreen extends React.Component{
   printNames = () => {
     score.forEach(element => {
       console.log(element.name);
+
     });
   }
   
   analyzeData = () => {
-    for(let i = 0 ; i < question[0].status.length ; i++){
-      for(let j = 0 ; j < question[0].status[i].teamskill.length ; j++){
-        if(question[0].status[i].teamskill[j] == 1 && (question[0].status[i].status))
-          partnership.push(question[0].surveyAnswers[i]);
+    for(let k = 0 ; k < question.length ; k++){
+      for(let i = 0 ; i < question[k].status.length ; i++){
+        for(let j = 0 ; j < question[k].status[i].teamskill.length ; j++){
+          if(question[k].status[i].teamskill[j] == 1 && (question[k].status[i].status))
+            partnership.push(question[k].surveyAnswers[i]);
         
-        if(question[0].status[i].teamskill[j] == 2  && (question[0].status[i].status))
-          goalOriented.push(question[0].surveyAnswers[i]);
+          if(question[k].status[i].teamskill[j] == 2  && (question[k].status[i].status))
+            goalOriented.push(question[k].surveyAnswers[i]);
         
-        if(question[0].status[i].teamskill[j] == 3  && (question[0].status[i].status))
-          qualityControl.push(question[0].surveyAnswers[i]);
+          if(question[k].status[i].teamskill[j] == 3  && (question[k].status[i].status))
+            qualityControl.push(question[k].surveyAnswers[i]);
         
-        if(question[0].status[i].teamskill[j] == 4  && (question[0].status[i].status))
-          developmentVelocity.push(question[0].surveyAnswers[i]);
+          if(question[k].status[i].teamskill[j] == 4  && (question[k].status[i].status))
+            developmentVelocity.push(question[k].surveyAnswers[i]);
         
-        if(question[0].status[i].teamskill[j] == 5  && (question[0].status[i].status))
-          communication.push(question[0].surveyAnswers[i]);
+          if(question[k].status[i].teamskill[j] == 5  && (question[k].status[i].status))
+            communication.push(question[k].surveyAnswers[i]);
         
-        if(question[0].status[i].teamskill[j] == 6  && (question[0].status[i].status))
-          success.push(question[0].surveyAnswers[i]);
+          if(question[k].status[i].teamskill[j] == 6  && (question[k].status[i].status))
+            success.push(question[k].surveyAnswers[i]);
+        }
       }
+
     }
+  }
+
+  setGlobalScores = () => {
+    for(let i = 0 ; i < partnership.length ; i++){
+      score.partnership.score += (partnership[i].answer * (score.partnership.weight / partnership.length)) / 5;
+    }
+    globalPartnership += score.partnership.score;
+    recentScores[0].score = score.partnership.score;
+    score.partnership.score = 0;
+
+    for(let i = 0 ; i < goalOriented.length ; i++){
+      score.goalOriented.score += (goalOriented[i].answer * (score.goalOriented.weight / goalOriented.length)) / 5;
+    }
+    globalGoalOriented += score.goalOriented.score;
+    recentScores[1].score = score.partnership.score;
+    score.partnership.score = 0;
+
+    for(let i = 0 ; i < qualityControl.length ; i++){
+      score.qualityControl.score += (qualityControl[i].answer * (score.qualityControl.weight / qualityControl.length)) / 5;
+    }
+    globalQualityControl += score.qualityControl.score;
+
+    for(let i = 0 ; i < developmentVelocity.length ; i++){
+      score.developmentVelocity.score += (developmentVelocity[i].answer * (score.developmentVelocity.weight / developmentVelocity.length)) / 5;
+    }
+    globalDevelopmentVelocity += score.developmentVelocity.score;
+
+    for(let i = 0 ; i < communication.length ; i++){
+      score.communication.score += (communication[i].answer * (score.communication.weight / communication.length)) / 5;
+    }
+    globalCommunication += score.communication.score;
+
+    for(let i = 0 ; i < success.length ; i++){
+      score.success.score += (success[i].answer * (score.success.weight / success.length)) / 5;
+    }
+    globalSuccess += score.success.score;
   }
   
   setScores = () => {
