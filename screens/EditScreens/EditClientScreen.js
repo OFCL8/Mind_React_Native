@@ -124,7 +124,7 @@ export default class EditClientScreen extends React.Component {
 
           <Input 
             autoCapitalize="none"
-            placeholder='Change Password'
+            placeholder='New Password'
             defaultValue={this.state.NewPassword}
             secureTextEntry
             onChangeText={NewPassword => this.setState({ NewPassword })}
