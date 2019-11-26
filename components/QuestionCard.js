@@ -15,20 +15,7 @@ class QuestionCard extends React.Component {
   renderButton = ({index,item}) => {
   
     const answerQuestion = () => {
-      this.props.onPress(index+1);
-/*
-      if(!this.state.select) {
-        this.state.prevSelect = index;
-        this.state.select = true;
-      }
-      else {
-        this.state.selected[this.state.prevSelect] = false;  
-        this.state.select = false;
-        this.state.prevSelect = index;
-      }
-      this.state.selected[index] = !this.state.selected[index];
- */
-      
+      this.props.onPress(index+1); 
 
       if(this.state.select === true) {
         this.state.selected[this.state.prevSelect] = false;
@@ -115,21 +102,3 @@ const styles = StyleSheet.create({
 });
 
 export default QuestionCard;
-
-/*
-<TouchableHighlight style = {styles.button} onPress = {() => console.log('1')}>
-            <Text style = {styles.buttonText}>1</Text>
-          </TouchableHighlight>
-          <TouchableHighlight style = {styles.button} onPress = {() => console.log('2')}>
-            <Text style = {styles.buttonText}>2</Text>
-          </TouchableHighlight>
-          <TouchableHighlight style = {styles.button} onPress = {() => console.log('3')}>
-            <Text style = {styles.buttonText}>3</Text>
-          </TouchableHighlight>
-          <TouchableHighlight style = {styles.button} onPress = {() => console.log('4')}>
-            <Text style = {styles.buttonText}>4</Text>
-          </TouchableHighlight>
-          <TouchableHighlight style = {styles.button} onPress = {() => console.log('5')}>
-            <Text style = {styles.buttonText}>5</Text>
-          </TouchableHighlight>
-*/
