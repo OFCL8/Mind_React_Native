@@ -34,7 +34,7 @@ class QuestionCard extends React.Component {
     }
     
     return(
-      <TouchableHighlight style = {styles.button} onPress = {answerQuestion} >
+      <TouchableHighlight style = {this.state.selected[index] ? styles.buttonSelected : styles.button} onPress = {answerQuestion} >
         <Text style = {styles.buttonText}>{index+1}</Text>
       </TouchableHighlight>
     );
@@ -75,6 +75,12 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: 'lightgrey',
+    borderRadius: 10,
+    width: 50,
+    margin: 2
+  },
+  buttonSelected: {
+    backgroundColor: 'red',
     borderRadius: 10,
     width: 50,
     margin: 2
