@@ -1,33 +1,31 @@
 import React from "react";
-import { Button, Dimensions, SafeAreaView, StatusBar, StyleSheet, Text, TextInput, Modal, TouchableOpacity, View, Alert } from "react-native";
+import { Button, Dimensions, SafeAreaView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
 import Constants from 'expo-constants';
-import { CheckBox, Input } from 'react-native-elements';
+import { Input } from 'react-native-elements';
 import LoadingScreen from "./LoadingScreen";
 const { width, height } = Dimensions.get('window');
 import * as firebase from 'firebase';
 
-export default class AddCTOScreen extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
+export default class AddClientScreen extends React.Component {
   state = {
-    CTOUID: firebase.auth().currentUser.uid,
+    LeaderUID: firebase.auth().currentUser.uid,
     Name: "",
     Company: "",
     Email: "",
     Password: "",
     ConfirmPassword: "",
-    Role: "CTO",
-    checked1: true,
-    checked2: false,
     errorMessage: null,
     loading: true
   }
 
-  static navigationOptions = ({ navigation }) => {
-    const { params = {} } = navigation.state;
-    let headerTitle = 'Add User';
+  handleChangeText(newText) {
+    this.setState({
+      value: newText
+    })
+  }
+
+  static navigationOptions = () => {
+    let headerTitle = 'Add Client';
     let headerRight = (<Button
     title="Log Out" 
     type="clear"
@@ -37,20 +35,9 @@ export default class AddCTOScreen extends React.Component {
     return { headerTitle, headerRight };
   };
 
-  handleChangeText(newText) {
-    this.setState({
-      value: newText
-    })
-  }
-
-  componentDidMount() {
-    this.setState({loading: false});
-  }
-
-  addUser = () => {
-    const { CTOUID, Name, Company, Email, Password, ConfirmPassword, Role } = this.state;
-    
-    if (!(Name || Company))
+  addClient = () => {
+    const { LeaderUID, Name, Company, Email, Password, ConfirmPassword } = this.state;
+    if (!(Name && Company))
     {
       Alert.alert( 
         'Error',
@@ -63,12 +50,11 @@ export default class AddCTOScreen extends React.Component {
     {
       firebase.auth().createUserWithEmailAndPassword(Email,Password).then((user) => {
         firebase.firestore().doc(`Users/${ user.user.uid}`).set({
-          CTOUID,
+          LeaderUID,
           Name: Name,
           Email: Email,
           Company: Company,
-          Password: Password,
-          Role: Role
+          Role: "Client"
         })
       }).catch(error => this.setState({errorMessage: error.message}));
     }
@@ -82,38 +68,19 @@ export default class AddCTOScreen extends React.Component {
     }
   }
 
+  componentDidMount() {
+    this.setState({loading: false});
+  }
+
   render() {
-    if(this.state.loading){
+    if(this.state.loading) {
       return <LoadingScreen/>;
     }
     else {
       return (
         <SafeAreaView style={styles.container}>
            <StatusBar backgroundColor="blue" barStyle="light-content" />
-           <CheckBox
-              center
-              title='CTO'
-              checkedIcon='dot-circle-o'
-              uncheckedIcon='circle-o'
-              checked={this.state.checked1}
-              onPress={() => {
-                this.setState({checked1: true}),
-                this.setState({checked2: false}),
-                this.setState({Role: "CTO"})
-              }}
-            />
-            <CheckBox
-              center
-              title='Leader'
-              checkedIcon='dot-circle-o'
-              uncheckedIcon='circle-o'
-              checked={this.state.checked2}
-              onPress={() => {
-                this.setState({checked2: true}),
-                this.setState({checked1: false}),
-                this.setState({Role: "Leader"})
-              }}
-            />
+  
            <Input
             placeholder='Name'
             defaultValue={this.state.Name}
@@ -158,8 +125,8 @@ export default class AddCTOScreen extends React.Component {
             value={this.state.ConfirmPassword}
            />
   
-           <TouchableOpacity style={styles.addbutton} onPress={this.addUser}>
-              <Text style={{fontSize: 20}}>+</Text>
+           <TouchableOpacity style={styles.addbutton} onPress={this.addClient}>
+              <Text style={{fontSize: 20}}>Add New Client</Text>
             </TouchableOpacity>
   
             <View style={styles.errorMessage}>
@@ -183,15 +150,15 @@ const styles = StyleSheet.create({
   addbutton: {
     alignItems: 'center',
     backgroundColor: 'white',
-    borderRadius: 60,
-    bottom: height - 730,
+    borderRadius: 35,
     elevation: 2,
-    height: 60,
+    height: 70,
     justifyContent: 'center',
-    left: width - 100,
-    shadowOpacity: 0.2,
-    position: 'relative',
-    width: 60
+    marginHorizontal: 20,
+    marginVertical: 5,
+    shadowOffset: {width:2, height:2},
+    shadowColor: 'black',
+    shadowOpacity: 0.2
   },
   errorMessage: {
     height: 72,

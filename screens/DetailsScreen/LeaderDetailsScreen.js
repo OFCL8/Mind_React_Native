@@ -30,6 +30,11 @@ export default class LeaderDetailsScreen extends React.Component{
     //Handles the selected value to navigate
     switch(newValue)
     {
+      case 'editprofile':
+        { 
+            this.props.navigation.navigate("EditCTO");
+        }
+        break;
         case 'signout':
         { 
           firebase.auth().signOut();
@@ -56,6 +61,10 @@ export default class LeaderDetailsScreen extends React.Component{
   render(){
     const { params } = this.props.navigation.state;
     const pickerValues = [
+      {
+        title: 'Edit My Profile',
+        value: 'editprofile'
+      },
       {
         title: 'Log Out',
         value: 'signout'

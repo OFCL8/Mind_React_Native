@@ -124,6 +124,10 @@ class HomeClientScreen extends React.Component {
     });
   }
 
+  editProfile = () => {
+    this.props.navigation.navigate("EditClient");
+  }
+
   render() {
     if(this.state.loading){
       return <LoadingScreen/>;
@@ -143,9 +147,9 @@ class HomeClientScreen extends React.Component {
                 <Text>Tap here to answer.</Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity style = {styles.surveysOptions}>
+            <TouchableOpacity style = {styles.surveysOptions} onPress={this.editProfile}>
               <View>
-                <Text>Survey history</Text>
+                <Text>Edit Profile</Text>
               </View>
             </TouchableOpacity>
     
@@ -163,9 +167,9 @@ class HomeClientScreen extends React.Component {
                   <Text>No pending surveys</Text>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity style = {styles.surveysOptions}>
+              <TouchableOpacity style = {styles.surveysOptions} onPress={this.editProfile}>
                 <View>
-                  <Text>Survey history</Text>
+                  <Text>Edit Profile</Text>
                 </View>
               </TouchableOpacity>
       

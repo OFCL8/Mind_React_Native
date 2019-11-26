@@ -1,19 +1,21 @@
 import React from "react";
-import { Button, Dimensions, SafeAreaView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
+import { Dimensions, SafeAreaView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
 import Constants from 'expo-constants';
 import { Input } from 'react-native-elements';
 import LoadingScreen from "./LoadingScreen";
 const { width, height } = Dimensions.get('window');
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { Button } from 'react-native-elements';
 import * as firebase from 'firebase';
 
-export default class AddClientScreen extends React.Component {
+export default class EditCTOScreen extends React.Component {
   state = {
-    LeaderUID: firebase.auth().currentUser.uid,
+    UID: firebase.auth().currentUser.uid,
     Name: "",
     Company: "",
     Email: "",
     Password: "",
-    ConfirmPassword: "",
+    NewPassword: "",
     errorMessage: null,
     loading: true
   }
@@ -25,7 +27,7 @@ export default class AddClientScreen extends React.Component {
   }
 
   static navigationOptions = () => {
-    let headerTitle = 'Add Client';
+    let headerTitle = 'My Profile';
     let headerRight = (<Button
     title="Log Out" 
     type="clear"
@@ -35,42 +37,46 @@ export default class AddClientScreen extends React.Component {
     return { headerTitle, headerRight };
   };
 
-  addClient = () => {
-    const { LeaderUID, Name, Company, Email, Password, ConfirmPassword } = this.state;
-    if (!(Name && Company))
+  updateClientInfo() {
+    const { UID, Name, Company, Email, Password, NewPassword } = this.state;
+
+    var user = firebase.auth().currentUser;
+    if(Email != user.email)
     {
-      Alert.alert( 
-        'Error',
-        'Please enter requested data.',
-        [ {text: 'OK', onPress: () => console.log('OK Pressed')}, ],
-        {cancelable: false},
-      );
+      user.updateEmail(Email).then(() => { Alert.alert("Email was successfully changed");})
+    .catch(error => this.setState({errorMessage: error.message}));
     }
-    if ((Password === ConfirmPassword) && ((Password && ConfirmPassword) != ""))
-    {
-      firebase.auth().createUserWithEmailAndPassword(Email,Password).then((user) => {
-        firebase.firestore().doc(`Users/${ user.user.uid}`).set({
-          LeaderUID,
-          Name: Name,
-          Email: Email,
-          Company: Company,
-          Password: Password,
-          Role: "Client"
-        })
+    
+    firebase.firestore().doc(`Users/${ UID }`).update({
+      Name: Name,
+      Company: Company,
+      Email: Email
+    }).catch(error => this.setState({errorMessage: error.message}));
+
+    if(Password !="" && NewPassword != "") {
+      this.reauthenticate(Password).then(() => {
+        user.updatePassword(NewPassword).then(() => {Alert.alert("Password was successfully changed");})
+        .catch(error => this.setState({errorMessage: error.message}));
       }).catch(error => this.setState({errorMessage: error.message}));
-    }
-    else {
-      Alert.alert( 
-        'Error',
-        'Passwords must be equal',
-        [ {text: 'OK', onPress: () => console.log('OK Pressed')}, ],
-        {cancelable: false},
-      );
     }
   }
 
+  reauthenticate(Password) {
+    var user = firebase.auth().currentUser;
+    var cred = firebase.auth.EmailAuthProvider.credential(user.email, Password);
+    return user.reauthenticateWithCredential(cred);
+  }
+
   componentDidMount() {
-    this.setState({loading: false});
+    this.setState({ loading: false });
+    firebase.firestore().doc(`Users/${ this.state.UID }`).get().then(user => {
+      clientInfo = user.data();
+      this.setState({
+        Name: clientInfo.Name,
+        Company: clientInfo.Company,
+        Email: clientInfo.Email
+      });
+    });
   }
 
   render() {
@@ -105,34 +111,37 @@ export default class AddClientScreen extends React.Component {
             onChangeText={Email => this.setState({ Email })}
             value={this.state.Email}
            />
-  
-           
-           <Input 
+
+          <Input 
             autoCapitalize="none"
-            placeholder='Password'
+            placeholder='Current Password'
             defaultValue={this.state.Password}
             secureTextEntry
             onChangeText={Password => this.setState({ Password })}
             value={this.state.Password}
            />
-  
-          
-           <Input 
+
+          <Input 
             autoCapitalize="none"
-            placeholder='Confirm Password'
-            defaultValue={this.state.ConfirmPassword}
+            placeholder='Change Password'
+            defaultValue={this.state.NewPassword}
             secureTextEntry
-            onChangeText={ConfirmPassword => this.setState({ ConfirmPassword })}
-            value={this.state.ConfirmPassword}
+            onChangeText={NewPassword => this.setState({ NewPassword })}
+            value={this.state.NewPassword}
            />
-  
-           <TouchableOpacity style={styles.addbutton} onPress={this.addClient}>
-              <Text style={{fontSize: 20}}>+</Text>
+          
+          <View style={styles.errorMessage}>
+              { this.state.errorMessage && <Text style={styles.error}>{this.state.errorMessage}</Text>}
+          </View>
+
+           <TouchableOpacity style={styles.addbutton} onPress={() => this.updateClientInfo()}>
+           <Icon
+                    name="refresh"
+                    size={20}
+                    color="#4682B4"
+                  />
             </TouchableOpacity>
   
-            <View style={styles.errorMessage}>
-              { this.state.errorMessage && <Text style={styles.error}>{this.state.errorMessage}</Text>}
-            </View>
         </SafeAreaView>
       );
     }
@@ -160,6 +169,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     position: 'relative',
     width: 60
+  },
+  error: {
+    color: "#E9446A",
+    fontSize: 13,
+    fontWeight: "600",
+    textAlign: "center"
   },
   errorMessage: {
     height: 72,

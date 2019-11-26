@@ -11,6 +11,9 @@ import ClientDetailsScreen from './screens/ClientDetailsScreen';
 import LeaderDetailsScreen from './screens/LeaderDetailsScreen';
 import EditSurveyScreen from './components/Survey';
 import ClientsurveyScreen from './screens/ClientSurveyScreen';
+import EditClientScreen from './screens/EditClientScreen';
+import EditLeaderScreen from './screens/EditLeaderScreen';
+import EditCTOScreen from './screens/EditCTOScreen';
 
 import Firebase from './components/Firebase';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
@@ -75,6 +78,9 @@ const RootStack = createStackNavigator(
     DetailsLeader: LeaderDetailsScreen,
     EditSurvey: EditSurveyScreen,
     ClientSurvey: ClientsurveyScreen,
+    EditClient: EditClientScreen,
+    EditLeader: EditLeaderScreen,
+    EditCTO: EditCTOScreen
   },
   {
     initialRouteName: 'Main',

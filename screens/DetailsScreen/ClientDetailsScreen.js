@@ -90,6 +90,11 @@ export default class ClientDetailsScreen extends React.Component{
     //Handles the selected value to navigate
     switch(newValue)
     {
+      case 'editprofile':
+        { 
+            this.props.navigation.navigate("EditLeader");
+        }
+        break;
       case 'editsurvey':
         { 
             this.props.navigation.navigate("EditSurvey", {
@@ -246,6 +251,10 @@ export default class ClientDetailsScreen extends React.Component{
   render(){
     const { params } = this.props.navigation.state;
     const pickerValues = [
+      {
+        title: 'Edit My Profile',
+        value: 'editprofile'
+      },
       {
         title: 'Edit Survey',
         value: 'editsurvey'
