@@ -68,7 +68,9 @@ export default class AddCTOScreen extends React.Component {
           Email: Email,
           Company: Company,
           Role: Role
-        })
+        });
+        Name && Company && Email && Password && ConfirmPassword == "";
+        this.props.navigation.goBack();
       }).catch(error => this.setState({errorMessage: error.message}));
     }
     else {

@@ -55,7 +55,9 @@ export default class AddClientScreen extends React.Component {
           Email: Email,
           Company: Company,
           Role: "Client"
-        })
+        });
+        Name && Company && Email && Password && ConfirmPassword == "";
+        this.props.navigation.goBack();
       }).catch(error => this.setState({errorMessage: error.message}));
     }
     else {
