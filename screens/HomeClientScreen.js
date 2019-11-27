@@ -99,8 +99,7 @@ class HomeClientScreen extends React.Component {
     let token = await Notifications.getExpoPushTokenAsync();
   
     // POST the token to your backend server from where you can retrieve it to send push notifications.
-    firebase.firestore().doc(`Users/${ this.currentUserLog }`).update({push_token:token});
-    firebase.database().ref('users/'+ this.currentUserLog +'/push_token').set(token);
+    firebase.firestore().doc(`Users/${ firebase.auth().currentUser.uid }`).update({push_token:token});
     console.log(token);
     }
     catch(error)
