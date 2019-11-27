@@ -5,12 +5,15 @@ import LoginScreen from './screens/LoginScreen';
 import HomeLeaderScreen from './screens/HomeLeaderScreen';
 import HomeClientScreen from './screens/HomeClientScreen';
 import HomeCTOScreen from './screens/HomeCTOScreen';
-import AddClientScreen from './screens/AddClientScreen';
-import AddCTOScreen from './screens/AddCTOScreen';
-import ClientDetailsScreen from './screens/ClientDetailsScreen';
-import LeaderDetailsScreen from './screens/LeaderDetailsScreen';
+import AddClientScreen from './screens/AddScreens/AddClientScreen';
+import AddCTOScreen from './screens/AddScreens/AddCTOScreen';
+import ClientDetailsScreen from './screens/DetailsScreen/ClientDetailsScreen';
+import LeaderDetailsScreen from './screens/DetailsScreen/LeaderDetailsScreen';
 import EditSurveyScreen from './components/Survey';
 import ClientsurveyScreen from './screens/ClientSurveyScreen';
+import EditClientScreen from './screens/EditScreens/EditClientScreen';
+import EditLeaderScreen from './screens/EditScreens/EditLeaderScreen';
+import EditCTOScreen from './screens/EditScreens/EditCTOScreen';
 
 import Firebase from './components/Firebase';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
@@ -75,6 +78,9 @@ const RootStack = createStackNavigator(
     DetailsLeader: LeaderDetailsScreen,
     EditSurvey: EditSurveyScreen,
     ClientSurvey: ClientsurveyScreen,
+    EditClient: EditClientScreen,
+    EditLeader: EditLeaderScreen,
+    EditCTO: EditCTOScreen
   },
   {
     initialRouteName: 'Main',

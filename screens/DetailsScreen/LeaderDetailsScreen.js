@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Flatlist, View, StyleSheet, Text, Modal, TouchableOpacity} from 'react-native';
 import * as firebase from 'firebase';
 import { ScrollView } from 'react-native-gesture-handler';
-import LoadingScreen from "./LoadingScreen";
+import LoadingScreen from "../LoadingScreen";
 
 export default class LeaderDetailsScreen extends React.Component{
   constructor(props) {
@@ -30,6 +30,11 @@ export default class LeaderDetailsScreen extends React.Component{
     //Handles the selected value to navigate
     switch(newValue)
     {
+      case 'editprofile':
+        { 
+            this.props.navigation.navigate("EditCTO");
+        }
+        break;
         case 'signout':
         { 
           firebase.auth().signOut();
@@ -56,6 +61,10 @@ export default class LeaderDetailsScreen extends React.Component{
   render(){
     const { params } = this.props.navigation.state;
     const pickerValues = [
+      {
+        title: 'Edit My Profile',
+        value: 'editprofile'
+      },
       {
         title: 'Log Out',
         value: 'signout'

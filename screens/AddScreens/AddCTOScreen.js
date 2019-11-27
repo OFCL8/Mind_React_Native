@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Dimensions, SafeAreaView, StatusBar, StyleSheet, Text, TextInput, Modal, TouchableOpacity, View, Alert } from "react-native";
 import Constants from 'expo-constants';
 import { CheckBox, Input } from 'react-native-elements';
-import LoadingScreen from "./LoadingScreen";
+import LoadingScreen from "../LoadingScreen";
 const { width, height } = Dimensions.get('window');
 import * as firebase from 'firebase';
 
@@ -67,7 +67,6 @@ export default class AddCTOScreen extends React.Component {
           Name: Name,
           Email: Email,
           Company: Company,
-          Password: Password,
           Role: Role
         })
       }).catch(error => this.setState({errorMessage: error.message}));
@@ -159,7 +158,7 @@ export default class AddCTOScreen extends React.Component {
            />
   
            <TouchableOpacity style={styles.addbutton} onPress={this.addUser}>
-              <Text style={{fontSize: 20}}>+</Text>
+              <Text style={{fontSize: 20}}>Add New User</Text>
             </TouchableOpacity>
   
             <View style={styles.errorMessage}>
@@ -183,15 +182,15 @@ const styles = StyleSheet.create({
   addbutton: {
     alignItems: 'center',
     backgroundColor: 'white',
-    borderRadius: 60,
-    bottom: height - 730,
+    borderRadius: 35,
     elevation: 2,
-    height: 60,
+    height: 70,
     justifyContent: 'center',
-    left: width - 100,
-    shadowOpacity: 0.2,
-    position: 'relative',
-    width: 60
+    marginHorizontal: 20,
+    marginVertical: 5,
+    shadowOffset: {width:2, height:2},
+    shadowColor: 'black',
+    shadowOpacity: 0.2
   },
   errorMessage: {
     height: 72,

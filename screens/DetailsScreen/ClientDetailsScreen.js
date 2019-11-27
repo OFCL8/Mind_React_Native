@@ -5,7 +5,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { Button } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { LineChart, BarChart, PieChart, ProgressChart, ContributionGraph, StackedBarChart } from "react-native-chart-kit";
-import LoadingScreen from "./LoadingScreen";
+import LoadingScreen from "../LoadingScreen";
 
 var surveys = [];
 var question = [];
@@ -90,6 +90,11 @@ export default class ClientDetailsScreen extends React.Component{
     //Handles the selected value to navigate
     switch(newValue)
     {
+      case 'editprofile':
+        { 
+            this.props.navigation.navigate("EditLeader");
+        }
+        break;
       case 'editsurvey':
         { 
             this.props.navigation.navigate("EditSurvey", {
@@ -138,6 +143,7 @@ export default class ClientDetailsScreen extends React.Component{
   }
 
   sendPushNotification = () => {
+    db.collection('leaderSurvey').doc(this.state.clientDetails.Company + this.state.clientDetails.Name).update({answered: false});
     let response = fetch('https://exp.host/--/api/v2/push/send', {
       method: 'POST',
       headers: {
@@ -246,6 +252,10 @@ export default class ClientDetailsScreen extends React.Component{
   render(){
     const { params } = this.props.navigation.state;
     const pickerValues = [
+      {
+        title: 'Edit My Profile',
+        value: 'editprofile'
+      },
       {
         title: 'Edit Survey',
         value: 'editsurvey'
