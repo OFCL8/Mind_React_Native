@@ -143,6 +143,7 @@ export default class ClientDetailsScreen extends React.Component{
   }
 
   sendPushNotification = () => {
+    db.collection('leaderSurvey').doc(this.state.clientDetails.Company + this.state.clientDetails.Name).update({answered: false});
     let response = fetch('https://exp.host/--/api/v2/push/send', {
       method: 'POST',
       headers: {
