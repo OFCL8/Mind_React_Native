@@ -29,7 +29,7 @@ class HomeCTOScreen extends React.Component {
     {
       case 'editprofile':
         { 
-          console.log("Holo"); this.props.navigation.navigate("EditCTO");
+          this.props.navigation.navigate("EditCTO");
         }
         break;
       case 'logout':
