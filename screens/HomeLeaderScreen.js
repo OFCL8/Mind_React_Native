@@ -21,7 +21,7 @@ class HomeLeaderScreen extends React.Component {
     {
       case 'editprofile':
         { 
-          console.log("Holo"); this.props.navigation.navigate("EditLeader");
+          this.props.navigation.navigate("EditLeader");
         }
         break;
       case 'logout':

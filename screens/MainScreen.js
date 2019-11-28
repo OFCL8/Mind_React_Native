@@ -11,12 +11,12 @@ export default class HomeScreen extends React.Component {
     const { params = {} } = navigation.state;
     let headerTitle = 'Home';
     let headerRight = (<Button
-    title="Options" 
-    type="clear"
-    color="blue"
-    style={{fontSize: 15, color: 'white'}}
-    onPress={()=>{ params.toggle(); }}>Options</Button>);
-    return { headerTitle, headerRight };
+      title="Options" 
+      type="clear"
+      color="blue"
+      style={{fontSize: 15, color: 'white'}}
+      onPress={()=>{ params.toggle(); }}>Options</Button>);
+      return { headerTitle, headerRight };
   };
 
   togglePicker() {
@@ -24,7 +24,7 @@ export default class HomeScreen extends React.Component {
   }
 
   componentDidMount() {
-    this.props.navigation.setParams({ toggle: this.togglePicker.bind(this), pickerDisplayed:false });
+    this.props.navigation.setParams({ toggle: this.togglePicker.bind(this), pickerDisplayed:false, screen: this.state.role });
   }
 
   constructor(props){
@@ -46,7 +46,9 @@ export default class HomeScreen extends React.Component {
               { this.setState({"redirectTo": "HomeLeader"}); }
               break;
             case "Client":
-              { this.setState({"redirectTo": "HomeClient"}); }
+              { 
+                this.setState({"redirectTo": "HomeClient"}); 
+              }
               break;
           }
       });

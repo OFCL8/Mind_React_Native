@@ -108,7 +108,7 @@ export default class ReactLogin extends React.Component {
 
   render() {
     return (
-      <KeyboardAvoidingView style={{flex:1}} behavior="padding" enabled={Platform.OS !== 'android'}>
+      <KeyboardAvoidingView style={{flex:1}} keyboardVerticalOffset={30} behavior="padding" enabled={Platform.OS !== 'android'}>
         <View
         style={{
           flex: 1,

@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, Modal, TouchableOpacity } from "react-native";
 import { Notifications } from 'expo';
 import * as Permissions from 'expo-permissions';
 
@@ -27,9 +27,21 @@ class HomeClientScreen extends React.Component {
     loading: true,
   };
 
-  signOutUser = () => {
-    firebase.auth().signOut();
-  };
+  setPickerValue (newValue) {
+    this.props.navigation.setParams({pickerDisplayed: false});
+    //Handles the selected value to navigate
+    switch(newValue)
+    {
+      case 'editprofile':
+        { 
+          this.props.navigation.navigate("EditCTO");
+        }
+        break;
+      case 'logout':
+        { firebase.auth().signOut(); }
+        break;
+    }
+  }
 
   async componentDidMount() {
     var currentUser = await firebase.auth().currentUser.uid;
@@ -128,6 +140,17 @@ class HomeClientScreen extends React.Component {
   }
 
   render() {
+    const { params } = this.props.navigation.state;
+    const pickerValues = [
+      {
+        title: 'Edit My Profile',
+        value: 'editprofile'
+      },
+      {
+        title: 'Log Out',
+        value: 'logout'
+      }
+    ]
     if(this.state.loading){
       return <LoadingScreen/>;
     }
@@ -146,15 +169,21 @@ class HomeClientScreen extends React.Component {
                 <Text>Tap here to answer.</Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity style = {styles.surveysOptions} onPress={this.editProfile}>
-              <View>
-                <Text>Edit Profile</Text>
+            <View>
+            <Modal visible= {params.pickerDisplayed} animationType={"slide"} transparent={false}>
+              <View style={styles.modalscreen}>
+                <Text style={{ fontWeight: 'bold', marginBottom: 10, fontSize: 25 }}>Select Option</Text>
+                { pickerValues.map((value, index) => {
+                  return <TouchableOpacity key={ index } onPress={() => this.setPickerValue(value.value)} style={{ paddingTop: 4, paddingBottom: 4, alignItems: 'center' }}>
+                        <Text style={{ fontSize: 25 }}>{value.title}</Text>
+                    </TouchableOpacity>
+                })}
+                <TouchableOpacity onPress={()=>this.props.navigation.setParams({pickerDisplayed: false})} style={{ paddingTop: 4, paddingBottom: 4 }}>
+                  <Text style={{ color: '#999', fontSize: 25 }}>Cancel</Text>
+                </TouchableOpacity>
               </View>
-            </TouchableOpacity>
-    
-            <TouchableOpacity style = {styles.surveysOptions} onPress={this.signOutUser}>
-              <Text>LogOut</Text>
-            </TouchableOpacity>
+           </Modal>
+          </View>
           </View>
         )
       }else{
@@ -166,15 +195,21 @@ class HomeClientScreen extends React.Component {
                   <Text>No pending surveys</Text>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity style = {styles.surveysOptions} onPress={this.editProfile}>
-                <View>
-                  <Text>Edit Profile</Text>
+              <View>
+              <Modal visible= {params.pickerDisplayed} animationType={"slide"} transparent={false}>
+                <View style={styles.modalscreen}>
+                  <Text style={{ fontWeight: 'bold', marginBottom: 10, fontSize: 25 }}>Select Option</Text>
+                  { pickerValues.map((value, index) => {
+                    return <TouchableOpacity key={ index } onPress={() => this.setPickerValue(value.value)} style={{ paddingTop: 4, paddingBottom: 4, alignItems: 'center' }}>
+                          <Text style={{ fontSize: 25 }}>{value.title}</Text>
+                      </TouchableOpacity>
+                  })}
+                  <TouchableOpacity onPress={()=>this.props.navigation.setParams({pickerDisplayed: false})} style={{ paddingTop: 4, paddingBottom: 4 }}>
+                    <Text style={{ color: '#999', fontSize: 25 }}>Cancel</Text>
+                  </TouchableOpacity>
                 </View>
-              </TouchableOpacity>
-      
-              <TouchableOpacity style = {styles.surveysOptions} onPress={this.signOutUser}>
-              <Text>LogOut</Text>
-            </TouchableOpacity>
+            </Modal>
+          </View>
             </View>
           );
       }
@@ -197,6 +232,11 @@ const styles = StyleSheet.create({
     width: '70%', 
     alignItems: 'center',
     marginVertical: '3%',
+  },
+  modalscreen: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   }
 });
 
