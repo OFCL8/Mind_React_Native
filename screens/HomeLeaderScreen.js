@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Modal, ScrollView, FlatList } from "react-native";
+import { Button, Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Modal, ScrollView, FlatList, Alert } from "react-native";
 import Constants from 'expo-constants';
 import * as firebase from 'firebase';
 import { withNavigation } from 'react-navigation';
@@ -23,6 +23,28 @@ class HomeLeaderScreen extends React.Component {
         { 
           this.props.navigation.navigate("EditLeader");
         }
+        break;
+        case 'forgotpsw':
+          {
+            //Retrieve password
+            firebase.auth().sendPasswordResetEmail(this.state.email).then(function() {
+              // Email sent.
+              Alert.alert( 
+                'Password sent',
+                'Please go check your email',
+                [ {text: 'OK', onPress: () => console.log('OK Pressed')}, ],
+                {cancelable: false},
+              );
+            }).catch(function(error) {
+              // An error happened.
+              Alert.alert( 
+                'Error',
+                'Sorry, something went wrong',
+                [ {text: 'OK', onPress: () => console.log('OK Pressed')}, ],
+                {cancelable: false},
+              );
+            });
+          }
         break;
       case 'logout':
         { firebase.auth().signOut(); }
@@ -133,6 +155,10 @@ class HomeLeaderScreen extends React.Component {
     {
       title: 'Log Out',
       value: 'logout'
+    },
+    {
+      title: 'Forgot My Password',
+      value: 'forgotpsw'
     }
   ]
     if(this.state.loading){

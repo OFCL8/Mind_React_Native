@@ -44,7 +44,7 @@ export default class EditCTOScreen extends React.Component {
     var user = firebase.auth().currentUser;
     if(Email != user.email)
     {
-      user.updateEmail(Email).then(() => { Alert.alert("Email was successfully changed");})
+      user.updateEmail(Email).then(() => { Alert.alert("Email was successfully changed"); })
     .catch(error => this.setState({errorMessage: error.message}));
     }
     //Updates firestore user data
@@ -56,7 +56,7 @@ export default class EditCTOScreen extends React.Component {
     //Checks if passwords are empty
     if(Password !="" && NewPassword != "") {
       this.reauthenticate(Password).then(() => {
-        user.updatePassword(NewPassword).then(() => {Alert.alert("Password was successfully changed");})
+        user.updatePassword(NewPassword).then(() => { Alert.alert("Password was successfully changed"); })
         .catch(error => this.setState({errorMessage: error.message}));
       }).catch(error => this.setState({errorMessage: error.message}));
     }

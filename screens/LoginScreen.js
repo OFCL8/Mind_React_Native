@@ -108,7 +108,7 @@ export default class ReactLogin extends React.Component {
 
   render() {
     return (
-      <KeyboardAvoidingView style={{flex:1}} keyboardVerticalOffset={30} behavior="padding" enabled={Platform.OS !== 'android'}>
+      <KeyboardAvoidingView style={{flex:1}} keyboardVerticalOffset={Platform.select({ios: 0, android: 500})} behavior="padding" enabled={Platform.OS !== 'android'}>
         <View
         style={{
           flex: 1,
@@ -193,7 +193,6 @@ export default class ReactLogin extends React.Component {
           <View style={styles.errorMessage}>
             { this.state.errorMessage && <Text style={styles.error}>{this.state.errorMessage}</Text>}
           </View>
-
         </Animated.View>
       </View>
       </KeyboardAvoidingView>

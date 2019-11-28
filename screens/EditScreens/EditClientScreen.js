@@ -56,7 +56,7 @@ export default class EditClientScreen extends React.Component {
     //Checks if passwords are empty
     if(Password !="" && NewPassword != "") {
       this.reauthenticate(Password).then(() => {
-        user.updatePassword(NewPassword).then(() => {Alert.alert("Password was successfully changed");})
+        user.updatePassword(NewPassword).then(() => { Alert.alert("Password was successfully changed"); })
         .catch(error => this.setState({errorMessage: error.message}));
       }).catch(error => this.setState({errorMessage: error.message}));
     }
