@@ -1,16 +1,31 @@
 import React from "react";
-
 import * as firebase from 'firebase';
 import HomeLeaderScreen from "./HomeLeaderScreen";
 import HomeClientScreen from "./HomeClientScreen";
 import HomeCTOScreen from "./HomeCTOScreen";
 import LoadingScreen from "./LoadingScreen";
+import { Button } from "react-native";
 
 export default class HomeScreen extends React.Component {
-
-  static navigationOptions = {
-    title: 'Home',
+  static navigationOptions = ({ navigation }) => {
+    const { params = {} } = navigation.state;
+    let headerTitle = 'Home';
+    let headerRight = (<Button
+    title="Options" 
+    type="clear"
+    color="blue"
+    style={{fontSize: 15, color: 'white'}}
+    onPress={()=>{ params.toggle(); }}>Options</Button>);
+    return { headerTitle, headerRight };
   };
+
+  togglePicker() {
+    this.props.navigation.setParams({pickerDisplayed: !this.pickerDisplayed});
+  }
+
+  componentDidMount() {
+    this.props.navigation.setParams({ toggle: this.togglePicker.bind(this), pickerDisplayed:false });
+  }
 
   constructor(props){
     super(props);

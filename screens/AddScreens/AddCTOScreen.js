@@ -25,16 +25,9 @@ export default class AddCTOScreen extends React.Component {
     loading: true
   }
 
-  static navigationOptions = ({ navigation }) => {
-    const { params = {} } = navigation.state;
+  static navigationOptions = () => {
     let headerTitle = 'Add User';
-    let headerRight = (<Button
-    title="Log Out" 
-    type="clear"
-    color="blue"
-    style={{fontSize: 15, color: 'white'}}
-    onPress={()=>{ firebase.auth().signOut(); }}>Log Out</Button>);
-    return { headerTitle, headerRight };
+    return { headerTitle };
   };
 
   handleChangeText(newText) {
