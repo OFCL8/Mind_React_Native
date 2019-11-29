@@ -32,28 +32,6 @@ class HomeCTOScreen extends React.Component {
           this.props.navigation.navigate("EditCTO");
         }
         break;
-        case 'forgotpsw':
-          {
-            //Retrieve password
-            firebase.auth().sendPasswordResetEmail(this.state.email).then(function() {
-              // Email sent.
-              Alert.alert( 
-                'Password sent',
-                'Please go check your email',
-                [ {text: 'OK', onPress: () => console.log('OK Pressed')}, ],
-                {cancelable: false},
-              );
-            }).catch(function(error) {
-              // An error happened.
-              Alert.alert( 
-                'Error',
-                'Sorry, something went wrong',
-                [ {text: 'OK', onPress: () => console.log('OK Pressed')}, ],
-                {cancelable: false},
-              );
-            });
-          }
-        break;
       case 'logout':
         { firebase.auth().signOut(); }
         break;
@@ -122,10 +100,6 @@ class HomeCTOScreen extends React.Component {
     {
       title: 'Log Out',
       value: 'logout'
-    },
-    {
-      title: 'Forgot My Password',
-      value: 'forgotpsw'
     }
   ]
     if(this.state.loading){
