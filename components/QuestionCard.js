@@ -4,15 +4,37 @@ import { StyleSheet, Text, TouchableHighlight, View, FlatList } from 'react-nati
 var numbers = ['1','2','3','4','5'];
 
 class QuestionCard extends React.Component {
+  
+  state = {
+    selected: [false,false,false,false,false],
+    select: false,
+    refresh: false,
+    prevSelect: 0,
+  }
 
   renderButton = ({index,item}) => {
-  
+    
     const answerQuestion = () => {
       this.props.onPress(index+1);
-    }
+    
+      if(this.state.select === true) {
+        this.state.selected[this.state.prevSelect] = false;
+      }
 
+      this.state.selected[index] = !this.state.selected[index];
+      this.state.select = true;
+      this.state.prevSelect = index;
+
+      this.setState({
+        selected: this.state.selected, 
+        select: this.state.select,
+        refresh: !this.state.refresh,
+        prevSelect: this.state.prevSelect,
+      });
+    }
+    
     return(
-      <TouchableHighlight style = {styles.button} onPress = {answerQuestion} >
+      <TouchableHighlight style = {this.state.selected[index] ? styles.buttonSelected : styles.button} onPress = {answerQuestion} >
         <Text style = {styles.buttonText}>{index+1}</Text>
       </TouchableHighlight>
     );
@@ -32,6 +54,7 @@ class QuestionCard extends React.Component {
         >
           <FlatList
             data = {numbers}
+            extraData = {this.state.refresh}
             renderItem = {this.renderButton}
             numColumns = {5}
             keyExtractor = {(item,index) => index.toString()}
@@ -56,6 +79,12 @@ const styles = StyleSheet.create({
     width: 50,
     margin: 2
   },
+  buttonSelected: {
+    backgroundColor: 'red',
+    borderRadius: 10,
+    width: 50,
+    margin: 2
+  },
   text: {
     fontSize: 18,
     margin: 5,
@@ -72,21 +101,3 @@ const styles = StyleSheet.create({
 });
 
 export default QuestionCard;
-
-/*
-<TouchableHighlight style = {styles.button} onPress = {() => console.log('1')}>
-            <Text style = {styles.buttonText}>1</Text>
-          </TouchableHighlight>
-          <TouchableHighlight style = {styles.button} onPress = {() => console.log('2')}>
-            <Text style = {styles.buttonText}>2</Text>
-          </TouchableHighlight>
-          <TouchableHighlight style = {styles.button} onPress = {() => console.log('3')}>
-            <Text style = {styles.buttonText}>3</Text>
-          </TouchableHighlight>
-          <TouchableHighlight style = {styles.button} onPress = {() => console.log('4')}>
-            <Text style = {styles.buttonText}>4</Text>
-          </TouchableHighlight>
-          <TouchableHighlight style = {styles.button} onPress = {() => console.log('5')}>
-            <Text style = {styles.buttonText}>5</Text>
-          </TouchableHighlight>
-*/

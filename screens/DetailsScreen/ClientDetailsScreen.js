@@ -5,7 +5,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { Button } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { LineChart, BarChart, PieChart, ProgressChart, ContributionGraph, StackedBarChart } from "react-native-chart-kit";
-import LoadingScreen from "./LoadingScreen";
+import LoadingScreen from "../LoadingScreen";
 
 var surveys = [];
 var question = [];
@@ -77,39 +77,20 @@ export default class ClientDetailsScreen extends React.Component{
     const { params = {} } = navigation.state;
     let headerTitle = 'Client Details';
     let headerRight = (<Button
-    title="Options" 
+    title="Edit Survey" 
     type="clear"
     color="blue"
     style={{fontSize: 15, color: 'white'}}
-    onPress={()=>{ params.toggle(); }}>Options</Button>);
+    onPress={()=>{ params.edit(); }}>Edit Survey</Button>);
     return { headerTitle, headerRight };
   };
 
-  setPickerValue (newValue) {
-    this.props.navigation.setParams({pickerDisplayed: false});
-    //Handles the selected value to navigate
-    switch(newValue)
-    {
-      case 'editsurvey':
-        { 
-            this.props.navigation.navigate("EditSurvey", {
-            company: this.state.clientDetails.Company,
-            name: this.state.clientDetails.Name,
-            leaderID: this.state.clientDetails.LeaderUID,
-          });
-          
-        }
-        break;
-        case 'signout':
-        { 
-          firebase.auth().signOut();
-        }
-        break;
-    }
-  }
-
-  togglePicker() {
-    this.props.navigation.setParams({pickerDisplayed: !this.pickerDisplayed});
+  editSurvey() {
+    this.props.navigation.navigate("EditSurvey", {
+      company: this.state.clientDetails.Company,
+      name: this.state.clientDetails.Name,
+      leaderID: this.state.clientDetails.LeaderUID,
+    });
   }
 
   componentDidMount(){
@@ -123,21 +104,20 @@ export default class ClientDetailsScreen extends React.Component{
     globalScore = 0;
     db = firebase.firestore();
     const clientData = this.props.navigation.getParam('clientDetails', 'NO-ID');
-
-    this.props.navigation.setParams({ toggle: this.togglePicker.bind(this), pickerDisplayed:false });
+    //Bind the function to access from header button
+    this.props.navigation.setParams({ edit: this.editSurvey.bind(this) });
 
     this.setState({
       clientDetails: clientData
     }, () => {
-      this.getData();
-      console.log('Got the data, rendering screen!!')
-      this.setState({
-        loading: false,
+      this.getData().then(() => {
+        this.setState({ loading: false });
       });
     });
   }
 
   sendPushNotification = () => {
+    db.collection('leaderSurvey').doc(this.state.clientDetails.Company + this.state.clientDetails.Name).update({answered: false});
     let response = fetch('https://exp.host/--/api/v2/push/send', {
       method: 'POST',
       headers: {
@@ -244,18 +224,7 @@ export default class ClientDetailsScreen extends React.Component{
   }
 
   render(){
-    const { params } = this.props.navigation.state;
-    const pickerValues = [
-      {
-        title: 'Edit Survey',
-        value: 'editsurvey'
-      },
-      {
-        title: 'Log Out',
-        value: 'signout'
-      }
-    ]
-    if(this.state.loading || params.pickerDisplayed==undefined){
+    if(this.state.loading){
       return <LoadingScreen/>;
     }else{
       return(
@@ -270,6 +239,11 @@ export default class ClientDetailsScreen extends React.Component{
           <View style = {{flexDirection: 'row', justifyContent:'center'}}>
             <Text>{this.state.clientDetails.Company} - </Text>
             <Text>{this.state.clientDetails.Name}</Text>
+          </View>
+
+          {/* Client Email*/}
+          <View style = {{flexDirection: 'row', justifyContent:'center'}}>
+            <Text>{this.state.clientDetails.Email}</Text>
           </View>
 
           {/* Client Overall Satisfaction table View list */}
@@ -392,21 +366,6 @@ export default class ClientDetailsScreen extends React.Component{
             }}
             />
             </View>
-            <View>
-            <Modal visible= {params.pickerDisplayed} animationType={"slide"} transparent={false}>
-              <View style={styles.container}>
-                <Text style={{ fontWeight: 'bold', marginBottom: 10, fontSize: 25 }}>Select Option</Text>
-                { pickerValues.map((value, index) => {
-                  return <TouchableOpacity key={ index } onPress={() => this.setPickerValue(value.value)} style={{ paddingTop: 4, paddingBottom: 4, alignItems: 'center' }}>
-                        <Text style={{ fontSize: 25 }}>{value.title}</Text>
-                    </TouchableOpacity>
-                })}
-                <TouchableOpacity onPress={()=>this.props.navigation.setParams({pickerDisplayed: false})} style={{ paddingTop: 4, paddingBottom: 4 }}>
-                  <Text style={{ color: '#999', fontSize: 25 }}>Cancel</Text>
-                </TouchableOpacity>
-              </View>
-           </Modal>
-          </View>
         </ScrollView>
         </View>
       );

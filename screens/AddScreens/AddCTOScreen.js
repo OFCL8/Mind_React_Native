@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Dimensions, SafeAreaView, StatusBar, StyleSheet, Text, TextInput, Modal, TouchableOpacity, View, Alert } from "react-native";
 import Constants from 'expo-constants';
 import { CheckBox, Input } from 'react-native-elements';
-import LoadingScreen from "./LoadingScreen";
+import LoadingScreen from "../LoadingScreen";
 const { width, height } = Dimensions.get('window');
 import * as firebase from 'firebase';
 
@@ -25,16 +25,9 @@ export default class AddCTOScreen extends React.Component {
     loading: true
   }
 
-  static navigationOptions = ({ navigation }) => {
-    const { params = {} } = navigation.state;
+  static navigationOptions = () => {
     let headerTitle = 'Add User';
-    let headerRight = (<Button
-    title="Log Out" 
-    type="clear"
-    color="blue"
-    style={{fontSize: 15, color: 'white'}}
-    onPress={()=>{ firebase.auth().signOut(); }}>Log Out</Button>);
-    return { headerTitle, headerRight };
+    return { headerTitle };
   };
 
   handleChangeText(newText) {
@@ -67,9 +60,10 @@ export default class AddCTOScreen extends React.Component {
           Name: Name,
           Email: Email,
           Company: Company,
-          Password: Password,
           Role: Role
-        })
+        });
+        Name && Company && Email && Password && ConfirmPassword == "";
+        this.props.navigation.goBack();
       }).catch(error => this.setState({errorMessage: error.message}));
     }
     else {
@@ -133,6 +127,7 @@ export default class AddCTOScreen extends React.Component {
            <Input 
             autoCapitalize="none"
             placeholder='Email'
+            keyboardType="email-address"
             defaultValue={this.state.Email}
             onChangeText={Email => this.setState({ Email })}
             value={this.state.Email}
@@ -159,7 +154,7 @@ export default class AddCTOScreen extends React.Component {
            />
   
            <TouchableOpacity style={styles.addbutton} onPress={this.addUser}>
-              <Text style={{fontSize: 20}}>+</Text>
+              <Text style={{fontSize: 20}}>Add New User</Text>
             </TouchableOpacity>
   
             <View style={styles.errorMessage}>
@@ -183,15 +178,15 @@ const styles = StyleSheet.create({
   addbutton: {
     alignItems: 'center',
     backgroundColor: 'white',
-    borderRadius: 60,
-    bottom: height - 730,
+    borderRadius: 35,
     elevation: 2,
-    height: 60,
+    height: 70,
     justifyContent: 'center',
-    left: width - 100,
-    shadowOpacity: 0.2,
-    position: 'relative',
-    width: 60
+    marginHorizontal: 20,
+    marginVertical: 5,
+    shadowOffset: {width:2, height:2},
+    shadowColor: 'black',
+    shadowOpacity: 0.2
   },
   errorMessage: {
     height: 72,

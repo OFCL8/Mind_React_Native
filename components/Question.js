@@ -23,20 +23,3 @@ const styles = StyleSheet.create({
 });
 
 export default Question;
-
-
-/**
- <FlatList 
-          data = {data}
-          renderItem={({item}) =>
-            <View style = {{margin: 10}}>
-              <CheckBox 
-                title = {item.q}
-                checked = {this.state.checked}
-                onIconPress = {this.onPress}
-              />
-            </View>
-          }
-          keyExtractor={(item, index) => index.toString()}      
-          /> 
- */
