@@ -108,6 +108,7 @@ export default class EditLeaderScreen extends React.Component {
            <Input 
             autoCapitalize="none"
             placeholder='Email'
+            keyboardType="email-address"
             defaultValue={this.state.Email}
             onChangeText={Email => this.setState({ Email })}
             value={this.state.Email}
