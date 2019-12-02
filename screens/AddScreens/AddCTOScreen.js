@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Dimensions, SafeAreaView, StatusBar, StyleSheet, Text, TextInput, Modal, TouchableOpacity, View, Alert } from "react-native";
+import { Button, Dimensions, SafeAreaView, StatusBar, StyleSheet, KeyboardAvoidingView, Platform, Text, TextInput, Modal, TouchableOpacity, View, Alert } from "react-native";
 import Constants from 'expo-constants';
 import { CheckBox, Input } from 'react-native-elements';
 import LoadingScreen from "../LoadingScreen";
@@ -83,7 +83,8 @@ export default class AddCTOScreen extends React.Component {
     else {
       return (
         <SafeAreaView style={styles.container}>
-           <StatusBar backgroundColor="blue" barStyle="light-content" />
+          <KeyboardAvoidingView style={{flex:1}} behavior={Platform.Os == "ios" ? "padding" : "height" } enabled>
+          <StatusBar backgroundColor="blue" barStyle="light-content" />
            <CheckBox
               center
               title='CTO'
@@ -160,6 +161,7 @@ export default class AddCTOScreen extends React.Component {
             <View style={styles.errorMessage}>
               { this.state.errorMessage && <Text style={styles.error}>{this.state.errorMessage}</Text>}
             </View>
+          </KeyboardAvoidingView>
         </SafeAreaView>
       );
     }

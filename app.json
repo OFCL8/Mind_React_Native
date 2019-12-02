@@ -54,7 +54,7 @@
       "backgroundColor": "#ffffff"
     },
     "androidStatusBar": {
-			"backgroundColor": "#000000"
+			"backgroundColor": "#A17EEB"
 		},
     "updates": {
       "fallbackToCacheTimeout": 0
