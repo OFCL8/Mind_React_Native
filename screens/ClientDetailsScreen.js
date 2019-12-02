@@ -11,21 +11,32 @@ var surveys = [];
 var question = [];
 
 var globalScore = 0;
-var partnership = [];
+var latestScore = 0;
+
+var partnership;
+var goalOriented ;
+var qualityControl;
+var developmentVelocity;
+var communication;
+var success;
+
 var globalPartnership;
-var goalOriented = [];
-var qualityControl = [];
-var developmentVelocity = [];
-var communication = [];
-var success = [];
 var globalGoalOriented;
 var globalQualityControl;
 var globalDevelopmentVelocity
 var globalCommunication;
 var globalSuccess;
-var recentScores = [{score: 0, name: 'partnership'}, {score: 0, name: 'goalOriented'}, 
-{score: 0, name: 'qualityControl'}, {score: 0, name: 'developmentVelocity'}, {score: 0, name: 'communication'},
-{score: 0, name: 'success'}];
+
+var globalTeamSkills;
+
+var latestScores = [
+  {score: 0, name: 'partnership'}, 
+  {score: 0, name: 'goalOriented'}, 
+  {score: 0, name: 'qualityControl'}, 
+  {score: 0, name: 'developmentVelocity'}, 
+  {score: 0, name: 'communication'},
+  {score: 0, name: 'success'}
+];
 
 var score = {
   partnership: {
@@ -122,14 +133,7 @@ export default class ClientDetailsScreen extends React.Component{
   }
 
   componentDidMount(){
-    score.partnership.score = 0;
-    score.qualityControl.score = 0;
-    score.communication.score = 0;
-    score.developmentVelocity.score = 0;
-    score.goalOriented.score = 0;
-    score.success.score = 0;
-    question = [];
-    globalScore = 0;
+    this.initVariables();
     db = firebase.firestore();
     const clientData = this.props.navigation.getParam('clientDetails', 'NO-ID');
 
@@ -144,6 +148,33 @@ export default class ClientDetailsScreen extends React.Component{
         loading: false,
       });
     });
+  }
+
+  initVariables = () => {
+    partnership = [];
+    goalOriented = [];
+    qualityControl = [];
+    developmentVelocity = [];
+    communication = [];
+    success = [];
+
+    score.partnership.score = 0;
+    score.qualityControl.score = 0;
+    score.communication.score = 0;
+    score.developmentVelocity.score = 0;
+    score.goalOriented.score = 0;
+    score.success.score = 0;
+
+    question = [];
+    globalScore = 0;
+
+    globalTeamSkills = [];
+    globalPartnership = [];
+    globalGoalOriented = [];
+    globalQualityControl = [];
+    globalDevelopmentVelocity = [];
+    globalCommunication = [];
+    globalSuccess = [];
   }
 
   sendPushNotification = () => {
@@ -175,12 +206,13 @@ export default class ClientDetailsScreen extends React.Component{
       });
 
       console.log('Finished pushing data, analyzing.')
-
+    })
+    .then(() => {
       if(question.length != 0){
         console.log(question.length);
         console.log('Question is not empty');
         this.analyzeData();
-        this.setScores();
+        //this.setScores();
       }
     }).catch(error => {
       console.log('Error connecting to FB', error);
@@ -198,11 +230,15 @@ export default class ClientDetailsScreen extends React.Component{
   }
   
   analyzeData = () => {
-    for(let k = 0 ; k < question.length ; k++){
-      for(let i = 0 ; i < question[k].status.length ; i++){
-        for(let j = 0 ; j < question[k].status[i].teamskill.length ; j++){
-          if(question[k].status[i].teamskill[j] == 1 && (question[k].status[i].status))
-            partnership.push(question[k].surveyAnswers[i]);
+    console.log('This client has ' + question.length + ' encuestas respondidas');
+    for(let k = 0 ; k < question.length ; k++){ //Numero de encuestas que se han respondido por el cliente
+      console.log('Survey ' + (k+1) );
+      for(let i = 0 ; i < question[k].status.length ; i++){ //numero de preguntas de la encuesta (15)
+        console.log('Question ' + (i+1));
+        for(let j = 0 ; j < question[k].status[i].teamskill.length ; j++){ //numero de team skills a las que pertenece cada pregunta
+          console.log('TeamSkill ' + (j+1));
+          if(question[k].status[i].teamskill[j] == 1 && (question[k].status[i].status)) //Si la pregunta esta activa y pertenece al TS indicado
+            partnership.push(question[k].surveyAnswers[i]); //si la pregunta pertenece al TS 1 se insertan las respuestas de esa pregunta al array indicado
         
           if(question[k].status[i].teamskill[j] == 2  && (question[k].status[i].status))
             goalOriented.push(question[k].surveyAnswers[i]);
@@ -220,44 +256,101 @@ export default class ClientDetailsScreen extends React.Component{
             success.push(question[k].surveyAnswers[i]);
         }
       }
-
+      this.setGlobalScores(); //Add the scores of the i survey to global score
     }
+    console.log('Global scores for partnership: ' , globalPartnership)
+    this.getAverageGlobalScores();
   }
 
   setGlobalScores = () => {
-    for(let i = 0 ; i < partnership.length ; i++){
-      score.partnership.score += (partnership[i].answer * (score.partnership.weight / partnership.length)) / 5;
+    for(let i = 0 ; i < partnership.length ; i++){ //numero de respuestas que se anadieron a cada team skill
+      score.partnership.score += (partnership[i].answer * (score.partnership.weight / partnership.length)) / 5; //ley de la tortilla
     }
-    globalPartnership += score.partnership.score;
-    recentScores[0].score = score.partnership.score;
-    score.partnership.score = 0;
+    console.log(score.partnership.score);
+    globalPartnership.push(score.partnership.score); //score de cada survey respondida anadido al 
+    score.partnership.score = 0; //resetear el score de cada skill para la siguiente vuelta
+    partnership = []; //limpiar el array de preguntas para no alterar la ley de la tortilla de arriba
 
+    //Repetir para cada team skill
     for(let i = 0 ; i < goalOriented.length ; i++){
       score.goalOriented.score += (goalOriented[i].answer * (score.goalOriented.weight / goalOriented.length)) / 5;
     }
-    globalGoalOriented += score.goalOriented.score;
-    recentScores[1].score = score.partnership.score;
-    score.partnership.score = 0;
+    globalGoalOriented.push(score.goalOriented.score);
+    score.goalOriented.score = 0;
+    goalOriented = [];
 
     for(let i = 0 ; i < qualityControl.length ; i++){
       score.qualityControl.score += (qualityControl[i].answer * (score.qualityControl.weight / qualityControl.length)) / 5;
     }
-    globalQualityControl += score.qualityControl.score;
+    globalQualityControl.push(score.qualityControl.score);
+    score.qualityControl.score = 0;
+    qualityControl = [];
 
     for(let i = 0 ; i < developmentVelocity.length ; i++){
       score.developmentVelocity.score += (developmentVelocity[i].answer * (score.developmentVelocity.weight / developmentVelocity.length)) / 5;
     }
-    globalDevelopmentVelocity += score.developmentVelocity.score;
+    globalDevelopmentVelocity.push(score.developmentVelocity.score);
+    score.developmentVelocity.score = 0;
+    developmentVelocity = [];
 
     for(let i = 0 ; i < communication.length ; i++){
       score.communication.score += (communication[i].answer * (score.communication.weight / communication.length)) / 5;
     }
-    globalCommunication += score.communication.score;
+    globalCommunication.push(score.communication.score);
+    score.communication.score = 0;
+    communication = [];
 
     for(let i = 0 ; i < success.length ; i++){
       score.success.score += (success[i].answer * (score.success.weight / success.length)) / 5;
     }
-    globalSuccess += score.success.score;
+    globalSuccess.push(score.success.score);
+    score.success.score = 0;
+    success = []
+  }
+
+  getAverageGlobalScores = () => {
+    var partn = 0, qc = 0, comm = 0, go = 0, succ = 0, dv = 0;
+    globalPartnership.forEach( (element) => {
+      partn += element;
+    });
+    console.log('Partn: ' + partn);
+    globalScore += partn / globalPartnership.length;
+    globalTeamSkills.push(partn / globalPartnership.length)
+
+    globalGoalOriented.forEach( (element) => {
+      go += element;
+    });
+    console.log('Goal oriented: ' + go);
+    globalScore += go / globalGoalOriented.length;
+    globalTeamSkills.push(go / globalGoalOriented.length)
+
+    globalQualityControl.forEach( (element) => {
+      qc += element;
+    });
+    console.log('Quality Control: ' + qc);
+    globalScore += qc / globalQualityControl.length;
+    globalTeamSkills.push(qc / globalQualityControl.length)
+
+    globalDevelopmentVelocity.forEach( (element) => {
+      dv += element;
+    });
+    console.log(dv / globalDevelopmentVelocity.length);
+    globalScore += dv / globalDevelopmentVelocity.length;
+    globalTeamSkills.push(dv / globalDevelopmentVelocity.length)
+
+    globalCommunication.forEach( (element) => {
+      comm += element;
+    });
+    console.log(comm / globalCommunication.length);
+    globalScore += comm / globalCommunication.length;
+    globalTeamSkills.push(comm / globalCommunication.length)
+
+    globalSuccess.forEach( (element) => {
+      succ += element;
+    });
+    console.log(succ / globalSuccess.length);
+    globalScore += succ / globalSuccess.length;
+    globalTeamSkills.push(succ / globalSuccess.length)
   }
   
   setScores = () => {
@@ -327,7 +420,7 @@ export default class ClientDetailsScreen extends React.Component{
           <ScrollView >
           {/* Score View */}
           <View style = {{flexDirection: 'row', justifyContent:'center'}}>
-            <Text style = {{fontWeight: 'bold', fontSize: 25}}>{globalScore}</Text>
+            <Text style = {{fontWeight: 'bold', fontSize: 25}}>{Math.trunc(globalScore)}</Text>
           </View>
 
           {/* Client data View */}
@@ -345,7 +438,7 @@ export default class ClientDetailsScreen extends React.Component{
               marginHorizontal: 50
             }}>
               <Text>Succes: </Text>
-              <Text>{score.success.score}</Text>
+              <Text>{Math.trunc(globalTeamSkills[5])}</Text>
             </View>
 
             <View style = {{
@@ -355,7 +448,7 @@ export default class ClientDetailsScreen extends React.Component{
               marginHorizontal: 50
             }}>
               <Text>Partnership: </Text>
-              <Text>{score.partnership.score}</Text>
+              <Text>{Math.trunc(globalTeamSkills[0])}</Text>
             </View>
 
             <View style = {{
@@ -365,7 +458,7 @@ export default class ClientDetailsScreen extends React.Component{
               marginHorizontal: 50
             }}>
               <Text>Goal oriented: </Text>
-              <Text>{score.goalOriented.score}</Text>
+              <Text>{Math.trunc(globalTeamSkills[1])}</Text>
             </View>
 
             <View style = {{
@@ -375,7 +468,7 @@ export default class ClientDetailsScreen extends React.Component{
               marginHorizontal: 50
             }}>
               <Text>Quality: </Text>
-              <Text>{score.qualityControl.score}</Text>
+              <Text>{Math.trunc(globalTeamSkills[2])}</Text>
             </View>
 
             <View style = {{
@@ -385,7 +478,7 @@ export default class ClientDetailsScreen extends React.Component{
               marginHorizontal: 50
             }}>
               <Text>Velocity: </Text>
-              <Text>{score.developmentVelocity.score}</Text>
+              <Text>{Math.trunc(globalTeamSkills[3])}</Text>
             </View>
 
             <View style = {{
@@ -395,7 +488,7 @@ export default class ClientDetailsScreen extends React.Component{
               marginHorizontal: 50
             }}>
               <Text>Communication: </Text>
-              <Text>{score.communication.score}</Text>
+              <Text>{Math.trunc(globalTeamSkills[4])}</Text>
             </View>
           </View>
 
