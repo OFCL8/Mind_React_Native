@@ -66,8 +66,7 @@ class HomeCTOScreen extends React.Component {
     return(
       <TouchableOpacity onPress = {openDetailsScreen}>
         <View style = {styles.flatListStyle}>
-          <Text style = {{fontSize: 18, fontWeight: 'bold'}}>{item.Company}</Text>
-          <Text style = {{fontSize: 15}}>{item.Name}</Text>
+          <Text style = {{fontSize: 18, fontWeight: 'bold'}}>{item.Name}</Text>
         </View>
       </TouchableOpacity>
     );

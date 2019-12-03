@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Flatlist, View, StyleSheet, Text, Modal, TouchableOpacity} from 'react-native';
+import { Button, FlatList, View, StyleSheet, Text, Modal, TouchableOpacity} from 'react-native';
 import * as firebase from 'firebase';
 import { ScrollView } from 'react-native-gesture-handler';
 import LoadingScreen from "../LoadingScreen";
@@ -7,6 +7,7 @@ import LoadingScreen from "../LoadingScreen";
 export default class LeaderDetailsScreen extends React.Component{
   constructor(props) {
     super(props);
+    users = [];
     this.state = {
       leaderDetails: {},
       loading: true
@@ -47,18 +48,39 @@ export default class LeaderDetailsScreen extends React.Component{
     this.props.navigation.setParams({pickerDisplayed: !this.pickerDisplayed});
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.props.navigation.setParams({ toggle: this.togglePicker.bind(this), pickerDisplayed:false });
+    this.setState({ leaderDetails: this.props.navigation.getParam('leaderDetails', 'NO-ID') });
+    this.getUsers();
     this.setState({
-      leaderDetails: this.props.navigation.getParam('leaderDetails', 'NO-ID')
-    }, () => {
-      this.setState({
-        loading: false,
-      })
-    });
-  }
+      loading: false,
+    })
+  };
   
+  
+  getUsers = async () => {
+    console.log('Get Users');
+    try{
+      const yup = db.collection('globalScores').where('leaderUID','==',String(this.state.leaderDetails.LeaderUID)).get().then(snapshot => {
+        snapshot.forEach((doc) => {
+          this.users.push(doc.data());
+        });
+      });
+    }catch(e){
+      console.error(e);
+    }
+  }
+
+  renderUsers = () => {
+    return(
+      <View style = {styles.flatListStyle}>
+        <Text style = {{fontSize: 18, fontWeight: 'bold'}}>{item.Company}</Text>
+      </View>
+    );
+  }
+
   render(){
+    console.log(this.user)
     const { params } = this.props.navigation.state;
     const pickerValues = [
       {
@@ -74,51 +96,16 @@ export default class LeaderDetailsScreen extends React.Component{
       return <LoadingScreen/>;
     }else{
       return(
-        <ScrollView contentContainerStyle = {{flex: 1, justifyContent: 'center'}}>
-          
-          {/* Score View */}
-          <View style = {{flexDirection: 'row', justifyContent:'center'}}>
-            <Text style = {{fontWeight: 'bold', fontSize: 25}}>0.0</Text>
+        <ScrollView contentContainerStyle = {{flex: 1, justifyContent: 'center'}}> 
+          <View style = {styles.container}>
+            <FlatList
+              data = {this.users}
+              extraData = {this.state.loading}
+              keyExtractor = {item => String(item.Email)}
+              renderItem = {this.renderUsers}
+            />
           </View>
 
-          {/* Client data View */}
-          <View style = {{flexDirection: 'row', justifyContent:'center'}}>
-            <Text>{this.state.leaderDetails.Company} - </Text>
-            <Text>{this.state.leaderDetails.Name}</Text>
-          </View>
-
-          {/* Client Overall Satisfaction table View list */}
-          <View>
-            <View style = {{flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, marginHorizontal: 50}}>
-              <Text>Succes: </Text>
-              <Text>0.0</Text>
-            </View>
-
-            <View style = {{flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, marginHorizontal: 50}}>
-              <Text>Partnership: </Text>
-              <Text>0.0</Text>
-            </View>
-
-            <View style = {{flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, marginHorizontal: 50}}>
-              <Text>Goal oriented: </Text>
-              <Text>0.0</Text>
-            </View>
-
-            <View style = {{flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, marginHorizontal: 50}}>
-              <Text>Quality: </Text>
-              <Text>0.0</Text>
-            </View>
-
-            <View style = {{flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, marginHorizontal: 50}}>
-              <Text>Velocity: </Text>
-              <Text>0.0</Text>
-            </View>
-
-            <View style = {{flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, marginHorizontal: 50}}>
-              <Text>Communication: </Text>
-              <Text>0.0</Text>
-            </View>
-          </View>
           <View>
             <Modal visible= {params.pickerDisplayed} animationType={"slide"} transparent={false}>
               <View style={styles.container}>
@@ -145,5 +132,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  flatListStyle: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: '#FFF',
+    color: '#000',
+    margin: 10,
+    borderRadius: 20,
+    height: 50,
+    borderWidth: 1,
   }
 });

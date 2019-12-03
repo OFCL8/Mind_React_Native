@@ -89,6 +89,7 @@ export default class ClientDetailsScreen extends React.Component{
     super(props);
     this.state = {
       clientDetails: {},
+      found: false,
       loading: true
     }
   }
@@ -198,28 +199,31 @@ export default class ClientDetailsScreen extends React.Component{
     let temp = this.state.clientDetails.Company + this.state.clientDetails.Name;
     console.log('Trying to get: ' + temp);
     const response = await db
-    .collection('answeredSurveys').where('name', '==', temp)
-    .get()
-    .then((query) => {
-      query.forEach(doc => {
-        question.push(doc.data());
-      });
+      .collection('answeredSurveys').where('name', '==', temp)
+      .get()
+      .then((query) => {
+        query.forEach(doc => {
+          question.push(doc.data());
+        });
 
-      console.log('Finished pushing data, analyzing.')
-    })
-    .then(() => {
-      if(question.length != 0){
-        console.log(question.length);
-        console.log('Question is not empty');
-        this.analyzeData();
-        //this.setScores();
-      }
-    }).catch(error => {
-      console.log('Error connecting to FB', error);
-      // this.setState({
-      //   loading: false,
-      // })
-    });
+        console.log('Finished pushing data, analyzing.')
+      })
+      .then(() => {
+        if(question.length != 0){
+          console.log(question.length);
+          console.log('Question is not empty');
+          this.analyzeData();
+          this.setState({found: true});
+          //this.setScores();
+        }
+      })
+      .catch(error => {
+        alert('zjsjdfzlsbv');
+        console.log('Error connecting to FB', error);
+        this.setState({
+          found: false,
+        })
+      });
   }
   
   printNames = () => {
@@ -351,6 +355,29 @@ export default class ClientDetailsScreen extends React.Component{
     console.log(succ / globalSuccess.length);
     globalScore += succ / globalSuccess.length;
     globalTeamSkills.push(succ / globalSuccess.length)
+
+    for(let i = 0; i<globalTeamSkills.length; i++) {
+      if(globalTeamSkills[i] != null){
+        console.log('JABAJABA');
+        globalTeamSkills[i] = parseFloat(globalTeamSkills[i].toFixed(2));
+      }
+      else{
+        console.log('yupyupyup');
+        globalTeamSkills[i] = 0;
+      }
+    }
+
+    this.saveGlobalScore();
+  }
+
+  saveGlobalScore = () => {
+    let score = {
+      liderUID: firebase.auth().currentUser.uid,
+      globalScore: parseFloat(globalScore.toFixed(2)),
+      clientName: this.state.clientDetails.Name,
+      company: this.state.clientDetails.Company
+    }
+    db.collection('globalScores').doc(String(this.state.clientDetails.Company + this.state.clientDetails.Name)).set(score);
   }
   
   setScores = () => {
@@ -415,141 +442,167 @@ export default class ClientDetailsScreen extends React.Component{
     if(this.state.loading || params.pickerDisplayed==undefined){
       return <LoadingScreen/>;
     }else{
-      return(
-        <View contentContainerStyle = {{flex: 1, justifyContent: 'center' , padding: 5}}>
-          <ScrollView >
-          {/* Score View */}
-          <View style = {{flexDirection: 'row', justifyContent:'center'}}>
-            <Text style = {{fontWeight: 'bold', fontSize: 25}}>{Math.trunc(globalScore)}</Text>
-          </View>
-
-          {/* Client data View */}
-          <View style = {{flexDirection: 'row', justifyContent:'center'}}>
-            <Text>{this.state.clientDetails.Company} - </Text>
-            <Text>{this.state.clientDetails.Name}</Text>
-          </View>
-
-          {/* Client Overall Satisfaction table View list */}
-          <View>
-            <View style = {{
-              flexDirection: 'row', 
-              justifyContent: 'space-between', 
-              borderBottomWidth: 1, 
-              marginHorizontal: 50
-            }}>
-              <Text>Succes: </Text>
-              <Text>{Math.trunc(globalTeamSkills[5])}</Text>
+      if(this.state.found){
+        return(
+          <View contentContainerStyle = {{flex: 1, justifyContent: 'center' , padding: 5}}>
+            <ScrollView >
+            {/* Score View */}
+            <View style = {{flexDirection: 'row', justifyContent:'center'}}>
+              <Text style = {{fontWeight: 'bold', fontSize: 25}}>{parseFloat(globalScore.toFixed(2))}</Text>
             </View>
-
-            <View style = {{
-              flexDirection: 'row', 
-              justifyContent: 'space-between', 
-              borderBottomWidth: 1, 
-              marginHorizontal: 50
-            }}>
-              <Text>Partnership: </Text>
-              <Text>{Math.trunc(globalTeamSkills[0])}</Text>
+  
+            {/* Client data View */}
+            <View style = {{flexDirection: 'row', justifyContent:'center'}}>
+              <Text>{this.state.clientDetails.Company} - </Text>
+              <Text>{this.state.clientDetails.Name}</Text>
             </View>
-
-            <View style = {{
-              flexDirection: 'row', 
-              justifyContent: 'space-between', 
-              borderBottomWidth: 1, 
-              marginHorizontal: 50
-            }}>
-              <Text>Goal oriented: </Text>
-              <Text>{Math.trunc(globalTeamSkills[1])}</Text>
-            </View>
-
-            <View style = {{
-              flexDirection: 'row', 
-              justifyContent: 'space-between', 
-              borderBottomWidth: 1, 
-              marginHorizontal: 50
-            }}>
-              <Text>Quality: </Text>
-              <Text>{Math.trunc(globalTeamSkills[2])}</Text>
-            </View>
-
-            <View style = {{
-              flexDirection: 'row', 
-              justifyContent: 'space-between', 
-              borderBottomWidth: 1, 
-              marginHorizontal: 50
-            }}>
-              <Text>Velocity: </Text>
-              <Text>{Math.trunc(globalTeamSkills[3])}</Text>
-            </View>
-
-            <View style = {{
-              flexDirection: 'row', 
-              justifyContent: 'space-between', 
-              borderBottomWidth: 1, 
-              marginHorizontal: 50
-            }}>
-              <Text>Communication: </Text>
-              <Text>{Math.trunc(globalTeamSkills[4])}</Text>
-            </View>
-          </View>
-
-          <Button 
-            icon={
-              <Icon
-                name="bell"
-                size={15}
-                color="#4682B4"
-              />
-            }
-            type="clear"
-            iconRight
-            title="Send Request Survey" 
-            onPress={()=>this.sendPushNotification()}
-          />
-          <View style={{padding: 2}}>
-            <LineChart
-            data={{
-              labels: ["PartnerShip", "Goal Oriented", "Quality", "Velocity", "Communication", "Success"],
-              datasets: [
-                {
-                  data: [
-                    score.partnership.score,
-                    score.goalOriented.score,
-                    score.qualityControl.score,
-                    score.developmentVelocity.score,
-                    score.communication.score,
-                    score.success.score
-                  ]
-                }
-              ]
-            }}
-            width={ width - 7}// from react-native
-            height={500}
-            verticalLabelRotation = {60}
-            chartConfig={{
-              backgroundColor: "blue",
-              backgroundGradientFrom: "#6593F5",
-              backgroundGradientTo: "#003152",
-              decimalPlaces: 2, // optional, defaults to 2dp
-              color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-              labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-              barPercentage: 0.1,
-              style: {
-                borderRadius: 16
-              },
-              propsForDots: {
-                r: "6",
-                strokeWidth: "2",
-                stroke: "black"
-              }
-            }}
-            bezier
-            style={{
-              marginVertical: 8,
-              borderRadius: 16
-            }}
-            />
-            </View>
+  
+            {/* Client Overall Satisfaction table View list */}
             <View>
+              <View style = {{
+                flexDirection: 'row', 
+                justifyContent: 'space-between', 
+                borderBottomWidth: 1, 
+                marginHorizontal: 50
+              }}>
+                <Text>Succes: </Text>
+                <Text>{globalTeamSkills[5]}</Text>
+              </View>
+  
+              <View style = {{
+                flexDirection: 'row', 
+                justifyContent: 'space-between', 
+                borderBottomWidth: 1, 
+                marginHorizontal: 50
+              }}>
+                <Text>Partnership: </Text>
+                <Text>{globalTeamSkills[0]}</Text>
+              </View>
+  
+              <View style = {{
+                flexDirection: 'row', 
+                justifyContent: 'space-between', 
+                borderBottomWidth: 1, 
+                marginHorizontal: 50
+              }}>
+                <Text>Goal oriented: </Text>
+                <Text>{globalTeamSkills[1]}</Text>
+              </View>
+  
+              <View style = {{
+                flexDirection: 'row', 
+                justifyContent: 'space-between', 
+                borderBottomWidth: 1, 
+                marginHorizontal: 50
+              }}>
+                <Text>Quality: </Text>
+                <Text>{globalTeamSkills[2]}</Text>
+              </View>
+  
+              <View style = {{
+                flexDirection: 'row', 
+                justifyContent: 'space-between', 
+                borderBottomWidth: 1, 
+                marginHorizontal: 50
+              }}>
+                <Text>Velocity: </Text>
+                <Text>{globalTeamSkills[3]}</Text>
+              </View>
+  
+              <View style = {{
+                flexDirection: 'row', 
+                justifyContent: 'space-between', 
+                borderBottomWidth: 1, 
+                marginHorizontal: 50
+              }}>
+                <Text>Communication: </Text>
+                <Text>{globalTeamSkills[4]}</Text>
+              </View>
+            </View>
+  
+            <Button 
+              icon={
+                <Icon
+                  name="bell"
+                  size={15}
+                  color="#4682B4"
+                />
+              }
+              type="clear"
+              iconRight
+              title="Send Request Survey" 
+              onPress={()=>this.sendPushNotification()}
+            />
+            <View style={{padding: 2}}>
+              <LineChart
+              data={{
+                labels: ["PartnerShip", "Goal Oriented", "Quality", "Velocity", "Communication", "Success"],
+                datasets: [
+                  {
+                    data: [
+                      globalTeamSkills[0],
+                      globalTeamSkills[1],
+                      globalTeamSkills[2],
+                      globalTeamSkills[3],
+                      globalTeamSkills[4],
+                      globalTeamSkills[5]
+                    ]
+                  }
+                ]
+              }}
+              width={ width - 7}// from react-native
+              height={500}
+              verticalLabelRotation = {60}
+              chartConfig={{
+                backgroundColor: "blue",
+                backgroundGradientFrom: "#6593F5",
+                backgroundGradientTo: "#003152",
+                decimalPlaces: 2, // optional, defaults to 2dp
+                color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                barPercentage: 0.1,
+                style: {
+                  borderRadius: 16
+                },
+                propsForDots: {
+                  r: "6",
+                  strokeWidth: "2",
+                  stroke: "black"
+                }
+              }}
+              bezier
+              style={{
+                marginVertical: 8,
+                borderRadius: 16
+              }}
+              />
+              </View>
+              <View>
+              <Modal visible= {params.pickerDisplayed} animationType={"slide"} transparent={false}>
+                <View style={styles.container}>
+                  <Text style={{ fontWeight: 'bold', marginBottom: 10, fontSize: 25 }}>Select Option</Text>
+                  { pickerValues.map((value, index) => {
+                    return <TouchableOpacity key={ index } onPress={() => this.setPickerValue(value.value)} style={{ paddingTop: 4, paddingBottom: 4, alignItems: 'center' }}>
+                          <Text style={{ fontSize: 25 }}>{value.title}</Text>
+                      </TouchableOpacity>
+                  })}
+                  <TouchableOpacity onPress={()=>this.props.navigation.setParams({pickerDisplayed: false})} style={{ paddingTop: 4, paddingBottom: 4 }}>
+                    <Text style={{ color: '#999', fontSize: 25 }}>Cancel</Text>
+                  </TouchableOpacity>
+                </View>
+             </Modal>
+            </View>
+          </ScrollView>
+        </View>
+      );
+      }
+      else{
+        return(
+          <View style = {styles.container}>
+            <View style = {styles.container}>
+              <Text style = {{fontWeight: 'bold', fontSize: 25}}>Results not available</Text>
+            </View>
+          <View>
             <Modal visible= {params.pickerDisplayed} animationType={"slide"} transparent={false}>
               <View style={styles.container}>
                 <Text style={{ fontWeight: 'bold', marginBottom: 10, fontSize: 25 }}>Select Option</Text>
@@ -562,11 +615,11 @@ export default class ClientDetailsScreen extends React.Component{
                   <Text style={{ color: '#999', fontSize: 25 }}>Cancel</Text>
                 </TouchableOpacity>
               </View>
-           </Modal>
+            </Modal>
           </View>
-        </ScrollView>
         </View>
-      );
+        );
+      }
     }
   }
 } 
