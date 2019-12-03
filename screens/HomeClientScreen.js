@@ -15,7 +15,7 @@ class HomeClientScreen extends React.Component {
   }
 
   state = {
-    email: "",
+    userName: "",
     company: '',
     name: '',
     currentUser: "", 
@@ -56,6 +56,7 @@ class HomeClientScreen extends React.Component {
         this.setState({
           clientDetails: doc.data(),
           currentUser: currentUser,
+          userName: doc.data().Name
         });
         this.setState({
           loading: false,
@@ -162,7 +163,10 @@ class HomeClientScreen extends React.Component {
               this.surveyDone();
             }
             } />
-            <Text>Hi {this.state.email}! You're logged in :) </Text>
+            <View style={styles.infoContainer}>
+                <Text style={[styles.displayName, {fontWeight: "200", fontSize: 28}]}>Hi {this.state.userName}!</Text>
+            </View>
+
             <TouchableOpacity style = {styles.surveysOptions} onPress = {this.answerSurvey}>
               <View>
                 <Text style = {{fontWeight: 'bold', fontSize: 15}}>You have a new survey!</Text>
@@ -189,7 +193,9 @@ class HomeClientScreen extends React.Component {
       }else{
           return (
             <View style={styles.container}>
-              <Text>Hi {this.state.email}! You're logged in :) </Text>
+              <View style={styles.infoContainer}>
+                <Text style={[styles.displayName, {fontWeight: "200", fontSize: 28}]}>Hi {this.state.userName}!</Text>
+              </View>
               <TouchableOpacity style = {styles.surveysOptions}>
                 <View>
                   <Text>No pending surveys</Text>
@@ -224,6 +230,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     margin: '5%',
   },
+  infoContainer: {
+    alignSelf: "center",
+    alignItems: "center",
+    marginTop: 16
+  },
   surveysOptions: {
     borderWidth: 1, 
     borderRadius: 20, 
@@ -237,6 +248,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  displayName: {
+    fontFamily: "Helvetica",
+    color: "#52575D"
   }
 });
 

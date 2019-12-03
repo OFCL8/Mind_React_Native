@@ -4,6 +4,7 @@ import Constants from 'expo-constants';
 import { withNavigation } from 'react-navigation';
 
 import * as firebase from 'firebase';
+import LoadingScreen from './LoadingScreen';
 
 const { width, height } = Dimensions.get('window');
 
@@ -17,6 +18,7 @@ class HomeCTOScreen extends React.Component {
 
   state = {
     email: "",
+    userName: "",
     role: "",
     users: [],
     loading: true,
@@ -43,15 +45,26 @@ class HomeCTOScreen extends React.Component {
   }
 
   componentDidMount = async () => {
-    
     db = await firebase.firestore();
-
-    const { email } =  firebase.auth().currentUser;
-    
+    const { email } = firebase.auth().currentUser;
     const currentUser = firebase.auth().currentUser.uid;
     this.currentUserLog = currentUser;
     const users = await this.getUsers();
     this.setState({ email });
+    
+    //Getting user name
+    var { userName } =  db.collection('Users').doc(String(currentUser)).get()
+    .then((doc) => {
+      if(doc.exists){
+        this.setState({ userName: doc.data().Name});
+        this.setState({ loading: false });
+      }
+      else
+        console.log('User not found');
+    })
+    .catch((error) => {
+      console.log('Error getting document: ' , error);
+    });
   }
 
   getUsers = async () => {
@@ -103,14 +116,14 @@ class HomeCTOScreen extends React.Component {
     }
   ]
     if(this.state.loading){
-      return (
-      <View style = {styles.container}>
-        <Text>Loading</Text>
-      </View>)
+      return (<LoadingScreen/>);
     }else{
       return (
         <ScrollView style={styles.container}>
-          <Text style={styles.title}>Hi {this.state.email}!</Text>
+          <View style={styles.infoContainer}>
+                <Text style={[styles.displayName, {fontWeight: "200", fontSize: 28}]}>Hi {this.state.userName}!</Text>
+          </View>
+
           <FlatList
             data = {this.users}
             extraData = {this.state.loading}
@@ -147,6 +160,11 @@ const styles = StyleSheet.create({
     marginTop: Constants.statusBarHeight,
     marginHorizontal: 16,
     marginBottom: 10
+  },
+  infoContainer: {
+    alignSelf: "center",
+    alignItems: "center",
+    marginTop: 16
   },
   title: {
     textAlign: 'center',
@@ -190,6 +208,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  displayName: {
+    fontFamily: "Helvetica",
+    color: "#52575D"
   }
 });
 export default withNavigation(HomeCTOScreen);
