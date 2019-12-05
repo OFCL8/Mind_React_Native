@@ -417,7 +417,7 @@ export default class ClientDetailsScreen extends React.Component{
             {/* Score View */}
             <View style = {{flexDirection: 'row', justifyContent:'center'}}>
               <Text style = {{fontWeight: 'bold', fontSize: 25}}>{parseFloat(globalScore.toFixed(2))}</Text>
-  
+            </View>
             {/* Client data View */}
             <View style = {{flexDirection: 'row', justifyContent:'center'}}>
               <Text>{this.state.clientDetails.Company} - </Text>

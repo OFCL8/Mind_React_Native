@@ -1,6 +1,6 @@
 import React from 'react';
 import Constants from 'expo-constants';
-import { Button, Flatlist, View, StyleSheet, Text, TouchableOpacity} from 'react-native';
+import { Button, FlatList, View, StyleSheet, Text, Modal, TouchableOpacity} from 'react-native';
 import * as firebase from 'firebase';
 import { ScrollView } from 'react-native-gesture-handler';
 import LoadingScreen from "../LoadingScreen";
@@ -22,8 +22,7 @@ export default class LeaderDetailsScreen extends React.Component{
   scores = [];
   
 
-  static navigationOptions = ({ navigation }) => {
-    const { params = {} } = navigation.state;
+  static navigationOptions = () => {
     let headerTitle = 'Leader Details';
     return { headerTitle };
   };
@@ -111,22 +110,6 @@ export default class LeaderDetailsScreen extends React.Component{
               keyExtractor = {item => String(item.company)}
               renderItem = {this.renderScores}
             />
-
-          <View>
-            <Modal visible= {params.pickerDisplayed} animationType={"slide"} transparent={false}>
-              <View style={styles.container}>
-                <Text style={{ fontWeight: 'bold', marginBottom: 10, fontSize: 25 }}>Select Option</Text>
-                { pickerValues.map((value, index) => {
-                  return <TouchableOpacity key={ index } onPress={() => this.setPickerValue(value.value)} style={{ paddingTop: 4, paddingBottom: 4, alignItems: 'center' }}>
-                        <Text style={{ fontSize: 25 }}>{value.title}</Text>
-                    </TouchableOpacity>
-                })}
-                <TouchableOpacity onPress={()=>this.props.navigation.setParams({pickerDisplayed: false})} style={{ paddingTop: 4, paddingBottom: 4 }}>
-                  <Text style={{ color: '#999', fontSize: 25 }}>Cancel</Text>
-                </TouchableOpacity>
-              </View>
-           </Modal>
-          </View>
         </ScrollView>
       );
     }
