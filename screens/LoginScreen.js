@@ -1,15 +1,13 @@
 import React from 'react';
-import { Dimensions, StyleSheet, Platform, Text, TextInput, View, KeyboardAvoidingView, ScrollView, AsyncStorage } from 'react-native';
+import { Alert, Dimensions, StyleSheet, Platform, Text, TextInput, View, KeyboardAvoidingView, Modal, TouchableOpacity, ScrollView, AsyncStorage, Button } from 'react-native';
 import Svg, {Image, Circle,ClipPath} from 'react-native-svg';
 import Animated, { Easing } from 'react-native-reanimated';
-import { State, TapGestureHandler, TouchableOpacity } from 'react-native-gesture-handler';
+import { State, TapGestureHandler } from 'react-native-gesture-handler';
 import * as firebase from 'firebase';
 import 'firebase/firestore';
-
 const { width, height } = Dimensions.get('window');
-
 const { block, cond, concat, Clock, clockRunning, debug, event, eq, Extrapolate, interpolate, set, startClock, stopClock, timing, Value} = Animated;
-
+import { Input } from 'react-native-elements';
 function runTiming(clock, value, dest) {
   const state = {
     finished: new Value(0),
@@ -40,9 +38,9 @@ function runTiming(clock, value, dest) {
 }
 
 export default class ReactLogin extends React.Component {
-  constructor(props) {
+  constructor(props){
     super(props);
-
+    
     this.buttonOpacity = new Value(1);
 
     this.onStateChange = event([
@@ -96,8 +94,10 @@ export default class ReactLogin extends React.Component {
 
   state = {
     email: "",
+    emailForReset: "",
     password: "",
-    errorMessage: null
+    errorMessage: null,
+    picker: false
   };
 
   handleLogin = async() => {
@@ -106,10 +106,45 @@ export default class ReactLogin extends React.Component {
     firebase.auth().signInWithEmailAndPassword(email,password).catch(error => this.setState({errorMessage: error.message}));
   };
 
+ restorePsw() { this.setState({picker: true}); }
+
+ sendVerification = async() => {
+   if(this.state.emailForReset === "")
+   {
+    Alert.alert( 
+      'Error',
+      'Please enter your Email',
+      [ {text: 'OK', onPress: () => console.log('OK Pressed')}, ],
+      {cancelable: false},
+    );
+   }
+   else {
+     //Retrieve password
+    firebase.auth().sendPasswordResetEmail(this.state.emailForReset).then(() => {
+      // Email sent.
+      Alert.alert( 
+        'Password sent',
+        'Please go check your email',
+        [ {text: 'OK', onPress: () => console.log('OK Pressed')}, ],
+        {cancelable: false},
+      );
+    }).catch(function(error) {
+      // An error happened.
+      Alert.alert( 
+        'Error',
+        'Sorry, something went wrong',
+        [ {text: 'OK', onPress: () => console.log('OK Pressed')}, ],
+        {cancelable: false},
+      );
+    });
+   }
+   this.setState({ picker: false, emailForReset: "" });
+  }
+
   render() {
     return (
-      <KeyboardAvoidingView style={{flex:1}} behavior="padding" enabled={Platform.OS !== 'android'}>
-        <View
+      <KeyboardAvoidingView style={{flex:1}} behavior={Platform.Os == "ios" ? "padding" : "height" } enabled>
+        <View 
         style={{
           flex: 1,
           backgroundColor: 'white',
@@ -169,6 +204,7 @@ export default class ReactLogin extends React.Component {
 
               <TextInput
                 autoCapitalize="none"
+                keyboardType="email-address"
                 placeholder="Email"
                 style={styles.textInput}
                 placeholderTextColor="black"
@@ -186,6 +222,36 @@ export default class ReactLogin extends React.Component {
                 onChangeText={password => this.setState({ password })}
                 value={this.state.password}
               />
+              <TouchableOpacity style={{alignItems:'center', paddingBottom: 3, paddingTop: 3}} onPress={() => this.restorePsw()}>
+                <Text style={{fontSize:15, fontWeight:'bold'}}>Forgot your Password?</Text>
+              </TouchableOpacity>
+              
+              <View>
+                <Modal visible= {this.state.picker} animationType={"slide"} transparent={false}>
+                  <View style={styles.modalscreen}>
+                    <Text style={{ fontWeight: 'bold', marginBottom: 10, fontSize: 25 }}>Please enter your Email</Text>
+                    
+                      <Input
+                      style={{paddingTop: 4, paddingBottom: 4, alignItems: 'center' }}
+                      keyboardType="email-address"
+                      autoCapitalize="none"
+                      placeholder='Email'
+                      defaultValue={this.state.emailForReset}
+                      onChangeText={emailForReset => this.setState({ emailForReset })}
+                      value={this.state.emailForReset}
+                     />
+            
+                     <TouchableOpacity style={styles.verificationbutton} onPress={this.sendVerification}>
+                        <Text style={{fontSize: 20}}>Send Verification</Text>
+                      </TouchableOpacity>
+                    
+                    <TouchableOpacity onPress={()=>this.setState({picker: false, emailForReset: ""})} style={{ paddingTop: 4, paddingBottom: 4 }}>
+                      <Text style={{ color: '#999', fontSize: 25 }}>Cancel</Text>
+                    </TouchableOpacity>
+                  </View>
+              </Modal>
+          </View>
+
           <TouchableOpacity style={styles.button} onPress={this.handleLogin}>
             <Text style={{fontSize:20, fontWeight:'bold'}}>SIGN IN</Text>
           </TouchableOpacity>
@@ -193,7 +259,6 @@ export default class ReactLogin extends React.Component {
           <View style={styles.errorMessage}>
             { this.state.errorMessage && <Text style={styles.error}>{this.state.errorMessage}</Text>}
           </View>
-
         </Animated.View>
       </View>
       </KeyboardAvoidingView>
@@ -207,14 +272,29 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     borderTopLeftRadius: 30,
-borderTopRightRadius: 30,
+    borderTopRightRadius: 30,
+  },
+  verificationbutton: {
+    alignItems: 'center',
+    backgroundColor: 'white',
+    borderRadius: 35,
+    elevation: 2,
+    height: 70,
+    justifyContent: 'center',
+    marginHorizontal: 20,
+    marginVertical: 30,
+    shadowOffset: {width:2, height:2},
+    shadowColor: 'black',
+    shadowOpacity: 0.2,
+    paddingLeft: 20,
+    paddingRight: 20
   },
   button: {
     alignItems: 'center',
     backgroundColor: 'white',
     borderRadius: 35,
     elevation: 2,
-    height: 70,
+    height: 60,
     justifyContent: 'center',
     marginHorizontal: 20,
     marginVertical: 5,
@@ -227,6 +307,7 @@ borderTopRightRadius: 30,
     backgroundColor: 'white',
     borderRadius: 20,
     height: 40,
+    elevation: 2,
     justifyContent: 'center',
     left: width / 2 - 20,
     position: 'relative',
@@ -235,7 +316,7 @@ borderTopRightRadius: 30,
     width: 40
   },
   errorMessage: {
-    height: 72,
+    height: 70,
     alignItems: "center",
     justifyContent: "center",
     marginHorizontal: 30
@@ -254,5 +335,11 @@ borderTopRightRadius: 30,
     marginHorizontal: 20,
     marginVertical: 5,
     paddingLeft: 10
+  },
+  modalscreen: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding:50
   }
 });

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button, FlatList, View, StyleSheet, Text, Modal, TouchableOpacity} from 'react-native';
 import Constants from 'expo-constants';
+import { Button, Flatlist, View, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import * as firebase from 'firebase';
 import { ScrollView } from 'react-native-gesture-handler';
 import LoadingScreen from "../LoadingScreen";
@@ -17,7 +17,7 @@ export default class LeaderDetailsScreen extends React.Component{
       meanScore: 0
     }
   }
-
+  
   leaderUID = '';
   scores = [];
   
@@ -25,13 +25,7 @@ export default class LeaderDetailsScreen extends React.Component{
   static navigationOptions = ({ navigation }) => {
     const { params = {} } = navigation.state;
     let headerTitle = 'Leader Details';
-    let headerRight = (<Button
-    title="Options" 
-    type="clear"
-    color="blue"
-    style={{fontSize: 15, color: 'white'}}
-    onPress={()=>{ params.toggle(); }}>Options</Button>);
-    return { headerTitle, headerRight };
+    return { headerTitle };
   };
 
   setPickerValue (newValue) {
@@ -103,18 +97,7 @@ export default class LeaderDetailsScreen extends React.Component{
   }
 
   render(){
-    const { params } = this.props.navigation.state;
-    const pickerValues = [
-      {
-        title: 'Edit My Profile',
-        value: 'editprofile'
-      },
-      {
-        title: 'Log Out',
-        value: 'signout'
-      }
-    ]
-    if(this.state.loading || params.pickerDisplayed==undefined){
+    if(this.state.loading){
       return <LoadingScreen/>;
     }else{
       return(

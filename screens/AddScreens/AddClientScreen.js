@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Dimensions, SafeAreaView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
+import { Button, Dimensions, SafeAreaView, StatusBar, StyleSheet, KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
 import Constants from 'expo-constants';
 import { Input } from 'react-native-elements';
 import LoadingScreen from "../LoadingScreen";
@@ -26,13 +26,7 @@ export default class AddClientScreen extends React.Component {
 
   static navigationOptions = () => {
     let headerTitle = 'Add Client';
-    let headerRight = (<Button
-    title="Log Out" 
-    type="clear"
-    color="blue"
-    style={{fontSize: 15, color: 'white'}}
-    onPress={()=>{ firebase.auth().signOut(); }}>Log Out</Button>);
-    return { headerTitle, headerRight };
+    return { headerTitle };
   };
 
   addClient = () => {
@@ -81,59 +75,61 @@ export default class AddClientScreen extends React.Component {
     else {
       return (
         <SafeAreaView style={styles.container}>
-           <StatusBar backgroundColor="blue" barStyle="light-content" />
-  
-           <Input
+          <KeyboardAvoidingView style={{flex:1}} behavior={Platform.Os == "ios" ? "padding" : "height" } enabled>
+          <StatusBar backgroundColor="blue" barStyle="light-content" />
+            <Input
             placeholder='Name'
             defaultValue={this.state.Name}
             onChangeText={Name => this.setState({ Name })}
             value={this.state.Name}
-           />
-  
-           
-           <Input 
+            />
+
+            
+            <Input 
             placeholder='Company'
             defaultValue={this.state.Company}
             onChangeText={Company => this.setState({ Company })}
             value={this.state.Company}
-           />
-  
-           
-           <Input 
+            />
+
+            
+            <Input 
             autoCapitalize="none"
             placeholder='Email'
+            keyboardType="email-address"
             defaultValue={this.state.Email}
             onChangeText={Email => this.setState({ Email })}
             value={this.state.Email}
-           />
-  
-           
-           <Input 
+            />
+
+            
+            <Input 
             autoCapitalize="none"
             placeholder='Password'
             defaultValue={this.state.Password}
             secureTextEntry
             onChangeText={Password => this.setState({ Password })}
             value={this.state.Password}
-           />
-  
+            />
+
           
-           <Input 
+            <Input 
             autoCapitalize="none"
             placeholder='Confirm Password'
             defaultValue={this.state.ConfirmPassword}
             secureTextEntry
             onChangeText={ConfirmPassword => this.setState({ ConfirmPassword })}
             value={this.state.ConfirmPassword}
-           />
-  
-           <TouchableOpacity style={styles.addbutton} onPress={this.addClient}>
+            />
+
+            <TouchableOpacity style={styles.addbutton} onPress={this.addClient}>
               <Text style={{fontSize: 20}}>Add New Client</Text>
             </TouchableOpacity>
-  
+
             <View style={styles.errorMessage}>
               { this.state.errorMessage && <Text style={styles.error}>{this.state.errorMessage}</Text>}
             </View>
+          </KeyboardAvoidingView>
         </SafeAreaView>
       );
     }
