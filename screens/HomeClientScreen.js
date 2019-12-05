@@ -169,8 +169,8 @@ class HomeClientScreen extends React.Component {
 
             <TouchableOpacity style = {styles.surveysOptions} onPress = {this.answerSurvey}>
               <View>
-                <Text style = {{fontWeight: 'bold', fontSize: 15}}>You have a new survey!</Text>
-                <Text>Tap here to answer.</Text>
+                <Text style = {{fontWeight: 'bold', fontSize: 20}}>You have a new survey!</Text>
+                <Text style = {{alignSelf:'center', fontSize: 15}}>Tap here to answer.</Text>
               </View>
             </TouchableOpacity>
             <View>
@@ -198,7 +198,7 @@ class HomeClientScreen extends React.Component {
               </View>
               <TouchableOpacity style = {styles.surveysOptions}>
                 <View>
-                  <Text>No pending surveys</Text>
+                  <Text style = {{fontWeight: 'bold', fontSize: 20}}>No pending surveys</Text>
                 </View>
               </TouchableOpacity>
               <View>
@@ -239,8 +239,8 @@ const styles = StyleSheet.create({
     borderWidth: 1, 
     borderRadius: 20, 
     justifyContent: 'center', 
-    height: '10%', 
-    width: '70%', 
+    height: '15%', 
+    width: '80%', 
     alignItems: 'center',
     marginVertical: '3%',
   },
