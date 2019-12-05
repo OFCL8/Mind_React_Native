@@ -17,7 +17,7 @@ export default class EditCTOScreen extends React.Component {
     Password: "",
     NewPassword: "",
     errorMessage: null,
-    loading: true
+    loading: true,
   }
 
   handleChangeText(newText) {
