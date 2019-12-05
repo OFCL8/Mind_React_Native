@@ -13,6 +13,7 @@ export default class AddCTOScreen extends React.Component {
 
   state = {
     CTOUID: firebase.auth().currentUser.uid,
+    LeaderUID: "",
     Name: "",
     Company: "",
     Email: "",
@@ -54,6 +55,7 @@ export default class AddCTOScreen extends React.Component {
     }
     if ((Password === ConfirmPassword) && ((Password && ConfirmPassword) != ""))
     {
+      if(this.state.Role == 'CTO') {
       firebase.auth().createUserWithEmailAndPassword(Email,Password).then((user) => {
         firebase.firestore().doc(`Users/${ user.user.uid}`).set({
           CTOUID,
@@ -65,6 +67,21 @@ export default class AddCTOScreen extends React.Component {
         Name && Company && Email && Password && ConfirmPassword == "";
         this.props.navigation.goBack();
       }).catch(error => this.setState({errorMessage: error.message}));
+      }
+      else{
+        firebase.auth().createUserWithEmailAndPassword(Email,Password).then((user) => {
+          firebase.firestore().doc(`Users/${ user.user.uid}`).set({
+            CTOUID,
+            LeaderUID: firebase.auth().currentUser.uid,
+            Name: Name,
+            Email: Email,
+            Company: Company,
+            Role: Role
+          });
+          Name && Company && Email && Password && ConfirmPassword == "";
+          this.props.navigation.goBack();
+        }).catch(error => this.setState({errorMessage: error.message}));
+      }
     }
     else {
       Alert.alert( 

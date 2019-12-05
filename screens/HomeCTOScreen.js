@@ -46,7 +46,8 @@ class HomeCTOScreen extends React.Component {
 
   componentDidMount = async () => {
     db = await firebase.firestore();
-    const { email } = firebase.auth().currentUser;
+
+    const { email } =  firebase.auth().currentUser;
     const currentUser = firebase.auth().currentUser.uid;
     this.currentUserLog = currentUser;
     const users = await this.getUsers();
@@ -85,18 +86,18 @@ class HomeCTOScreen extends React.Component {
   }
 
   renderUsers = ({index, item}) => {
-
+    console.log('item: ' + item.LeaderUID);
     const openDetailsScreen = () => {
       this.props.navigation.navigate("DetailsLeader", {
         leaderDetails: item,
+        userUID: item.LeaderUID,
       })
     }
 
     return(
       <TouchableOpacity onPress = {openDetailsScreen}>
         <View style = {styles.flatListStyle}>
-          <Text style = {{fontSize: 18, fontWeight: 'bold'}}>{item.Company}</Text>
-          <Text style = {{fontSize: 15}}>{item.Name}</Text>
+          <Text style = {{fontSize: 18, fontWeight: 'bold'}}>{item.Name}</Text>
         </View>
       </TouchableOpacity>
     );

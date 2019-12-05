@@ -1,90 +1,161 @@
 import React from 'react';
+import Constants from 'expo-constants';
 import { Button, Flatlist, View, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import * as firebase from 'firebase';
 import { ScrollView } from 'react-native-gesture-handler';
 import LoadingScreen from "../LoadingScreen";
 
+var meanScore = 0;
+
 export default class LeaderDetailsScreen extends React.Component{
   constructor(props) {
     super(props);
+    
     this.state = {
       leaderDetails: {},
-      loading: true
+      loading: true,
+      meanScore: 0
     }
   }
+  
+  leaderUID = '';
+  scores = [];
+  
 
-  static navigationOptions = () => {
+  static navigationOptions = ({ navigation }) => {
+    const { params = {} } = navigation.state;
     let headerTitle = 'Leader Details';
     return { headerTitle };
   };
 
-  componentDidMount(){
+  setPickerValue (newValue) {
+    this.props.navigation.setParams({pickerDisplayed: false});
+    //Handles the selected value to navigate
+    switch(newValue)
+    {
+      case 'editprofile':
+        { 
+            this.props.navigation.navigate("EditCTO");
+        }
+        break;
+        case 'signout':
+        { 
+          firebase.auth().signOut();
+        }
+        break;
+    }
+  }
+
+  togglePicker() {
+    this.props.navigation.setParams({pickerDisplayed: !this.pickerDisplayed});
+  }
+
+  componentDidMount() {
+    meanScore = 0;
+    this.props.navigation.setParams({ toggle: this.togglePicker.bind(this), pickerDisplayed:false });
+    this.setState({ leaderDetails: this.props.navigation.getParam('leaderDetails', 'NO-ID') });
+    this.leaderUID = this.props.navigation.getParam('userUID');
+    this.getUsers();
     this.setState({
-      leaderDetails: this.props.navigation.getParam('leaderDetails', 'NO-ID')
-    }, () => {
-      this.setState({
-        loading: false,
-      })
+      loading: false,
     });
+  };
+  
+  leaderMeanScore = () => {
+    for (let i = 0; i < this.scores.length; i++) {
+      meanScore += this.scores[i].globalScore;
+    }
+    meanScore /= this.scores.length;
   }
   
+  getUsers = () => {
+    let gscore = db.collection('globalScores').where('liderUID','==',this.leaderUID);
+    let getDoc = gscore.get()
+      .then(snapshot => {
+        if (snapshot.empty) {
+          console.log('No matching documents.');
+          return;
+        }  
+        snapshot.forEach(doc => {
+          this.scores.push(doc.data());
+        });
+        this.leaderMeanScore();
+      })
+      .catch(err => {
+        console.log('Error getting documents', err);
+      });
+  }
+
+  renderScores = ({index, item}) => {
+    
+    return(
+      <View style = {styles.flatListStyle}>
+          <Text style = {styles.textStyle}>{item.company}</Text>
+          <Text style = {styles.textStyle}>{item.globalScore}</Text>
+      </View>
+    );
+  }
+
   render(){
     if(this.state.loading){
       return <LoadingScreen/>;
     }else{
       return(
-        <ScrollView contentContainerStyle = {{flex: 1, justifyContent: 'center'}}>
-          
-          {/* Score View */}
-          <View style = {{flexDirection: 'row', justifyContent:'center'}}>
-            <Text style = {{fontWeight: 'bold', fontSize: 25}}>0.0</Text>
+        <ScrollView contentContainerStyle = {styles.container}> 
+          <View style = {{marginBottom: 20}}>
+            <Text style = {{fontSize: 30, fontWeight: 'bold'}}>{parseFloat(meanScore.toFixed(2))}</Text>
           </View>
+            <FlatList
+              data = {this.scores}
+              extraData = {this.state.loading}
+              keyExtractor = {item => String(item.company)}
+              renderItem = {this.renderScores}
+            />
 
-          {/* Leader data View */}
-          <View style = {{flexDirection: 'row', justifyContent:'center'}}>
-            <Text>{this.state.leaderDetails.Company} - </Text>
-            <Text>{this.state.leaderDetails.Name}</Text>
-          </View>
-
-          {/* Leader Email*/}
-          <View style = {{flexDirection: 'row', justifyContent:'center'}}>
-            <Text>{this.state.leaderDetails.Email}</Text>
-          </View>
-
-          {/* Leader Overall Satisfaction table View list */}
           <View>
-            <View style = {{flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, marginHorizontal: 50}}>
-              <Text>Succes: </Text>
-              <Text>0.0</Text>
-            </View>
-
-            <View style = {{flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, marginHorizontal: 50}}>
-              <Text>Partnership: </Text>
-              <Text>0.0</Text>
-            </View>
-
-            <View style = {{flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, marginHorizontal: 50}}>
-              <Text>Goal oriented: </Text>
-              <Text>0.0</Text>
-            </View>
-
-            <View style = {{flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, marginHorizontal: 50}}>
-              <Text>Quality: </Text>
-              <Text>0.0</Text>
-            </View>
-
-            <View style = {{flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, marginHorizontal: 50}}>
-              <Text>Velocity: </Text>
-              <Text>0.0</Text>
-            </View>
-
-            <View style = {{flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, marginHorizontal: 50}}>
-              <Text>Communication: </Text>
-              <Text>0.0</Text>
-            </View>
+            <Modal visible= {params.pickerDisplayed} animationType={"slide"} transparent={false}>
+              <View style={styles.container}>
+                <Text style={{ fontWeight: 'bold', marginBottom: 10, fontSize: 25 }}>Select Option</Text>
+                { pickerValues.map((value, index) => {
+                  return <TouchableOpacity key={ index } onPress={() => this.setPickerValue(value.value)} style={{ paddingTop: 4, paddingBottom: 4, alignItems: 'center' }}>
+                        <Text style={{ fontSize: 25 }}>{value.title}</Text>
+                    </TouchableOpacity>
+                })}
+                <TouchableOpacity onPress={()=>this.props.navigation.setParams({pickerDisplayed: false})} style={{ paddingTop: 4, paddingBottom: 4 }}>
+                  <Text style={{ color: '#999', fontSize: 25 }}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
+           </Modal>
           </View>
         </ScrollView>
       );
     }
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: Constants.statusBarHeight,
+    marginHorizontal: 16,
+    marginBottom: 10
+  },
+  flatListStyle: {
+    flex: 1,
+    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: "center",
+    backgroundColor: '#FFF',
+    color: '#000',
+    margin: 10,
+    borderRadius: 20,
+    height: 50,
+    borderWidth: 1,
+  },
+  textStyle: {
+    fontSize: 18, fontWeight: 'bold', 
+    marginHorizontal: 15,
+  },
+});

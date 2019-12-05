@@ -99,15 +99,19 @@ class Survey extends React.Component {
         year: new Date().getFullYear(),
       }
     },async () => {
-
-      try{
-        const response = await db.collection('leaderSurvey').doc(String(this.state.idCliente)).set(this.state);      
-        console.log('Survey saved succesfully');
-        alert('Survey saved succesfully','asdasdasd');
-      }catch(e) {
-        console.log(e);
-        alert('Save failed');
+      var count = this.state.status.filter( s => {return s.status}).length;
+      if(count >= 1){
+        try{
+          const response = await db.collection('leaderSurvey').doc(String(this.state.idCliente)).set(this.state);      
+          this.props.navigation.goBack(null);
+          alert('Survey saved succesfully');
+        }catch(e) {
+          console.log(e);
+          alert('Save failed');
+        }
       }
+      else
+        alert('Select at least one question.');
     });
   }
   
