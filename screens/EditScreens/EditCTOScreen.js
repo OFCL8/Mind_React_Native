@@ -28,13 +28,7 @@ export default class EditCTOScreen extends React.Component {
 
   static navigationOptions = () => {
     let headerTitle = 'My Profile';
-    let headerRight = (<Button
-    title="Log Out" 
-    type="clear"
-    color="blue"
-    style={{fontSize: 15, color: 'white'}}
-    onPress={()=>{ firebase.auth().signOut(); }}>Log Out</Button>);
-    return { headerTitle, headerRight };
+    return { headerTitle };
   };
 
   updateClientInfo() {
