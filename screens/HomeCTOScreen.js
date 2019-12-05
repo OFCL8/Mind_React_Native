@@ -29,9 +29,7 @@ class HomeCTOScreen extends React.Component {
   componentDidMount = async () => {
     
     db = await firebase.firestore();
-
     const { email } =  firebase.auth().currentUser;
-    
     const currentUser = firebase.auth().currentUser.uid;
     this.currentUserLog = currentUser;
     const users = await this.getUsers();
@@ -56,10 +54,11 @@ class HomeCTOScreen extends React.Component {
   }
 
   renderUsers = ({index, item}) => {
-
+    console.log('item: ' + item.LeaderUID);
     const openDetailsScreen = () => {
       this.props.navigation.navigate("DetailsLeader", {
         leaderDetails: item,
+        userUID: item.LeaderUID,
       })
     }
 
