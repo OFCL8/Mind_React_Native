@@ -1,11 +1,13 @@
 import React from 'react';
 import Constants from 'expo-constants';
-import { Button, FlatList, View, StyleSheet, Text, Modal, TouchableOpacity} from 'react-native';
+import { Button, Dimensions, FlatList, View, StyleSheet, Text, Modal, TouchableOpacity} from 'react-native';
 import * as firebase from 'firebase';
 import { ScrollView } from 'react-native-gesture-handler';
+import { LineChart, BarChart, PieChart, ProgressChart, ContributionGraph, StackedBarChart } from "react-native-chart-kit";
 import LoadingScreen from "../LoadingScreen";
 
 var meanScore = 0;
+const { width, height } = Dimensions.get('window');
 
 export default class LeaderDetailsScreen extends React.Component{
   constructor(props) {
@@ -20,7 +22,8 @@ export default class LeaderDetailsScreen extends React.Component{
   
   leaderUID = '';
   scores = [];
-  
+  clientsFromLeader = [];
+  clientScore = [];
 
   static navigationOptions = () => {
     let headerTitle = 'Leader Details';
@@ -67,7 +70,7 @@ export default class LeaderDetailsScreen extends React.Component{
     meanScore /= this.scores.length;
   }
   
-  getUsers = () => {
+  getUsers() {
     let gscore = db.collection('globalScores').where('liderUID','==',this.leaderUID);
     let getDoc = gscore.get()
       .then(snapshot => {
@@ -77,16 +80,17 @@ export default class LeaderDetailsScreen extends React.Component{
         }  
         snapshot.forEach(doc => {
           this.scores.push(doc.data());
+          this.clientScore.push(doc.data().globalScore);
+          this.clientsFromLeader.push(doc.data().company);
         });
-        this.leaderMeanScore();
+        this.leaderMeanScore()
       })
       .catch(err => {
         console.log('Error getting documents', err);
       });
   }
-
+  
   renderScores = ({index, item}) => {
-    
     return(
       <View style = {styles.flatListStyle}>
           <Text style = {styles.textStyle}>{item.company}</Text>
@@ -94,22 +98,59 @@ export default class LeaderDetailsScreen extends React.Component{
       </View>
     );
   }
-
   render(){
-    if(this.state.loading){
+    if(this.state.loading || this.clientScore.length === 0){
       return <LoadingScreen/>;
     }else{
       return(
-        <ScrollView contentContainerStyle = {styles.container}> 
-          <View style = {{marginBottom: 20}}>
-            <Text style = {{fontSize: 30, fontWeight: 'bold'}}>{parseFloat(meanScore.toFixed(2))}</Text>
+        <ScrollView contentContainerStyle = {{ justifyContent: 'center' , padding: 5}}> 
+          <View>
+            <Text style = {{ alignSelf: 'center', fontSize: 30, fontWeight: 'bold', marginBottom: 10}}>{parseFloat(meanScore.toFixed(2))}</Text>
           </View>
-            <FlatList
-              data = {this.scores}
-              extraData = {this.state.loading}
-              keyExtractor = {item => String(item.company)}
-              renderItem = {this.renderScores}
-            />
+          <FlatList
+            style = {{marginBottom:10}}
+            data = {this.scores}
+            extraData = {this.state.loading}
+            keyExtractor = {item => String(item.company)}
+            renderItem = {this.renderScores}
+          />
+            <View style={{padding: 2}}>
+              <LineChart
+              data={{
+                labels: this.clientsFromLeader,
+                datasets: [
+                  {
+                    data: this.clientScore
+                  }
+                ]
+              }}
+              width={ width + 220}// from react-native
+              height={500}
+              verticalLabelRotation = {60}
+              chartConfig={{
+                backgroundColor: "blue",
+                backgroundGradientFrom: "#6593F5",
+                backgroundGradientTo: "#003152",
+                decimalPlaces: 2, // optional, defaults to 2dp
+                color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                barPercentage: 0.1,
+                style: {
+                  borderRadius: 16
+                },
+                propsForDots: {
+                  r: "6",
+                  strokeWidth: "2",
+                  stroke: "black"
+                }
+              }}
+              bezier
+              style={{
+                marginVertical: 8,
+                borderRadius: 16
+              }}
+              />
+              </View>
         </ScrollView>
       );
     }

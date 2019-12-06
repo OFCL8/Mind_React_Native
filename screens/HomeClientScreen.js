@@ -250,7 +250,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   displayName: {
-    fontFamily: "Helvetica",
     color: "#52575D"
   }
 });

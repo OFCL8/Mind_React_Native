@@ -506,17 +506,11 @@ export default class ClientDetailsScreen extends React.Component{
                 labels: ["PartnerShip", "Goal Oriented", "Quality", "Velocity", "Communication", "Success"],
                 datasets: [
                   {
-                    data: [
-                      globalTeamSkills[0],
-                      globalTeamSkills[1],
-                      globalTeamSkills[2],
-                      globalTeamSkills[3],
-                      globalTeamSkills[4],
-                      globalTeamSkills[5]
-                    ]
+                    data: globalTeamSkills
                   }
                 ]
               }}
+              fromZero = {true}
               width={ width - 7}// from react-native
               height={500}
               verticalLabelRotation = {60}
