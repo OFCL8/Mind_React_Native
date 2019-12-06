@@ -197,7 +197,7 @@ export default class ClientDetailsScreen extends React.Component{
         }
       })
       .catch(error => {
-        alert('zjsjdfzlsbv');
+        alert('Error connecting to Database, check your internet connection.');
         console.log('Error connecting to FB', error);
         this.setState({
           found: false,
@@ -205,15 +205,8 @@ export default class ClientDetailsScreen extends React.Component{
       });
   }
   
-  printNames = () => {
-    score.forEach(element => {
-      console.log(element.name);
-
-    });
-  }
-  
   analyzeData = () => {
-    console.log('This client has ' + question.length + ' encuestas respondidas');
+    
     for(let k = 0 ; k < question.length ; k++){ //Numero de encuestas que se han respondido por el cliente
       console.log('Survey ' + (k+1) );
       for(let i = 0 ; i < question[k].status.length ; i++){ //numero de preguntas de la encuesta (15)
@@ -358,53 +351,6 @@ export default class ClientDetailsScreen extends React.Component{
     }
     db.collection('globalScores').doc(String(this.state.clientDetails.Company + this.state.clientDetails.Name)).set(score);
   }
-  
-  setScores = () => {
-    globalScore = 0;
-    for(let i = 0 ; i < partnership.length ; i++)
-    {
-      score.partnership.score += (partnership[i].answer * (score.partnership.weight / partnership.length)) / 5;
-    }
-    console.log(score.partnership.score);
-    globalScore += score.partnership.score;
-  
-    for(let i = 0 ; i < goalOriented.length ; i++)
-    {
-      score.goalOriented.score += (goalOriented[i].answer * (score.goalOriented.weight / goalOriented.length)) / 5;
-    }
-    console.log(score.goalOriented.score);
-    globalScore += score.goalOriented.score;
-  
-    for(let i = 0 ; i < qualityControl.length ; i++)
-    {
-      score.qualityControl.score += (qualityControl[i].answer * (score.qualityControl.weight / qualityControl.length)) / 5;
-    }
-    console.log(score.qualityControl.score);
-    globalScore += score.qualityControl.score;
-  
-    for(let i = 0 ; i < developmentVelocity.length ; i++)
-    {
-      score.developmentVelocity.score += (developmentVelocity[i].answer * (score.developmentVelocity.weight / developmentVelocity.length)) / 5;
-    }
-    console.log(score.developmentVelocity.score);
-    globalScore += score.developmentVelocity.score;
-  
-    for(let i = 0 ; i < communication.length ; i++)
-    {
-      score.communication.score += (communication[i].answer * (score.communication.weight / communication.length)) / 5;
-    }
-    console.log(score.communication.score);
-    globalScore += score.communication.score;
-  
-    for(let i = 0 ; i < success.length ; i++)
-    {
-      score.success.score += (success[i].answer * (score.success.weight / success.length)) / 5;
-    }
-    console.log(score.success.score);
-    globalScore += score.success.score;
-    //globalScore = 10;
-    console.log(globalScore);
-  }
 
   render(){
     if(this.state.loading){
@@ -418,6 +364,7 @@ export default class ClientDetailsScreen extends React.Component{
             <View style = {{flexDirection: 'row', justifyContent:'center'}}>
               <Text style = {{fontWeight: 'bold', fontSize: 25}}>{parseFloat(globalScore.toFixed(2))}</Text>
             </View>
+
             {/* Client data View */}
             <View style = {{flexDirection: 'row', justifyContent:'center'}}>
               <Text>{this.state.clientDetails.Company} - </Text>
@@ -517,6 +464,7 @@ export default class ClientDetailsScreen extends React.Component{
                   }
                 ]
               }}
+              fromZero = {true}
               width={ width - 7}// from react-native
               height={500}
               verticalLabelRotation = {60}
@@ -543,7 +491,7 @@ export default class ClientDetailsScreen extends React.Component{
                 borderRadius: 16
               }}
               />
-              </View>
+            </View>
           </ScrollView>
         </View>
       );
@@ -559,7 +507,7 @@ export default class ClientDetailsScreen extends React.Component{
       }
     }
   }
-} 
+}
 
 const styles = StyleSheet.create({
   container: {
