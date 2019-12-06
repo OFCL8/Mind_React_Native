@@ -34,26 +34,32 @@ export default class EditClientScreen extends React.Component {
   updateClientInfo() {
     const { UID, Name, Company, Email, Password, NewPassword } = this.state;
 
-    //Checks if email was changed
-    var user = firebase.auth().currentUser;
-    if(Email != user.email)
+    //Checks if data is empty
+    if(Name =="" || Company =="" || Email =="")
+    { Alert.alert("Please don't leave blank data"); }
+    else
     {
-      user.updateEmail(Email).then(() => { Alert.alert("Email was successfully changed");})
-    .catch(error => this.setState({errorMessage: error.message}));
-    }
-    //Updates firestore user data
-    firebase.firestore().doc(`Users/${ UID }`).update({
-      Name: Name,
-      Company: Company,
-      Email: Email
-    }).catch(error => this.setState({errorMessage: error.message}));
-    //Checks if passwords are empty
-    if(Password !="" && NewPassword != "") {
-      this.reauthenticate(Password).then(() => {
-        user.updatePassword(NewPassword).then(() => { Alert.alert("Password was successfully changed"); })
-        .catch(error => this.setState({errorMessage: error.message}));
+      //Checks if email was changed
+      var user = firebase.auth().currentUser;
+      if(Email != user.email)
+      {
+        user.updateEmail(Email).then(() => { Alert.alert("Email was successfully changed");})
+      .catch(error => this.setState({errorMessage: error.message}));
+      }
+      //Updates firestore user data
+      firebase.firestore().doc(`Users/${ UID }`).update({
+        Name: Name,
+        Company: Company,
+        Email: Email
       }).catch(error => this.setState({errorMessage: error.message}));
-    }
+      //Checks if passwords are empty
+      if(Password !="" && NewPassword != "") {
+        this.reauthenticate(Password).then(() => {
+          user.updatePassword(NewPassword).then(() => { Alert.alert("Password was successfully changed"); })
+          .catch(error => this.setState({errorMessage: error.message}));
+        }).catch(error => this.setState({errorMessage: error.message}));
+      }
+      }
   }
   //Method for changing password without re-sign in
   reauthenticate(Password) {

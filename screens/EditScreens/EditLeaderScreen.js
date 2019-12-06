@@ -34,7 +34,12 @@ export default class EditLeaderScreen extends React.Component {
   updateClientInfo() {
     const { UID, Name, Company, Email, Password, NewPassword } = this.state;
 
-    //Checks if email was changed
+    //Checks if data is empty
+    if(Name =="" || Company =="" || Email =="")
+    { Alert.alert("Please don't leave blank data"); }
+    else
+    {
+      //Checks if email was changed
     var user = firebase.auth().currentUser;
     if(Email != user.email)
     {
@@ -54,7 +59,9 @@ export default class EditLeaderScreen extends React.Component {
         .catch(error => this.setState({errorMessage: error.message}));
       }).catch(error => this.setState({errorMessage: error.message}));
     }
+    }
   }
+
   //Method for changing password without re-sign in
   reauthenticate(Password) {
     var user = firebase.auth().currentUser;
