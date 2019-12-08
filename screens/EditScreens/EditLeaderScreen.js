@@ -1,5 +1,5 @@
 import React from "react";
-import { Dimensions, SafeAreaView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
+import { Dimensions, SafeAreaView, StatusBar, StyleSheet, KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
 import Constants from 'expo-constants';
 import { Input } from 'react-native-elements';
 import LoadingScreen from "../LoadingScreen";
@@ -28,19 +28,18 @@ export default class EditLeaderScreen extends React.Component {
 
   static navigationOptions = () => {
     let headerTitle = 'My Profile';
-    let headerRight = (<Button
-    title="Log Out" 
-    type="clear"
-    color="blue"
-    style={{fontSize: 15, color: 'white'}}
-    onPress={()=>{ firebase.auth().signOut(); }}>Log Out</Button>);
-    return { headerTitle, headerRight };
+    return { headerTitle };
   };
 
   updateClientInfo() {
     const { UID, Name, Company, Email, Password, NewPassword } = this.state;
 
-    //Checks if email was changed
+    //Checks if data is empty
+    if(Name =="" || Company =="" || Email =="")
+    { Alert.alert("Please don't leave blank data"); }
+    else
+    {
+      //Checks if email was changed
     var user = firebase.auth().currentUser;
     if(Email != user.email)
     {
@@ -60,7 +59,9 @@ export default class EditLeaderScreen extends React.Component {
         .catch(error => this.setState({errorMessage: error.message}));
       }).catch(error => this.setState({errorMessage: error.message}));
     }
+    }
   }
+
   //Method for changing password without re-sign in
   reauthenticate(Password) {
     var user = firebase.auth().currentUser;
@@ -87,32 +88,33 @@ export default class EditLeaderScreen extends React.Component {
     else {
       return (
         <SafeAreaView style={styles.container}>
-           <StatusBar backgroundColor="blue" barStyle="light-content" />
+          <KeyboardAvoidingView style={{flex:1}} behavior={Platform.Os == "ios" ? "padding" : "height" } enabled>
+          <StatusBar backgroundColor="blue" barStyle="light-content" />
   
-           <Input
+            <Input
             placeholder='Name'
             defaultValue={this.state.Name}
             onChangeText={Name => this.setState({ Name })}
             value={this.state.Name}
-           />
-  
-           
-           <Input 
+            />
+
+            
+            <Input 
             placeholder='Company'
             defaultValue={this.state.Company}
             onChangeText={Company => this.setState({ Company })}
             value={this.state.Company}
-           />
-  
-           
-           <Input 
+            />
+
+            
+            <Input 
             autoCapitalize="none"
             placeholder='Email'
             keyboardType="email-address"
             defaultValue={this.state.Email}
             onChangeText={Email => this.setState({ Email })}
             value={this.state.Email}
-           />
+            />
 
           <Input 
             autoCapitalize="none"
@@ -121,7 +123,7 @@ export default class EditLeaderScreen extends React.Component {
             secureTextEntry
             onChangeText={Password => this.setState({ Password })}
             value={this.state.Password}
-           />
+            />
 
           <Input 
             autoCapitalize="none"
@@ -130,20 +132,20 @@ export default class EditLeaderScreen extends React.Component {
             secureTextEntry
             onChangeText={NewPassword => this.setState({ NewPassword })}
             value={this.state.NewPassword}
-           />
+            />
           
           <View style={styles.errorMessage}>
               { this.state.errorMessage && <Text style={styles.error}>{this.state.errorMessage}</Text>}
           </View>
 
-           <TouchableOpacity style={styles.addbutton} onPress={() => this.updateClientInfo()}>
-           <Icon
+            <TouchableOpacity style={styles.addbutton} onPress={() => this.updateClientInfo()}>
+            <Icon
                     name="refresh"
                     size={20}
                     color="#4682B4"
                   />
             </TouchableOpacity>
-  
+          </KeyboardAvoidingView>
         </SafeAreaView>
       );
     }

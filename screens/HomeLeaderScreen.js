@@ -36,6 +36,7 @@ class HomeLeaderScreen extends React.Component {
   state = {
     email: "",
     role: "",
+    userName: "",
     clients: [],
     loading: true,
   };
@@ -81,10 +82,26 @@ class HomeLeaderScreen extends React.Component {
     const { email } =  firebase.auth().currentUser;
     
     const currentUser = firebase.auth().currentUser.uid;
+    
     this.currentUserLog = currentUser;
     const clients = await this.getClients();
     this.setState({ email });
+
     await this.registerForPushNotificationsAsync();
+
+    //Getting user name
+    var { userName } =  db.collection('Users').doc(String(currentUser)).get()
+    .then((doc) => {
+      if(doc.exists){
+        this.setState({ userName: doc.data().Name});
+        this.setState({ loading: false });
+      }
+      else
+        console.log('User not found');
+    })
+    .catch((error) => {
+      console.log('Error getting document: ' , error);
+    });
   }
 
   getClients = async () => {
@@ -140,7 +157,10 @@ class HomeLeaderScreen extends React.Component {
     }else{
       return (
         <ScrollView style={styles.container}>
-          <Text style={styles.title}>Hi {this.state.email}!</Text>
+          <View style={styles.infoContainer}>
+            <Text style={[styles.displayName, {fontWeight: "200", fontSize: 28}]}>Hi {this.state.userName}!</Text>
+          </View>
+          
           <FlatList
             data = {this.clientes}
             extraData = {this.state.loading}
@@ -177,6 +197,11 @@ const styles = StyleSheet.create({
     marginTop: Constants.statusBarHeight,
     marginHorizontal: 16,
     marginBottom: 10
+  },
+  infoContainer: {
+    alignSelf: "center",
+    alignItems: "center",
+    marginTop: 16
   },
   title: {
     textAlign: 'center',
@@ -220,6 +245,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  displayName: {
+    color: "#52575D"
   }
 });
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Dimensions, SafeAreaView, StatusBar, StyleSheet, Text, TextInput, Modal, TouchableOpacity, View, Alert } from "react-native";
+import { Button, Dimensions, SafeAreaView, StatusBar, StyleSheet, KeyboardAvoidingView, Platform, Text, TextInput, Modal, TouchableOpacity, View, Alert } from "react-native";
 import Constants from 'expo-constants';
 import { CheckBox, Input } from 'react-native-elements';
 import LoadingScreen from "../LoadingScreen";
@@ -13,6 +13,7 @@ export default class AddCTOScreen extends React.Component {
 
   state = {
     CTOUID: firebase.auth().currentUser.uid,
+    LeaderUID: "",
     Name: "",
     Company: "",
     Email: "",
@@ -54,6 +55,7 @@ export default class AddCTOScreen extends React.Component {
     }
     if ((Password === ConfirmPassword) && ((Password && ConfirmPassword) != ""))
     {
+      if(this.state.Role == 'CTO') {
       firebase.auth().createUserWithEmailAndPassword(Email,Password).then((user) => {
         firebase.firestore().doc(`Users/${ user.user.uid}`).set({
           CTOUID,
@@ -65,6 +67,21 @@ export default class AddCTOScreen extends React.Component {
         Name && Company && Email && Password && ConfirmPassword == "";
         this.props.navigation.goBack();
       }).catch(error => this.setState({errorMessage: error.message}));
+      }
+      else{
+        firebase.auth().createUserWithEmailAndPassword(Email,Password).then((user) => {
+          firebase.firestore().doc(`Users/${ user.user.uid}`).set({
+            CTOUID,
+            LeaderUID: firebase.auth().currentUser.uid,
+            Name: Name,
+            Email: Email,
+            Company: Company,
+            Role: Role
+          });
+          Name && Company && Email && Password && ConfirmPassword == "";
+          this.props.navigation.goBack();
+        }).catch(error => this.setState({errorMessage: error.message}));
+      }
     }
     else {
       Alert.alert( 
@@ -83,7 +100,8 @@ export default class AddCTOScreen extends React.Component {
     else {
       return (
         <SafeAreaView style={styles.container}>
-           <StatusBar backgroundColor="blue" barStyle="light-content" />
+          <KeyboardAvoidingView style={{flex:1}} behavior={Platform.Os == "ios" ? "padding" : "height" } enabled>
+          <StatusBar backgroundColor="blue" barStyle="light-content" />
            <CheckBox
               center
               title='CTO'
@@ -160,6 +178,7 @@ export default class AddCTOScreen extends React.Component {
             <View style={styles.errorMessage}>
               { this.state.errorMessage && <Text style={styles.error}>{this.state.errorMessage}</Text>}
             </View>
+          </KeyboardAvoidingView>
         </SafeAreaView>
       );
     }
