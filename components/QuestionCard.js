@@ -9,6 +9,13 @@ class QuestionCard extends React.Component {
     sliderValue: ['Totalmente desacuerdo', 'Desacuerdo', 'Neutral', 'De acuerdo', 'Totalmente de acuerdo'],
   }
 
+  updateState = (val) => {
+    this.setState({
+      value: val
+    })
+    this.props.onPress(val);
+  }
+
   render() {
     return (
       <View style = {styles.container}>
@@ -24,7 +31,7 @@ class QuestionCard extends React.Component {
               minimumTrackTintColor = {'#1077AC'}
               thumbTintColor = {'#CCCCCC'}
               step = {1}
-              onValueChange = {value => this.props.onPress(value)}
+              onValueChange = {value => this.updateState(value)}
             />
           </View>
           <Text style = {{alignSelf: 'center'}}>{this.state.sliderValue[this.state.value - 1]}</Text>
