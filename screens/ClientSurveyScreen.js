@@ -34,21 +34,21 @@ export default class ClientSurveyScreen extends React.Component {
     },
     loading: true,
     surveyAnswers: [
-      {question: 0, answer: 0},
-      {question: 1, answer: 0},
-      {question: 2, answer: 0},
-      {question: 3, answer: 0},
-      {question: 4, answer: 0},
-      {question: 5, answer: 0},
-      {question: 6, answer: 0},
-      {question: 7, answer: 0},
-      {question: 8, answer: 0},
-      {question: 9, answer: 0},
-      {question: 10, answer: 0},
-      {question: 11, answer: 0},
-      {question: 12, answer: 0},
-      {question: 13, answer: 0},
-      {question: 14, answer: 0}
+      {question: 0, answer: 3},
+      {question: 1, answer: 3},
+      {question: 2, answer: 3},
+      {question: 3, answer: 3},
+      {question: 4, answer: 3},
+      {question: 5, answer: 3},
+      {question: 6, answer: 3},
+      {question: 7, answer: 3},
+      {question: 8, answer: 3},
+      {question: 9, answer: 3},
+      {question: 10, answer: 3},
+      {question: 11, answer: 3},
+      {question: 12, answer: 3},
+      {question: 13, answer: 3},
+      {question: 14, answer: 3}
     ],
   }
 
@@ -64,6 +64,7 @@ export default class ClientSurveyScreen extends React.Component {
 
   renderQuestion = ({index,item}) => {
     const onAnsweredQuestion = (num) => {
+      console.log('Survey tapped')
       this.state.surveyAnswers[index].answer = num;
       this.setState({
         surveyAnswers: this.state.surveyAnswers,
@@ -73,7 +74,7 @@ export default class ClientSurveyScreen extends React.Component {
     if(!this.state.loading){
       if(this.state.status[index].status){
         return(
-          <ScrollView>
+          <ScrollView contentContainerStyle = {{justifyContent: 'center', alignItems: 'center'}}>
             <QuestionCard
             question = {item.q}
             index = {index}
@@ -84,7 +85,7 @@ export default class ClientSurveyScreen extends React.Component {
       }
     }
   }
-
+  
   sendSurvey = () => {
     this.setState({
       date:{
@@ -96,7 +97,7 @@ export default class ClientSurveyScreen extends React.Component {
       
       try{
         const response = await db.collection('answeredSurveys').add(this.state);
-        alert('Survey saved succesfully','asdasdasd');
+        alert('Survey saved succesfully');
         db.collection('leaderSurvey').doc(this.state.name).update({answered: true});
         this.props.navigation.goBack(null);
       }catch(e) {
@@ -112,7 +113,7 @@ export default class ClientSurveyScreen extends React.Component {
     }
     else {
       return(
-        <ScrollView>
+        <ScrollView contentContainerStyle = {{justifyContent: 'center'}}>
         <FlatList
           data = {Data}
           extraData = {this.state.loading}
@@ -130,7 +131,7 @@ const styles = StyleSheet.create({
   container: {
     borderRadius: 10,
     margin: 25,
-    width: '75%',
+    width: '85%',
     height: '25%',
     backgroundColor: 'aliceblue'
   },

@@ -1,64 +1,33 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableHighlight, View, FlatList } from 'react-native';
-
-var numbers = ['1','2','3','4','5'];
+import { StyleSheet, Text, View } from 'react-native';
+import { Slider } from 'react-native-elements';
 
 class QuestionCard extends React.Component {
   
   state = {
-    selected: [false,false,false,false,false],
-    select: false,
-    refresh: false,
-    prevSelect: 0,
-  }
-
-  renderButton = ({index,item}) => {
-    
-    const answerQuestion = () => {
-      this.props.onPress(index+1);
-    
-      if(this.state.select === true) {
-        this.state.selected[this.state.prevSelect] = false;
-      }
-
-      this.state.selected[index] = !this.state.selected[index];
-      this.state.select = true;
-      this.state.prevSelect = index;
-
-      this.setState({
-        selected: this.state.selected, 
-        select: this.state.select,
-        refresh: !this.state.refresh,
-        prevSelect: this.state.prevSelect,
-      });
-    }
-    
-    return(
-      <TouchableHighlight style = {this.state.selected[index] ? styles.buttonSelected : styles.button} onPress = {answerQuestion} >
-        <Text style = {styles.buttonText}>{index+1}</Text>
-      </TouchableHighlight>
-    );
+    value: 3,
+    sliderValue: ['Totalmente desacuerdo', 'Desacuerdo', 'Neutral', 'De acuerdo', 'Totalmente de acuerdo'],
   }
 
   render() {
     return (
       <View style = {styles.container}>
-        <Text style = {styles.text}>{this.props.question}</Text>
-        <View 
-          style = {{
-            
-            flexDirection: 'row', 
-            justifyContent: 'space-evenly', 
-            alignItems: 'flex-end', 
-            marginBottom: 10}}
-        >
-          <FlatList
-            data = {numbers}
-            extraData = {this.state.refresh}
-            renderItem = {this.renderButton}
-            numColumns = {5}
-            keyExtractor = {(item,index) => index.toString()}
-          />
+        <View style = {{justifyContent: 'center', alignContent: 'center', backgroundColor: '#ffffff'}}>
+          <Text style= {{alignSelf: 'center'}}>{this.props.question}</Text>
+          <View style = {{alignSelf: 'center', width: '100%', alignItems: 'center'}}>
+            <Slider 
+              style = {styles.slider}
+              value = {this.state.value}
+              minimumValue = {1}
+              maximumValue = {5}
+              thumbTouchSize = {{width: 90, height: 90}}
+              minimumTrackTintColor = {'#1077AC'}
+              thumbTintColor = {'#CCCCCC'}
+              step = {1}
+              onValueChange = {value => this.props.onPress(value)}
+            />
+          </View>
+          <Text style = {{alignSelf: 'center'}}>{this.state.sliderValue[this.state.value - 1]}</Text>
         </View>
       </View>
     );
@@ -67,9 +36,10 @@ class QuestionCard extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 10,
-    margin: 25,
-    width: '75%',
+    justifyContent: 'center',
+    borderRadius: 1,
+    margin: '5%',
+    width: '90%',
     height: '70 %',
     backgroundColor: 'aliceblue'
   },
@@ -98,6 +68,11 @@ const styles = StyleSheet.create({
     color: 'white', 
     textAlign: 'center'
   },
+  slider: {
+    width: '70%',
+    //alignSelf: "stretch",
+    //justifyContent: 'center',
+  }
 });
 
 export default QuestionCard;
