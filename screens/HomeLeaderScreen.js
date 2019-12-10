@@ -161,12 +161,15 @@ class HomeLeaderScreen extends React.Component {
             <Text style={[styles.displayName, {fontWeight: "200", fontSize: 28}]}>Hi {this.state.userName}!</Text>
           </View>
           
-          <FlatList
-            data = {this.clientes}
-            extraData = {this.state.loading}
-            keyExtractor = {item => String(item.Email)}
-            renderItem = {this.renderClients}
-          />
+          <View>
+            <FlatList
+              data = {this.clientes}
+              extraData = {this.state.loading}
+              keyExtractor = {item => String(item.Email)}
+              renderItem = {this.renderClients}
+            />
+          </View>
+         
           <View>
             <Modal visible= {params.pickerDisplayed} animationType={"slide"} transparent={false}>
               <View style={styles.modalscreen}>
@@ -214,7 +217,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
     borderRadius: 60,
-    bottom: height - 660,
     elevation: 2,
     height: 60,
     justifyContent: 'center',
