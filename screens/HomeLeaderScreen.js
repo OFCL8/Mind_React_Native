@@ -182,9 +182,11 @@ class HomeLeaderScreen extends React.Component {
               </View>
            </Modal>
           </View>
-          <TouchableOpacity style={styles.addbutton} onPress={this.addClient}>
-            <Text style={{fontSize: 20}}>+</Text>
-          </TouchableOpacity>
+          <View>
+            <TouchableOpacity style={styles.addbutton} onPress={this.addClient}>
+              <Text style={{fontSize: 20}}>+</Text>
+            </TouchableOpacity>
+          </View>
         </ScrollView>
       );
     }

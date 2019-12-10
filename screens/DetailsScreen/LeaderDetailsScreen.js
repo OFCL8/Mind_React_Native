@@ -58,9 +58,7 @@ export default class LeaderDetailsScreen extends React.Component{
     this.setState({ leaderDetails: this.props.navigation.getParam('leaderDetails', 'NO-ID') });
     this.leaderUID = this.props.navigation.getParam('userUID');
     this.getUsers();
-    this.setState({
-      loading: false,
-    });
+    
   };
   
   leaderMeanScore = () => {
@@ -76,6 +74,9 @@ export default class LeaderDetailsScreen extends React.Component{
       .then(snapshot => {
         if (snapshot.empty) {
           console.log('No matching documents.');
+          this.setState({
+            loading: false,
+          });
           return;
         }  
         snapshot.forEach(doc => {
@@ -83,7 +84,10 @@ export default class LeaderDetailsScreen extends React.Component{
           this.clientScore.push(doc.data().globalScore);
           this.clientsFromLeader.push(doc.data().company);
         });
-        this.leaderMeanScore()
+        this.leaderMeanScore();
+        this.setState({
+          loading: false,
+        });
       })
       .catch(err => {
         console.log('Error getting documents', err);
@@ -98,10 +102,11 @@ export default class LeaderDetailsScreen extends React.Component{
       </View>
     );
   }
+
   render(){
-    if(this.state.loading || this.clientScore.length === 0){
+    if(this.state.loading){
       return <LoadingScreen/>;
-    }else{
+    }else if(this.clientScore.length > 0){
       return(
         <ScrollView contentContainerStyle = {{ justifyContent: 'center' , padding: 5}}> 
           <View>
@@ -151,6 +156,16 @@ export default class LeaderDetailsScreen extends React.Component{
               }}
               />
               </View>
+        </ScrollView>
+      );
+    }
+    else if (this.clientsFromLeader.length === 0)
+    {
+      return(
+        <ScrollView contentContainerStyle = {{ justifyContent: 'center' , padding: 5}}> 
+          <View>
+            <Text style = {{ alignSelf: 'center', fontSize: 30, fontWeight: 'bold', marginBottom: 10}}>No data available</Text>
+          </View>
         </ScrollView>
       );
     }
