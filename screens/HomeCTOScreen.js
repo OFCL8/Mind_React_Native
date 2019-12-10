@@ -120,17 +120,26 @@ class HomeCTOScreen extends React.Component {
       return (<LoadingScreen/>);
     }else{
       return (
-        <ScrollView style={styles.container}>
+        <ScrollView contentContainerStyle={styles.container}>
           <View style={styles.infoContainer}>
                 <Text style={[styles.displayName, {fontWeight: "200", fontSize: 28}]}>Hi {this.state.userName}!</Text>
           </View>
+          
+          <View>
+            <FlatList
+              data = {this.users}
+              extraData = {this.state.loading}
+              keyExtractor = {item => String(item.Email)}
+              renderItem = {this.renderUsers}
+            />
+          </View>
 
-          <FlatList
-            data = {this.users}
-            extraData = {this.state.loading}
-            keyExtractor = {item => String(item.Email)}
-            renderItem = {this.renderUsers}
-          />
+          <View>
+            <TouchableOpacity style={styles.addbutton} onPress={this.addUser}>
+              <Text style={{fontSize: 20}}>+</Text>
+            </TouchableOpacity>
+          </View>
+          
           <View>
             <Modal visible= {params.pickerDisplayed} animationType={"slide"} transparent={false}>
               <View style={styles.modalscreen}>
@@ -146,11 +155,7 @@ class HomeCTOScreen extends React.Component {
               </View>
            </Modal>
           </View>
-          <View>
-            <TouchableOpacity style={styles.addbutton} onPress={this.addUser}>
-              <Text style={{fontSize: 20}}>+</Text>
-            </TouchableOpacity>
-          </View>
+          
         </ScrollView>
       )
     }
@@ -162,7 +167,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: Constants.statusBarHeight,
     marginHorizontal: 16,
-    marginBottom: 10
+    marginBottom: 10,
   },
   infoContainer: {
     alignSelf: "center",
@@ -178,7 +183,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
     borderRadius: 60,
-    bottom: height - 660,
     elevation: 2,
     height: 60,
     justifyContent: 'center',
